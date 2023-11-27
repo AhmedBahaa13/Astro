@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "415148573213",
+    "firebase_url": "https://astro-8f945-default-rtdb.firebaseio.com",
+    "project_id": "astro-8f945",
+    "storage_bucket": "astro-8f945.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415148573213:android:cbeace824587a57b95fcf4",
+        "android_client_info": {
+          "package_name": "com.uni.astro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "415148573213-t93rl3s4827r0jdel0iolit5hg7gudhs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uni.astro",
+            "certificate_hash": "d1704edb7dc4b7c9f684f5f8d30bd25a43aad486"
+          }
+        },
+        {
+          "client_id": "415148573213-te71j7vfutr8s8qn22ki7obglqnljqu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaNxX2zmsxg7J7KXWsupfRiP5Ytr6jLAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "415148573213-te71j7vfutr8s8qn22ki7obglqnljqu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
