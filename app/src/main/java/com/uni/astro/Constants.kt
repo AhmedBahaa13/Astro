@@ -1,7 +1,7 @@
 package com.uni.astro
 
 object Constants {
-    const val BASE_URL = "http://197.52.188.215:80/new_astro/"
+    const val BASE_URL = "http://197.52.142.136:80/new_astro/"
     const val API_KEY = "156c4675-9608-4591-1111-00000"
 
     //for referral deep linking
@@ -21,8 +21,8 @@ object Constants {
     const val AD_COLONY_BANNER_ID = "vzdb67721f381948c292"
     const val AD_COLONY_INTERSTITIAL_ID = "vza31e4740f6e94f5d9b"
     val AD_COLONY_UNIT_Zone_Ids = arrayOf(AD_COLONY_BANNER_ID, AD_COLONY_INTERSTITIAL_ID)
-    const val privacy_policy = ""
-    const val terms_conditions = ""
+    const val privacy_policy = "encept.co"
+    const val terms_conditions = "\"encept.co"
 
     // if you want a user can't share a video from your app then you have to set this value to true
     const val IS_SECURE_INFO = false
@@ -34,7 +34,7 @@ object Constants {
     const val IS_SHOW_GIF = true
 
     // if you want to disable all the toasts in the app
-    const val IS_TOAST_ENABLE = false
+    const val IS_TOAST_ENABLE = true
 
     // if you want to add a limit that a user can watch only 6 video then change the below value to true
     // if you want to change the demo videos limit count then set the count as you want
@@ -47,7 +47,7 @@ object Constants {
     @JvmField
     var RECORDING_DURATION = 30000
 
-    // minimum time of recode a video for now it is 3 sec
+    // minimum time of recode a video.
     @JvmField
     var MIN_TIME_RECORDING = 3000
 
@@ -59,7 +59,7 @@ object Constants {
     @JvmField
     var MAX_TIME_FOR_VIDEO_PICS = 10
 
-    // minimum trim chunk time span of a video for now it is 5 sec
+    // minimum trim chunk time span of a video.
     @JvmField
     var MIN_TRIM_TIME = 5
 

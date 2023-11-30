@@ -41,40 +41,46 @@ import java.io.File
 import com.uni.astro.R
 
 
-class Astro : Application(), ActivityLifecycleCallbacks,
-    BackgroundDetectorHandler.OnVisibilityChangedListener {
+class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandler.OnVisibilityChangedListener {
     private var proxy: HttpProxyCacheServer? = null
+    private var videoEditor: BanubaVideoEditor? = null
     private var backgroundDetectorHandler: BackgroundDetectorHandler? = null
 
-    private var videoEditor: BanubaVideoEditor? = null
 
     override fun onCreate() {
         super.onCreate()
+
         initAdsView()
         VolleyRequest.initalizeSdk(this)
         appLevelContext = applicationContext
         registerActivityLifecycleCallbacks(this)
+
         backgroundDetectorHandler = BackgroundDetectorHandler(
             BackgroundDetectorCallback(
                 BackgroundDetectorHandler.ON_ACTIVITY_RESUMED,
                 this
             )
         )
+
         Fresco.initialize(
             applicationContext, ImagePipelineConfigUtils.getDefaultImagePipelineConfig(
                 applicationContext
             )
         )
+
         Paper.init(applicationContext)
         FirebaseApp.initializeApp(applicationContext)
         addFirebaseToken()
         setUserOnline()
+
         if (leastRecentlyUsedCacheEvictor == null) {
             leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
         }
+
         if (exoDatabaseProvider == null) {
             exoDatabaseProvider = StandaloneDatabaseProvider(applicationContext)
         }
+
         if (simpleCache == null) {
             simpleCache =
                 SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor!!, exoDatabaseProvider!!)
@@ -82,6 +88,7 @@ class Astro : Application(), ActivityLifecycleCallbacks,
                 freeMemory()
             }
         }
+
         initCrashActivity()
         initConfig()
         Functions.createNoMediaFile(applicationContext)
@@ -92,7 +99,6 @@ class Astro : Application(), ActivityLifecycleCallbacks,
         } else {
             VideoEditorModule().initialize(this@Astro)
         }
-
     }
 
     private fun initAdsView() {

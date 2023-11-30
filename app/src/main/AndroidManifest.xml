@@ -457,35 +457,35 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/website/profile/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/website/profile/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/ref/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/astro/ref/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/stream/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.188.215:80/new_astro"
+                    android:host="http://197.52.142.136:80/new_astro"
                     android:pathPrefix="/stream/"
                     android:scheme="http" />
             </intent-filter>

@@ -1619,7 +1619,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 val `in`: InputStream = FileInputStream(sourceLocation)
                 val out: OutputStream = FileOutputStream(targetLocation)
 
-                // Copy the bits from instream to outstream
+                // Copy the bits from in-stream to out-stream
                 val buf = ByteArray(1024)
                 var len: Int
                 while ((`in`.read(buf).also { len = it }) > 0) {

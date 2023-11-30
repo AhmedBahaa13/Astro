@@ -15,25 +15,26 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.hendraanggrian.appcompat.widget.SocialView;
+import com.uni.astro.Constants;
+import com.uni.astro.R;
 import com.uni.astro.activitesfragments.profile.ProfileA;
 import com.uni.astro.adapters.CommentsAdapter;
 import com.uni.astro.apiclasses.ApiLinks;
-import com.uni.astro.Constants;
 import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.interfaces.FragmentDataSend;
 import com.uni.astro.models.CommentModel;
 import com.uni.astro.models.HomeModel;
 import com.uni.astro.models.UserModel;
 import com.uni.astro.models.UsersModel;
-import com.uni.astro.R;
 import com.uni.astro.simpleclasses.DataParsing;
 import com.uni.astro.simpleclasses.DebounceClickHandler;
 import com.uni.astro.simpleclasses.Functions;
@@ -41,53 +42,63 @@ import com.uni.astro.simpleclasses.Variables;
 import com.volley.plus.VPackages.VolleyRequest;
 import com.volley.plus.interfaces.APICallBack;
 import com.volley.plus.interfaces.Callback;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class CommentF extends BottomSheetDialogFragment {
 
+    private static int commentCount = 0;
     View view;
     Context context;
-
     RecyclerView recyclerView;
     CommentsAdapter adapter;
     ImageView send_btn;
     ProgressBar send_progress;
-    ArrayList<CommentModel> dataList= new ArrayList<>();
+    ArrayList<CommentModel> dataList = new ArrayList<>();
     HomeModel item;
     String videoId;
     String userId;
     ProgressBar noDataLoader;
-    TextView commentCountTxt, tvNoCommentData,tvComment;
+    TextView commentCountTxt, tvNoCommentData, tvComment;
     RelativeLayout send_btn_layout;
-    boolean isSendAllow=true;
+    boolean isSendAllow = true;
     String replyStatus = null;
-    private static int commentCount = 0;
-    CommentModel selectedComment=null;
+    CommentModel selectedComment = null;
     int selectedCommentPosition;
-    CommentModel selectedReplyComment=null;
+    CommentModel selectedReplyComment = null;
     int selectedReplyCommentPosition;
 
     int pageCount = 0;
     boolean ispostFinsh;
     ProgressBar loadMoreProgress;
     LinearLayoutManager linearLayoutManager;
-
-
-    private BottomSheetBehavior mBehavior;
     BottomSheetDialog dialog;
+    FragmentDataSend fragmentDataSend;
+    RelativeLayout write_layout;
+    ArrayList<UsersModel> taggedUserList = new ArrayList<>();
+    String commentType = "OwnComment";
+    private BottomSheetBehavior mBehavior;
+
 
     public CommentF() {
-
     }
 
 
+    @SuppressLint("ValidFragment")
+    public CommentF(int count, FragmentDataSend fragmentDataSend) {
+        commentCount = count;
+        this.fragmentDataSend = fragmentDataSend;
+
+
+    }
+
     @NonNull
-    @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 
         View view = View.inflate(getContext(), R.layout.fragment_comment, null);
@@ -96,12 +107,11 @@ public class CommentF extends BottomSheetDialogFragment {
         mBehavior = BottomSheetBehavior.from((View) view.getParent());
         mBehavior.setHideable(false);
         mBehavior.setDraggable(false);
-        mBehavior.setPeekHeight((int) view.getContext().getResources().getDimension(R.dimen._450sdp),true);
+        mBehavior.setPeekHeight((int) view.getContext().getResources().getDimension(R.dimen._450sdp), true);
         mBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState!=BottomSheetBehavior.STATE_EXPANDED)
-                {
+                if (newState != BottomSheetBehavior.STATE_EXPANDED) {
                     mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
@@ -111,54 +121,34 @@ public class CommentF extends BottomSheetDialogFragment {
 
             }
         });
-        return  dialog;
-    }
-
-
-    FragmentDataSend fragmentDataSend;
-    RelativeLayout write_layout;
-
-
-    @SuppressLint("ValidFragment")
-    public CommentF(int count, FragmentDataSend fragmentDataSend ) {
-        commentCount = count;
-        this.fragmentDataSend = fragmentDataSend;
-
-
+        return dialog;
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_comment, container, false);
         context = view.getContext();
         write_layout = view.findViewById(R.id.write_layout);
 
         tvNoCommentData = view.findViewById(R.id.tvNoCommentData);
-        send_btn=view.findViewById(R.id.send_btn);
-        send_progress=view.findViewById(R.id.send_progress);
-        tvComment=view.findViewById(R.id.tvComment);
-        send_btn_layout=view.findViewById(R.id.send_btn_layout);
-        tvComment.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replyStatus=null;
-                hitComment();
-            }
+        send_btn = view.findViewById(R.id.send_btn);
+        send_progress = view.findViewById(R.id.send_progress);
+        tvComment = view.findViewById(R.id.tvComment);
+        send_btn_layout = view.findViewById(R.id.send_btn_layout);
+
+
+        tvComment.setOnClickListener(new DebounceClickHandler(view -> {
+            replyStatus = null;
+            hitComment();
         }));
-        send_btn_layout.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replyStatus=null;
-                hitComment();
-            }
+
+        send_btn_layout.setOnClickListener(new DebounceClickHandler(view -> {
+            replyStatus = null;
+            hitComment();
         }));
-        view.findViewById(R.id.goBack).setOnClickListener(new DebounceClickHandler(v -> {
-            dismiss();
-        }));
+
+        view.findViewById(R.id.goBack).setOnClickListener(new DebounceClickHandler(v -> dismiss()));
 
 
         Bundle bundle = getArguments();
@@ -168,14 +158,13 @@ public class CommentF extends BottomSheetDialogFragment {
             item = (HomeModel) bundle.getSerializable("data");
         }
 
-        if (Functions.isShowContentPrivacy(context, item.apply_privacy_model.getVideo_comment(), item.follow_status_button.equalsIgnoreCase("friends")))
-        {
+        if (Functions.isShowContentPrivacy(context, item.apply_privacy_model.getVideo_comment(), item.follow_status_button.equalsIgnoreCase("friends"))) {
             send_btn.setVisibility(View.VISIBLE);
-            isSendAllow=true;
-        } else
-        {
+            isSendAllow = true;
+
+        } else {
             send_btn.setVisibility(View.GONE);
-            isSendAllow=false;
+            isSendAllow = false;
         }
 
         commentCountTxt = view.findViewById(R.id.comment_count);
@@ -220,16 +209,14 @@ public class CommentF extends BottomSheetDialogFragment {
                         }
                     }
                     break;
+
                     case R.id.reply_count: {
-                        if (selectedComment.isExpand) {
-                            selectedComment.isExpand = false;
-                        } else {
-                            selectedComment.isExpand = true;
-                        }
+                        selectedComment.isExpand = !selectedComment.isExpand;
                         dataList.set(selectedCommentPosition, selectedComment);
                         adapter.notifyDataSetChanged();
                     }
                     break;
+
                     case R.id.show_less_txt: {
                         selectedComment.isExpand = false;
                         dataList.set(selectedCommentPosition, selectedComment);
@@ -244,12 +231,8 @@ public class CommentF extends BottomSheetDialogFragment {
                 selectedCommentPosition = positon;
                 selectedComment = dataList.get(selectedCommentPosition);
 
-                switch (view.getId()) {
-
-                    case R.id.message_layout:
-                        openCommentSetting(selectedComment, selectedCommentPosition);
-                        break;
-
+                if (view.getId() == R.id.message_layout) {
+                    openCommentSetting(selectedComment, selectedCommentPosition);
                 }
             }
         }, new CommentsAdapter.onRelyItemCLickListener() {
@@ -284,29 +267,17 @@ public class CommentF extends BottomSheetDialogFragment {
             public void onItemLongPress(ArrayList<CommentModel> arrayList, int postion, View view) {
                 selectedReplyCommentPosition = postion;
                 selectedReplyComment = arrayList.get(selectedReplyCommentPosition);
-                switch (view.getId()) {
-
-                    case R.id.reply_layout: {
-                        Functions.copyCode(view.getContext(), selectedReplyComment.comment_reply);
-                    }
-                    break;
-
+                if (view.getId() == R.id.reply_layout) {
+                    Functions.copyCode(view.getContext(), selectedReplyComment.comment_reply);
                 }
             }
-        }, new CommentsAdapter.LinkClickListener() {
-            @Override
-            public void onLinkClicked(SocialView view, String matchedText) {
-                openProfileByUsername(matchedText);
-            }
-        }, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow"))
-                {
-                    openTagUser(bundle.getString("name"));
-                }
+
+        }, (view, matchedText) -> openProfileByUsername(matchedText), bundle1 -> {
+            if (bundle1.getBoolean("isShow")) {
+                openTagUser(bundle1.getString("name"));
             }
         });
+
 
         recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -340,34 +311,30 @@ public class CommentF extends BottomSheetDialogFragment {
 
             }
         });
-        noDataLoader=view.findViewById(R.id.noDataLoader);
 
-
+        noDataLoader = view.findViewById(R.id.noDataLoader);
 
 
         if (item.apply_privacy_model.getVideo_comment().equalsIgnoreCase("everyone") ||
                 (item.apply_privacy_model.getVideo_comment().equalsIgnoreCase("friend") &&
-                        item.follow_status_button.equalsIgnoreCase("friends")))
-        {
+                        item.follow_status_button.equalsIgnoreCase("friends"))) {
             write_layout.setVisibility(View.VISIBLE);
             getAllComments();
-        }
-        else
-        {
+
+        } else {
             noDataLoader.setVisibility(View.GONE);
             write_layout.setVisibility(View.GONE);
             tvNoCommentData.setText(view.getContext().getString(R.string.comments_are_turned_off));
-            commentCountTxt.setText("0 "+context.getString(R.string.comments));
+            commentCountTxt.setText("0 " + getString(R.string.comments));
             tvNoCommentData.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
-
         }
 
         return view;
     }
 
     private void openTagUser(String tag) {
-        if(Functions.checkProfileOpenValidationByUserName(tag)) {
+        if (Functions.checkProfileOpenValidationByUserName(tag)) {
             Intent intent = new Intent(view.getContext(), ProfileA.class);
             intent.putExtra("user_name", tag);
             startActivity(intent);
@@ -375,44 +342,32 @@ public class CommentF extends BottomSheetDialogFragment {
         }
     }
 
-    ArrayList<UsersModel> taggedUserList = new ArrayList<>();
-    String commentType="OwnComment";
     private void hitComment() {
-        String replyStr="";
+        String replyStr = "";
 
-        if (replyStatus==null)
-        {
-            commentType="OwnComment";
-        }
-        else
-        if (replyStatus.equals("commentReply"))
-        {
-            replyStr=context.getString(R.string.reply_to)+" " + selectedReplyComment.replay_user_name;
-            commentType="replyComment";
-        }
-        else
-        {
-            replyStr=context.getString(R.string.reply_to)+" " + selectedComment.user_name;
-            commentType="replyComment";
+        if (replyStatus == null) {
+            commentType = "OwnComment";
+        } else if (replyStatus.equals("commentReply")) {
+            replyStr = context.getString(R.string.reply_to) + " " + selectedReplyComment.replay_user_name;
+            commentType = "replyComment";
+        } else {
+            replyStr = context.getString(R.string.reply_to) + " " + selectedComment.user_name;
+            commentType = "replyComment";
         }
 
-        EditTextSheetF fragment = new EditTextSheetF(commentType,taggedUserList, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
-                    if (bundle.getString("action").equals("sendComment"))
-                    {
-                        taggedUserList= (ArrayList<UsersModel>) bundle.getSerializable("taggedUserList");
-                        String message=bundle.getString("message");
-                        tvComment.setText(message);
-                        sendComment(""+message);
-                    }
+        EditTextSheetF fragment = new EditTextSheetF(commentType, taggedUserList, bundle -> {
+            if (bundle.getBoolean("isShow", false)) {
+                if (bundle.getString("action").equals("sendComment")) {
+                    taggedUserList = (ArrayList<UsersModel>) bundle.getSerializable("taggedUserList");
+                    String message = bundle.getString("message");
+                    tvComment.setText(message);
+                    sendComment("" + message);
                 }
             }
         });
-        Bundle bundle=new Bundle();
-        bundle.putString("replyStr",replyStr);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("replyStr", replyStr);
         fragment.setArguments(bundle);
         fragment.show(getChildFragmentManager(), "EditTextSheetF");
     }
@@ -421,25 +376,20 @@ public class CommentF extends BottomSheetDialogFragment {
         if (!TextUtils.isEmpty(message)) {
 
             if (Functions.checkLoginUser(getActivity())) {
-
                 if (replyStatus == null) {
                     sendComments(videoId, message);
+
+                } else if (replyStatus.equals("commentReply")) {
+                    message = context.getString(R.string.replied_to) + " " + "@" + selectedReplyComment.replay_user_name + " " + message;
+                    sendCommentsReply(selectedReplyComment.parent_comment_id, message, videoId, selectedReplyComment.videoOwnerId);
+
+                } else {
+                    Log.d(Constants.tag, "HitAPI here comment_id " + selectedComment.comment_id);
+                    sendCommentsReply(selectedComment.comment_id, message, videoId, selectedComment.videoOwnerId);
                 }
-                else
-                if (replyStatus.equals("commentReply"))
-                {
-                    message = context.getString(R.string.replied_to)+" " + "@" + selectedReplyComment.replay_user_name + " " + message;
-                    sendCommentsReply(selectedReplyComment.parent_comment_id, message,videoId,selectedReplyComment.videoOwnerId);
-                }
-                else
-                {
-                    Log.d(Constants.tag,"HitAPI here comment_id "+selectedComment.comment_id);
-                    sendCommentsReply(selectedComment.comment_id, message,videoId,selectedComment.videoOwnerId);
-                }
+
                 tvComment.setText(context.getString(R.string.leave_a_comment));
-
             }
-
         }
     }
 
@@ -447,36 +397,22 @@ public class CommentF extends BottomSheetDialogFragment {
         CommentSettingF fragment = new CommentSettingF(item, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
-                    if (bundle.getString("action").equals("copyText"))
-                    {
-                        Functions.copyCode(view.getContext(),item.comments);
-                    }
-                    else
-                    if (bundle.getString("action").equals("pinComment"))
-                    {
+                if (bundle.getBoolean("isShow", false)) {
+                    if (bundle.getString("action").equals("copyText")) {
+                        Functions.copyCode(view.getContext(), item.comments);
+                    } else if (bundle.getString("action").equals("pinComment")) {
 
-                        if (Integer.valueOf(item.pin_comment_id)>0)
-                        {
-                            if (item.pin_comment_id.equals(item.comment_id))
-                            {
-                                hitApiPinComment(item,"unpin");
+                        if (Integer.valueOf(item.pin_comment_id) > 0) {
+                            if (item.pin_comment_id.equals(item.comment_id)) {
+                                hitApiPinComment(item, "unpin");
+                            } else {
+                                replacePreviousPinned(item, positon);
                             }
-                            else
-                            {
-                                replacePreviousPinned(item,positon);
-                            }
+                        } else {
+                            hitApiPinComment(item, "pin");
                         }
-                        else
-                        {
-                            hitApiPinComment(item,"pin");
-                        }
-                    }
-                    else
-                    if (bundle.getString("action").equals("deleteComment"))
-                    {
-                        hitApiCommentDelete(item,positon);
+                    } else if (bundle.getString("action").equals("deleteComment")) {
+                        hitApiCommentDelete(item, positon);
                     }
 
                 }
@@ -492,59 +428,50 @@ public class CommentF extends BottomSheetDialogFragment {
                 false, new FragmentCallBack() {
                     @Override
                     public void onResponce(Bundle bundle) {
-                        if (bundle.getBoolean("isShow",false))
-                        {
-                            hitApiPinComment(item,"pin");
+                        if (bundle.getBoolean("isShow", false)) {
+                            hitApiPinComment(item, "pin");
                         }
                     }
                 });
     }
 
-    private void hitApiPinComment(CommentModel item,String pinHitStatus) {
+    private void hitApiPinComment(CommentModel item, String pinHitStatus) {
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("video_id", item.video_id);
-            String commentPin="";
-            if (pinHitStatus.equals("unpin"))
-            {
-                commentPin="0";
-            }
-            else
-            {
-                commentPin=item.comment_id;
+            String commentPin = "";
+            if (pinHitStatus.equals("unpin")) {
+                commentPin = "0";
+            } else {
+                commentPin = item.comment_id;
             }
             parameters.put("pin_comment_id", commentPin);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Functions.showLoader(getActivity(),false,false);
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.pinComment, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        Functions.showLoader(getActivity(), false, false);
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.pinComment, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 Functions.cancelLoader();
                 try {
                     JSONObject response = new JSONObject(resp);
                     String code = response.optString("code");
                     if (code.equals("200")) {
 
-                        if (pinHitStatus.equals("pin"))
-                        {
-                            JSONObject msgObj=response.getJSONObject("msg");
-                            JSONObject videoObj=msgObj.getJSONObject("Video");
-                            String pinnedCommentId=videoObj.optString("pin_comment_id");
-                            for (CommentModel itemDataUpdate:dataList)
-                            {
-                                itemDataUpdate.pin_comment_id=pinnedCommentId;
-                                dataList.set(dataList.indexOf(itemDataUpdate),itemDataUpdate);
+                        if (pinHitStatus.equals("pin")) {
+                            JSONObject msgObj = response.getJSONObject("msg");
+                            JSONObject videoObj = msgObj.getJSONObject("Video");
+                            String pinnedCommentId = videoObj.optString("pin_comment_id");
+                            for (CommentModel itemDataUpdate : dataList) {
+                                itemDataUpdate.pin_comment_id = pinnedCommentId;
+                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
                             }
-                        }
-                        else
-                        {
-                            for (CommentModel itemDataUpdate:dataList)
-                            {
-                                itemDataUpdate.pin_comment_id="0";
-                                dataList.set(dataList.indexOf(itemDataUpdate),itemDataUpdate);
+                        } else {
+                            for (CommentModel itemDataUpdate : dataList) {
+                                itemDataUpdate.pin_comment_id = "0";
+                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
                             }
                         }
 
@@ -553,7 +480,7 @@ public class CommentF extends BottomSheetDialogFragment {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.tag, "Exception: " + e);
                 }
 
             }
@@ -561,18 +488,18 @@ public class CommentF extends BottomSheetDialogFragment {
     }
 
 
-    private void hitApiCommentDelete(CommentModel item,int position) {
+    private void hitApiCommentDelete(CommentModel item, int position) {
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("id", item.comment_id);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Functions.showLoader(getActivity(),false,false);
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.deleteVideoComment, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        Functions.showLoader(getActivity(), false, false);
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.deleteVideoComment, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 Functions.cancelLoader();
                 try {
                     JSONObject response = new JSONObject(resp);
@@ -580,28 +507,24 @@ public class CommentF extends BottomSheetDialogFragment {
                     if (code.equals("200")) {
 
 
-                        if (item.comment_id.equals(item.pin_comment_id))
-                        {
-                            for (CommentModel itemDataUpdate:dataList)
-                            {
-                                itemDataUpdate.pin_comment_id="0";
-                                dataList.set(dataList.indexOf(itemDataUpdate),itemDataUpdate);
+                        if (item.comment_id.equals(item.pin_comment_id)) {
+                            for (CommentModel itemDataUpdate : dataList) {
+                                itemDataUpdate.pin_comment_id = "0";
+                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
                             }
                             dataList.remove(position);
-                        }
-                        else
-                        {
+                        } else {
                             dataList.remove(position);
                         }
                         adapter.notifyDataSetChanged();
-                        commentCount=dataList.size();
-                        commentCountTxt.setText(commentCount + " "+context.getString(R.string.comments));
+                        commentCount = dataList.size();
+                        commentCountTxt.setText(commentCount + " " + context.getString(R.string.comments));
                         if (fragmentDataSend != null)
                             fragmentDataSend.onDataSent("" + commentCount);
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.tag, "Exception: " + e);
                 }
 
             }
@@ -611,10 +534,10 @@ public class CommentF extends BottomSheetDialogFragment {
     private void likeCommentReply() {
 
 
-        CommentModel itemUpdate=dataList.get(selectedCommentPosition);
-        ArrayList<CommentModel> replyList=itemUpdate.arrayList;
+        CommentModel itemUpdate = dataList.get(selectedCommentPosition);
+        ArrayList<CommentModel> replyList = itemUpdate.arrayList;
 
-        CommentModel itemReplyUpdate=replyList.get(selectedReplyCommentPosition);
+        CommentModel itemReplyUpdate = replyList.get(selectedReplyCommentPosition);
 
         String action = itemReplyUpdate.comment_reply_liked;
         if (action != null) {
@@ -630,7 +553,7 @@ public class CommentF extends BottomSheetDialogFragment {
 
 
         Functions.callApiForLikeCommentReply(
-                getActivity(), itemReplyUpdate.comment_reply_id,videoId, new
+                getActivity(), itemReplyUpdate.comment_reply_id, videoId, new
 
                         APICallBack() {
                             @Override
@@ -644,23 +567,20 @@ public class CommentF extends BottomSheetDialogFragment {
                                 try {
                                     JSONObject jsonObject = new JSONObject(responce);
                                     if (jsonObject.optString("code").equals("200")) {
-                                        if (jsonObject.optString("msg").equals("unfavourite"))
-                                        {
+                                        if (jsonObject.optString("msg").equals("unfavourite")) {
                                             itemReplyUpdate.isLikedByOwner = "0";
 
-                                            replyList.set(selectedReplyCommentPosition,itemReplyUpdate);
-                                            itemUpdate.arrayList=replyList;
+                                            replyList.set(selectedReplyCommentPosition, itemReplyUpdate);
+                                            itemUpdate.arrayList = replyList;
                                             dataList.set(selectedCommentPosition, itemUpdate);
                                             adapter.notifyDataSetChanged();
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             JSONObject msgObj = jsonObject.getJSONObject("msg");
                                             JSONObject videoLikeComment = msgObj.getJSONObject("VideoCommentReplyLike");
                                             itemReplyUpdate.isLikedByOwner = videoLikeComment.optString("owner_like");
 
-                                            replyList.set(selectedReplyCommentPosition,itemReplyUpdate);
-                                            itemUpdate.arrayList=replyList;
+                                            replyList.set(selectedReplyCommentPosition, itemReplyUpdate);
+                                            itemUpdate.arrayList = replyList;
                                             dataList.set(selectedCommentPosition, itemUpdate);
                                             adapter.notifyDataSetChanged();
                                         }
@@ -691,10 +611,9 @@ public class CommentF extends BottomSheetDialogFragment {
                 action = "1";
                 item.like_count = "" + (Functions.parseInterger(item.like_count) + 1);
             }
-            Log.d(Constants.tag,"Check UserId and Owner Id"+item.userId+"      "+item.videoOwnerId);
+            Log.d(Constants.tag, "Check UserId and Owner Id" + item.userId + "      " + item.videoOwnerId);
 
-            if (userId.equals(item.videoOwnerId))
-            {
+            if (userId.equals(item.videoOwnerId)) {
                 if (item.userId.equals(item.videoOwnerId)) {
                     item.isLikedByOwner = "1";
                 } else {
@@ -717,23 +636,18 @@ public class CommentF extends BottomSheetDialogFragment {
                     try {
                         JSONObject jsonObject = new JSONObject(responce);
                         if (jsonObject.optString("code").equals("200")) {
-                            if (jsonObject.optString("msg").equals("unfavourite"))
-                            {
-                                if (userId.equals(item.videoOwnerId))
-                                {
+                            if (jsonObject.optString("msg").equals("unfavourite")) {
+                                if (userId.equals(item.videoOwnerId)) {
                                     item.isLikedByOwner = "0";
                                 }
 
 
                                 dataList.set(positon, item);
                                 adapter.notifyDataSetChanged();
-                            }
-                            else
-                            {
+                            } else {
                                 JSONObject msgObj = jsonObject.getJSONObject("msg");
                                 JSONObject videoLikeComment = msgObj.getJSONObject("VideoCommentLike");
-                                if (userId.equals(item.videoOwnerId))
-                                {
+                                if (userId.equals(item.videoOwnerId)) {
                                     item.isLikedByOwner = videoLikeComment.optString("owner_like");
                                 }
 
@@ -760,8 +674,7 @@ public class CommentF extends BottomSheetDialogFragment {
 
     // this funtion will get all the comments against post
     public void getAllComments() {
-        if (dataList.isEmpty())
-        {
+        if (dataList.isEmpty()) {
             noDataLoader.setVisibility(View.VISIBLE);
         }
 
@@ -777,13 +690,13 @@ public class CommentF extends BottomSheetDialogFragment {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showVideoComments, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showVideoComments, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 noDataLoader.setVisibility(View.GONE);
 
-                CommentModel pinnedCommentModel=null;
+                CommentModel pinnedCommentModel = null;
 
                 ArrayList<CommentModel> temp_list = new ArrayList<>();
                 try {
@@ -797,7 +710,7 @@ public class CommentF extends BottomSheetDialogFragment {
 
                             JSONObject videoComment = itemdata.optJSONObject("VideoComment");
                             JSONObject videoObj = itemdata.optJSONObject("Video");
-                            UserModel userDetailModel= DataParsing.getUserDataModel(itemdata.optJSONObject("User"));
+                            UserModel userDetailModel = DataParsing.getUserDataModel(itemdata.optJSONObject("User"));
 
                             JSONArray videoCommentReply = itemdata.optJSONArray("VideoCommentReply");
 
@@ -806,7 +719,7 @@ public class CommentF extends BottomSheetDialogFragment {
                                 for (int j = 0; j < videoCommentReply.length(); j++) {
                                     JSONObject jsonObject = videoCommentReply.getJSONObject(j);
 
-                                    UserModel userDetailModelReply=DataParsing.getUserDataModel(jsonObject.optJSONObject("User"));
+                                    UserModel userDetailModelReply = DataParsing.getUserDataModel(jsonObject.optJSONObject("User"));
                                     CommentModel comment_model = new CommentModel();
 
                                     comment_model.comment_reply_id = jsonObject.optString("id");
@@ -829,11 +742,11 @@ public class CommentF extends BottomSheetDialogFragment {
                             }
 
                             CommentModel item = new CommentModel();
-                            item.isLikedByOwner=videoComment.optString("owner_like");
+                            item.isLikedByOwner = videoComment.optString("owner_like");
                             item.videoOwnerId = videoObj.optString("user_id");
-                            item.pin_comment_id = videoObj.optString("pin_comment_id","0");
+                            item.pin_comment_id = videoObj.optString("pin_comment_id", "0");
                             item.userId = userDetailModel.getId();
-                            item.isVerified=userDetailModel.getVerified();
+                            item.isVerified = userDetailModel.getVerified();
                             item.user_name = userDetailModel.getUsername();
                             item.first_name = userDetailModel.getFirstName();
                             item.last_name = userDetailModel.getLastName();
@@ -848,18 +761,14 @@ public class CommentF extends BottomSheetDialogFragment {
                             item.comment_id = videoComment.optString("id");
                             item.created = videoComment.optString("created");
 
-                            if (item.comment_id.equals(item.pin_comment_id))
-                            {
-                                pinnedCommentModel=item;
-                            }
-                            else
-                            {
+                            if (item.comment_id.equals(item.pin_comment_id)) {
+                                pinnedCommentModel = item;
+                            } else {
                                 temp_list.add(item);
                             }
 
 
                         }
-
 
 
                         if (pageCount == 0) {
@@ -870,10 +779,8 @@ public class CommentF extends BottomSheetDialogFragment {
                         }
 
 
-
-                        if (pinnedCommentModel!=null)
-                        {
-                            dataList.add(0,pinnedCommentModel);
+                        if (pinnedCommentModel != null) {
+                            dataList.add(0, pinnedCommentModel);
                         }
 
                         adapter.notifyDataSetChanged();
@@ -886,7 +793,7 @@ public class CommentF extends BottomSheetDialogFragment {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: comment"+e);
+                    Log.d(Constants.tag, "Exception: comment" + e);
                 } finally {
                     loadMoreProgress.setVisibility(View.GONE);
                 }
@@ -895,28 +802,26 @@ public class CommentF extends BottomSheetDialogFragment {
     }
 
 
-
     // this function will call an api to upload your comment reply
-    private void sendCommentsReply(String commentId, String message,String videoId,String videoOwnerId) {
-        Functions.callApiForSendCommentReply(getActivity(), commentId, message,videoId,videoOwnerId,taggedUserList, new APICallBack() {
+    private void sendCommentsReply(String commentId, String message, String videoId, String videoOwnerId) {
+        Functions.callApiForSendCommentReply(getActivity(), commentId, message, videoId, videoOwnerId, taggedUserList, new APICallBack() {
             @Override
             public void arrayData(ArrayList arrayList) {
 
                 tvComment.setText(context.getString(R.string.leave_a_comment));
 
-                CommentModel itemUpdate=dataList.get(selectedCommentPosition);
-                ArrayList<CommentModel> replyList =itemUpdate.arrayList;
+                CommentModel itemUpdate = dataList.get(selectedCommentPosition);
+                ArrayList<CommentModel> replyList = itemUpdate.arrayList;
 
-                for (CommentModel itemReply:(ArrayList<CommentModel>)arrayList)
-                {
-                    replyList.add(0,itemReply);
+                for (CommentModel itemReply : (ArrayList<CommentModel>) arrayList) {
+                    replyList.add(0, itemReply);
                 }
-                itemUpdate.arrayList=replyList;
-                itemUpdate.item_count_replies=""+itemUpdate.arrayList.size();
-                dataList.set(selectedCommentPosition,itemUpdate);
+                itemUpdate.arrayList = replyList;
+                itemUpdate.item_count_replies = "" + itemUpdate.arrayList.size();
+                dataList.set(selectedCommentPosition, itemUpdate);
                 adapter.notifyDataSetChanged();
                 replyStatus = null;
-                selectedComment=null;
+                selectedComment = null;
                 selectedReplyComment = null;
             }
 
@@ -936,54 +841,51 @@ public class CommentF extends BottomSheetDialogFragment {
 
     // this function will call an api to upload your comment
     public void sendComments(String video_id, final String comment) {
-
         send_btn.setVisibility(View.GONE);
         send_progress.setVisibility(View.VISIBLE);
-        Functions.callApiForSendComment(getActivity(), video_id, comment,taggedUserList, new APICallBack() {
+
+        Functions.callApiForSendComment(getActivity(), "text", video_id, comment, taggedUserList, new APICallBack() {
             @Override
             public void arrayData(ArrayList arrayList) {
-
                 send_btn.setVisibility(View.VISIBLE);
                 send_progress.setVisibility(View.GONE);
                 tvNoCommentData.setVisibility(View.GONE);
 
-                for (CommentModel item : (ArrayList<CommentModel>)arrayList) {
+                for (CommentModel item : (ArrayList<CommentModel>) arrayList) {
                     dataList.add(0, item);
                     commentCount++;
-                    commentCountTxt.setText(commentCount + " "+context.getString(R.string.comments));
+                    commentCountTxt.setText(commentCount + " " + getString(R.string.comments));
 
                     if (fragmentDataSend != null)
                         fragmentDataSend.onDataSent("" + commentCount);
-
                 }
+
                 adapter.notifyDataSetChanged();
-                selectedComment=null;
+                selectedComment = null;
             }
 
             @Override
-            public void onSuccess(String responce) {
-                // this will return a string responce
+            public void onSuccess(String response) {
+                // this will return a string response
                 send_btn.setVisibility(View.VISIBLE);
                 send_progress.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFail(String responce) {
+            public void onFail(String response) {
                 send_btn.setVisibility(View.VISIBLE);
                 send_progress.setVisibility(View.GONE);
-                // this will return the failed responce
+                // this will return the failed response
             }
-
         });
-
     }
 
 
-      // get the profile data by sending the username instead of id
+    // get the profile data by sending the username instead of id
     private void openProfileByUsername(String username) {
 
-        if(Functions.checkProfileOpenValidationByUserName(username)) {
-            Intent intent=new Intent(view.getContext(), ProfileA.class);
+        if (Functions.checkProfileOpenValidationByUserName(username)) {
+            Intent intent = new Intent(view.getContext(), ProfileA.class);
             intent.putExtra("user_name", username);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
@@ -997,9 +899,9 @@ public class CommentF extends BottomSheetDialogFragment {
     // this will open the profile of user which have uploaded the currenlty running video
     private void openProfile(CommentModel commentModel) {
 
-        if(Functions.checkProfileOpenValidation(commentModel.userId)) {
+        if (Functions.checkProfileOpenValidation(commentModel.userId)) {
 
-            Intent intent=new Intent(view.getContext(), ProfileA.class);
+            Intent intent = new Intent(view.getContext(), ProfileA.class);
             intent.putExtra("user_id", commentModel.userId);
             intent.putExtra("user_name", commentModel.user_name);
             intent.putExtra("user_pic", commentModel.getProfile_pic());
@@ -1010,12 +912,6 @@ public class CommentF extends BottomSheetDialogFragment {
 
 
     }
-
-
-
-
-
-
 
 
 }

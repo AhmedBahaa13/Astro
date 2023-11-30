@@ -1,6 +1,9 @@
 package com.uni.astro.simpleclasses;
 
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -56,28 +59,6 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-
-import com.amulyakhare.textdrawable.TextDrawable;
-import com.danikula.videocache.HttpProxyCacheServer;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.Postprocessor;
-import com.facebook.login.LoginManager;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.upstream.DefaultAllocator;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import com.uni.astro.BuildConfig;
-import com.uni.astro.activitesfragments.livestreaming.CallBack;
-import com.uni.astro.activitesfragments.profile.analytics.KeyMatricsModel;
-import com.uni.astro.activitesfragments.spaces.utils.CookieBar;
-import com.uni.astro.interfaces.GenrateBitmapCallback;
-import com.uni.astro.interfaces.GenrateFileCallback;
-import com.uni.astro.interfaces.InternetCheckCallback;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,34 +69,55 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.imagepipeline.request.Postprocessor;
+import com.facebook.login.LoginManager;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.googlecode.mp4parser.authoring.Track;
-import com.uni.astro.activitesfragments.accounts.LoginA;
-import com.uni.astro.activitesfragments.sendgift.StickerModel;
-import com.uni.astro.activitesfragments.SplashA;
-import com.uni.astro.apiclasses.ApiLinks;
-import com.uni.astro.models.ImageHeightWidthModel;
-import com.uni.astro.models.PromotionModel;
-import com.uni.astro.models.StoryModel;
-import com.uni.astro.models.StoryVideoModel;
-import com.uni.astro.models.UsersModel;
-import com.volley.plus.VPackages.VolleyRequest;
+import com.uni.astro.BuildConfig;
 import com.uni.astro.Constants;
-import com.uni.astro.mainmenu.MainMenuActivity;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
+import com.uni.astro.R;
+import com.uni.astro.activitesfragments.SplashA;
+import com.uni.astro.activitesfragments.accounts.LoginA;
+import com.uni.astro.activitesfragments.livestreaming.CallBack;
+import com.uni.astro.activitesfragments.profile.analytics.KeyMatricsModel;
+import com.uni.astro.activitesfragments.sendgift.StickerModel;
+import com.uni.astro.activitesfragments.spaces.utils.CookieBar;
+import com.uni.astro.apiclasses.ApiLinks;
 import com.uni.astro.interfaces.FragmentCallBack;
+import com.uni.astro.interfaces.GenrateBitmapCallback;
+import com.uni.astro.interfaces.GenrateFileCallback;
+import com.uni.astro.interfaces.InternetCheckCallback;
+import com.uni.astro.mainmenu.MainMenuActivity;
 import com.uni.astro.models.CommentModel;
 import com.uni.astro.models.HomeModel;
+import com.uni.astro.models.ImageHeightWidthModel;
 import com.uni.astro.models.MultipleAccountModel;
 import com.uni.astro.models.PrivacyPolicySettingModel;
+import com.uni.astro.models.PromotionModel;
 import com.uni.astro.models.PushNotificationSettingModel;
+import com.uni.astro.models.StoryModel;
+import com.uni.astro.models.StoryVideoModel;
 import com.uni.astro.models.UserModel;
-import com.uni.astro.R;
+import com.uni.astro.models.UsersModel;
+import com.volley.plus.VPackages.VolleyRequest;
+import com.volley.plus.interfaces.APICallBack;
+import com.volley.plus.interfaces.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,14 +156,19 @@ import io.paperdb.Paper;
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
 import kotlin.jvm.JvmStatic;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
-import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
-
 /**
  * Created by qboxus on 2/20/2019.
  */
 
 public class Functions {
+
+    // initialize the loader dialog and show
+    public static Dialog dialog;
+    public static Dialog indeterminantDialog;
+    public static Dialog determinantDialog;
+    public static ProgressBar determinantProgress;
+    public static BroadcastReceiver broadcastReceiver;
+    public static IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
 
     public static LoadControl getExoControler() {
         return new DefaultLoadControl.Builder()
@@ -191,7 +198,7 @@ public class Functions {
     }
 
     @JvmStatic
-    public static DisplayMetrics getPhoneResolution(Activity activity){
+    public static DisplayMetrics getPhoneResolution(Activity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
@@ -211,37 +218,34 @@ public class Functions {
         return (Locale.getDefault().getCountry().toUpperCase());
     }
 
-    public static String getValidatedNumber(Context context,String number,String region) {
+    public static String getValidatedNumber(Context context, String number, String region) {
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.createInstance(context);
 
-        Phonenumber.PhoneNumber phoneNumber=null;
+        Phonenumber.PhoneNumber phoneNumber = null;
         try {
             phoneNumber = phoneUtil.parse(number, region);
         } catch (Exception e) {
             Log.e(Constants.tag, "error during parsing a number");
         }
 
-        if(phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)){
+        if (phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)) {
             return phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
-        }
-        else {
+        } else {
 
-            if(number.startsWith("+")){
+            if (number.startsWith("+")) {
                 return number;
-            }
-            else if(number.startsWith("0")){
+            } else if (number.startsWith("0")) {
                 number = number.substring(1);
-                return "+"+number;
-            }
-            else {
-                return "+"+number;
+                return "+" + number;
+            } else {
+                return "+" + number;
             }
 
         }
 
     }
 
-    public static void copyCode(Context context,String text){
+    public static void copyCode(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("text", text);
         clipboard.setPrimaryClip(clip);
@@ -249,46 +253,42 @@ public class Functions {
         Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show();
     }
 
-    public static String getContryFromNumber(Context context,String number) {
+    public static String getContryFromNumber(Context context, String number) {
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.createInstance(context);
 
-        Phonenumber.PhoneNumber phoneNumber=null;
+        Phonenumber.PhoneNumber phoneNumber = null;
         try {
             phoneNumber = phoneUtil.parse(number, null);
         } catch (Exception e) {
             Log.e(Constants.tag, "error during parsing a number");
         }
 
-        if(phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)){
-            Locale loc = new Locale("",phoneUtil.getRegionCodeForCountryCode(phoneNumber.getCountryCode()));
-            return  loc.getDisplayCountry();
-        }
-        else {
+        if (phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)) {
+            Locale loc = new Locale("", phoneUtil.getRegionCodeForCountryCode(phoneNumber.getCountryCode()));
+            return loc.getDisplayCountry();
+        } else {
 
             return "";
         }
 
     }
 
-    public static String applyPhoneNoValidation(String number,String countryCode) {
-        if (number.charAt(0)=='0')
-        {
-            number=number.substring(1);
+    public static String applyPhoneNoValidation(String number, String countryCode) {
+        if (number.charAt(0) == '0') {
+            number = number.substring(1);
         }
-        number=number.replace("+","");
-        number=number.replace(countryCode,"");
-        if (number.charAt(0)=='0')
-        {
-            number=number.substring(1);
+        number = number.replace("+", "");
+        number = number.replace(countryCode, "");
+        if (number.charAt(0) == '0') {
+            number = number.substring(1);
         }
-        number=countryCode+number;
-        number=number.replace(" ","");
-        number=number.replace("(","");
-        number=number.replace(")","");
-        number=number.replace("-","");
+        number = countryCode + number;
+        number = number.replace(" ", "");
+        number = number.replace("(", "");
+        number = number.replace(")", "");
+        number = number.replace("-", "");
         return number;
     }
-
 
     public static String changeDateToTimebase(String date) {
         try {
@@ -297,8 +297,7 @@ public class Functions {
             Calendar dateCal = Calendar.getInstance();
 
 
-
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             Date d = null;
             try {
                 d = f.parse(date);
@@ -311,32 +310,20 @@ public class Functions {
 
             if (difference < 60) {
                 return difference + "s ago";
-            }  else
-            if (difference < 3600) {
-                return (0+(difference / 60)) + "m ago";
-            }  else
-            if (difference < 86400) {
-                return (0+(difference / 3600)) + "h ago";
-            }  else
-            if (difference<604800)
-            {
-                return (0+(difference / 86400)) + "d ago";
-            }
-            else
-            {
-                if (difference<2592000)
-                {
-                    return (0+(difference / 604800)) + "week ago";
-                }
-                else
-                {
-                    if (difference<31536000)
-                    {
-                        return (0+(difference / 2592000)) + "month ago";
-                    }
-                    else
-                    {
-                        return (0+(difference / 31536000)) + "year ago";
+            } else if (difference < 3600) {
+                return ((difference / 60)) + "m ago";
+            } else if (difference < 86400) {
+                return ((difference / 3600)) + "h ago";
+            } else if (difference < 604800) {
+                return ((difference / 86400)) + "d ago";
+            } else {
+                if (difference < 2592000) {
+                    return ((difference / 604800)) + "week ago";
+                } else {
+                    if (difference < 31536000) {
+                        return ((difference / 2592000)) + "month ago";
+                    } else {
+                        return ((difference / 31536000)) + "year ago";
                     }
 
                 }
@@ -352,7 +339,6 @@ public class Functions {
 
     }
 
-
     // change the color of status bar into black
     public static void blackStatusBar(Activity activity) {
         View view = activity.getWindow().getDecorView();
@@ -362,7 +348,6 @@ public class Functions {
         view.setSystemUiVisibility(flags);
         activity.getWindow().setStatusBarColor(Color.BLACK);
     }
-
 
     public static void PrintHashKey(Context context) {
         try {
@@ -379,26 +364,20 @@ public class Functions {
         }
     }
 
-
     // change the color of status bar into white
     public static void whiteStatusBar(Activity activity) {
         View view = activity.getWindow().getDecorView();
         int flags = view.getSystemUiVisibility();
         flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         view.setSystemUiVisibility(flags);
-        if (new DarkModePrefManager(activity).isNightMode())
-        {
+        if (new DarkModePrefManager(activity).isNightMode()) {
             activity.getWindow().setNavigationBarColor(ContextCompat.getColor(activity, R.color.black));
             activity.getWindow().setStatusBarColor(Color.BLACK);
-        }
-        else
-        {
+        } else {
             activity.getWindow().setStatusBarColor(Color.WHITE);
         }
 
     }
-
-
 
     // close the keybord
     @JvmStatic
@@ -412,7 +391,6 @@ public class Functions {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-
 
     // open the keyboard
     public static void showKeyboard(Activity activity) {
@@ -433,7 +411,6 @@ public class Functions {
         }
 
     }
-
 
     public static SharedPreferences getSettingsPreference(Context context) {
         if (Variables.settingsPreferences != null)
@@ -465,7 +442,7 @@ public class Functions {
 
             return file_duration;
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.tag, "Exception: " + e);
         }
         return 0;
     }
@@ -491,7 +468,7 @@ public class Functions {
                 if (count < 1000)
                     return "" + count;
                 int exp = (int) (Math.log(count) / Math.log(1000));
-                return String.format(Locale.ENGLISH,"%.1f %c",
+                return String.format(Locale.ENGLISH, "%.1f %c",
                         count / Math.pow(1000, exp),
                         "kMBTPE".charAt(exp - 1));
             } else {
@@ -502,7 +479,6 @@ public class Functions {
         }
 
     }
-
 
     // return  the rundom string of given length
     public static String getRandomString(int n) {
@@ -524,15 +500,13 @@ public class Functions {
         return sb.toString();
     }
 
-
-    public static String removeSpecialChar(String s){
+    public static String removeSpecialChar(String s) {
         return s.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     // show loader of simple messages
     public static void showAlert(Activity activity, String title, String Message) {
-        if (activity!=null)
-        {
+        if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -553,9 +527,6 @@ public class Functions {
 
     }
 
-
-
-
     // dialog for show loader for showing dialog with title and descriptions
     public static void showAlert(Context context, String title, String description, final CallBack callBack) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -571,7 +542,6 @@ public class Functions {
         builder.show();
 
     }
-
 
     // dialog for show any kind of alert
     public static void showAlert(Context context, String title, String Message, String postivebtn, String negitivebtn, final Callback callback) {
@@ -597,19 +567,17 @@ public class Functions {
                 }).show();
     }
 
-
-    public static void showDoubleButtonAlert(Context context, String title, String message, String negTitle, String posTitle,boolean isCancelable, FragmentCallBack callBack)
-    {
+    public static void showDoubleButtonAlert(Context context, String title, String message, String negTitle, String posTitle, boolean isCancelable, FragmentCallBack callBack) {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(isCancelable);
         dialog.setContentView(R.layout.show_double_button_new_popup_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        final TextView tvtitle,tvMessage,tvPositive,tvNegative;
-        tvtitle=dialog.findViewById(R.id.tvtitle);
-        tvMessage=dialog.findViewById(R.id.tvMessage);
-        tvNegative=dialog.findViewById(R.id.tvNegative);
-        tvPositive=dialog.findViewById(R.id.tvPositive);
+        final TextView tvtitle, tvMessage, tvPositive, tvNegative;
+        tvtitle = dialog.findViewById(R.id.tvtitle);
+        tvMessage = dialog.findViewById(R.id.tvMessage);
+        tvNegative = dialog.findViewById(R.id.tvNegative);
+        tvPositive = dialog.findViewById(R.id.tvPositive);
 
 
         tvtitle.setText(title);
@@ -621,8 +589,8 @@ public class Functions {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                Bundle bundle=new Bundle();
-                bundle.putBoolean("isShow",false);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isShow", false);
                 callBack.onResponce(bundle);
             }
         });
@@ -630,22 +598,20 @@ public class Functions {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                Bundle bundle=new Bundle();
-                bundle.putBoolean("isShow",true);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isShow", true);
                 callBack.onResponce(bundle);
             }
         });
         dialog.show();
     }
 
-
     public static String readableFileSize(long size) {
-        if(size <= 0) return "0";
-        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size)/ Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size/ Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
-
 
     public static List<List<StickerModel>> createChunksOfList(List<StickerModel> originalList,
                                                               int chunkSize) {
@@ -655,12 +621,11 @@ public class Functions {
                     + chunkSize));
         }
         if (originalList.size() % chunkSize != 0) {
-            listOfChunks.add((List<StickerModel>) originalList.subList(originalList.size()
+            listOfChunks.add(originalList.subList(originalList.size()
                     - originalList.size() % chunkSize, originalList.size()));
         }
         return listOfChunks;
     }
-
 
     // format the username
     public static String showUsername(String username) {
@@ -670,16 +635,14 @@ public class Functions {
             return "@" + username;
     }
 
-
     // format the username
     public static String showUsernameOnVideoSection(HomeModel item) {
         if (item.first_name != null && !(TextUtils.isEmpty(item.first_name)) &&
                 item.last_name != null && !(TextUtils.isEmpty(item.last_name)))
-            return item.first_name+" "+item.last_name;
+            return item.first_name + " " + item.last_name;
         else
-            return ""+item.username;
+            return "" + item.username;
     }
-
 
     public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -693,14 +656,13 @@ public class Functions {
         return false;
     }
 
-
     public static boolean checkTimeDiffernce(Calendar current_cal, String date) {
         try {
 
 
             Calendar date_cal = Calendar.getInstance();
 
-            SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm:ssZZ",Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm:ssZZ", Locale.ENGLISH);
             Date d = null;
             try {
                 d = f.parse(date);
@@ -711,12 +673,7 @@ public class Functions {
 
             long difference = (current_cal.getTimeInMillis() - date_cal.getTimeInMillis()) / 1000;
 
-            if (difference <0) {
-               return true;
-            }
-            else {
-                return false;
-            }
+            return difference < 0;
 
         } catch (Exception e) {
             return false;
@@ -725,14 +682,13 @@ public class Functions {
 
     }
 
-
     public static String changeDateTodayYesterday(Context context, String date) {
         try {
             Calendar current_cal = Calendar.getInstance();
 
             Calendar date_cal = Calendar.getInstance();
 
-            SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm:ssZZ",Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm:ssZZ", Locale.ENGLISH);
             Date d = null;
             try {
                 d = f.parse(date);
@@ -747,7 +703,7 @@ public class Functions {
             if (difference < 86400) {
                 if (current_cal.get(Calendar.DAY_OF_YEAR) - date_cal.get(Calendar.DAY_OF_YEAR) == 0) {
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
+                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
                     return sdf.format(d);
                 } else
                     return context.getString(R.string.yesterday);
@@ -756,14 +712,12 @@ public class Functions {
             } else
                 return (difference / 86400) + context.getString(R.string.day_ago);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return date;
         }
 
 
     }
-
 
     public static String bitmapToBase64(Bitmap imagebitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -785,7 +739,6 @@ public class Functions {
         return decodedByte;
     }
 
-
     public static boolean isShowContentPrivacy(Context context, String string_case, boolean isFriend) {
         if (string_case == null)
             return true;
@@ -794,12 +747,8 @@ public class Functions {
 
             if (string_case.equalsIgnoreCase("Everyone")) {
                 return true;
-            } else if (string_case.equalsIgnoreCase("Friends") &&
-                    Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false) && isFriend) {
-                return true;
-            } else {
-                return false;
-            }
+            } else return string_case.equalsIgnoreCase("Friends") &&
+                    Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false) && isFriend;
         }
     }
 
@@ -814,7 +763,6 @@ public class Functions {
         res_string = res_string.replace(" ", "_");
         return res_string;
     }
-
 
     public static double correctTimeToSyncSample(Track track, double cutHere, boolean next) {
         double[] timeOfSyncSamples = new double[track.getSyncSamples().length];
@@ -844,7 +792,6 @@ public class Functions {
         return timeOfSyncSamples[timeOfSyncSamples.length - 1];
     }
 
-
     // make the directory on specific path
     public static void makeDirectry(String path) {
         File dir = new File(path);
@@ -854,12 +801,12 @@ public class Functions {
     }
 
     // make the directory on specific path
-    public static void makeDirectryAndRefresh(Context context,String dirPath,String filePath) {
+    public static void makeDirectryAndRefresh(Context context, String dirPath, String filePath) {
         File dir = new File(dirPath);
         if (!dir.exists()) {
             dir.mkdir();
         }
-        File file=new File(dirPath,filePath);
+        File file = new File(dirPath, filePath);
 
         InputStream imageStream = null;
         try {
@@ -870,7 +817,7 @@ public class Functions {
         BitmapFactory.decodeStream(imageStream);
 
         MediaScannerConnection.scanFile(context,
-                new String[]{dir.getAbsolutePath(),file.getAbsolutePath()}, null,
+                new String[]{dir.getAbsolutePath(), file.getAbsolutePath()}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i("ExternalStorage", "Scanned " + path + ":");
@@ -878,7 +825,6 @@ public class Functions {
                     }
                 });
     }
-
 
     // return the random string of 10 char
     public static String getRandomString() {
@@ -893,7 +839,6 @@ public class Functions {
         return saltStr;
 
     }
-
 
     public static long getFileDuration(Context context, Uri uri) {
         try {
@@ -910,26 +855,30 @@ public class Functions {
         return 0;
     }
 
-// getCurrent Date
+
+    // Bottom is all the Apis which is mostly used in app we have add it
+    // just one time and whenever we need it we will call it
+
+    // getCurrent Date
     public static String getCurrentDate(String dateFormat) {
-        SimpleDateFormat format=new SimpleDateFormat(dateFormat,Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         Calendar date = Calendar.getInstance();
         return format.format(date.getTime());
     }
 
     // getCurrent Date
-    public static String getCurrentDate(String dateFormat,int days) {
-        SimpleDateFormat format=new SimpleDateFormat(dateFormat,Locale.ENGLISH);
+    public static String getCurrentDate(String dateFormat, int days) {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         Calendar date = Calendar.getInstance();
-        date.add(Calendar.DAY_OF_MONTH,days);
+        date.add(Calendar.DAY_OF_MONTH, days);
         return format.format(date.getTime());
     }
 
     //use to get fomated time
-    public static String getTimeWithAdditionalSecond(String dateFormat,int second) {
+    public static String getTimeWithAdditionalSecond(String dateFormat, int second) {
         Calendar calendarDate = Calendar.getInstance();
-        String date="00:00:00";
-        SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
+        String date = "00:00:00";
+        SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date d = null;
         try {
             d = f.parse(date);
@@ -938,42 +887,35 @@ public class Functions {
             e.printStackTrace();
         }
 
-        SimpleDateFormat format=new SimpleDateFormat(dateFormat,Locale.ENGLISH);
-        calendarDate.add(Calendar.SECOND,second);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
+        calendarDate.add(Calendar.SECOND, second);
         return format.format(calendarDate.getTime());
     }
 
-    public static String getAppFolder(Context context)
-    {
+    public static String getAppFolder(Context context) {
         try {
-            return context.getExternalFilesDir(null).getPath()+"/";
-        }
-        catch (Exception e)
-        {
-            return context.getFilesDir().getPath()+"/";
+            return context.getExternalFilesDir(null).getPath() + "/";
+        } catch (Exception e) {
+            return context.getFilesDir().getPath() + "/";
         }
     }
 
-
     public static void createAppNameVideoDirectory(Context context) {
-        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.P)
-        {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             ContentResolver resolver = context.getContentResolver();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM+File.separator+context.getString(R.string.app_name)+File.separator+Variables.VideoDirectory);
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM + File.separator + context.getString(R.string.app_name) + File.separator + Variables.VideoDirectory);
             String path = String.valueOf(resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues));
             File folder = new File(path);
             boolean isCreada = folder.exists();
-            if(!isCreada) {
+            if (!isCreada) {
                 folder.mkdirs();
             }
-        }
-        else
-        {
+        } else {
 
 
             MediaScannerConnection.scanFile(context,
-                    new String[]{ createDefultFolder(Environment.DIRECTORY_DCIM,context.getString(R.string.app_name)+File.separator+Variables.VideoDirectory)},
+                    new String[]{createDefultFolder(Environment.DIRECTORY_DCIM, context.getString(R.string.app_name) + File.separator + Variables.VideoDirectory)},
                     null,
                     new MediaScannerConnection.OnScanCompletedListener() {
 
@@ -984,19 +926,14 @@ public class Functions {
         }
     }
 
-    public static String createDefultFolder(String root,String folderName) {
+    public static String createDefultFolder(String root, String folderName) {
 
-        File defultFile=new File(Environment.getExternalStoragePublicDirectory(root),folderName);
-        if (!(defultFile.exists()))
-        {
+        File defultFile = new File(Environment.getExternalStoragePublicDirectory(root), folderName);
+        if (!(defultFile.exists())) {
             defultFile.mkdirs();
         }
         return defultFile.getAbsolutePath();
     }
-
-
-    // Bottom is all the Apis which is mostly used in app we have add it
-    // just one time and whenever we need it we will call it
 
     public static void callApiForLikeVideo(final Activity activity,
                                            String video_id, String action,
@@ -1011,10 +948,10 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeVideo, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeVideo, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
 
                 if (api_callBack != null)
                     api_callBack.onSuccess(resp);
@@ -1024,10 +961,9 @@ public class Functions {
 
     }
 
-
     public static void callApiForFavouriteVideo(final Activity activity,
-                                           String video_id, String action,
-                                           final APICallBack api_callBack) {
+                                                String video_id, String action,
+                                                final APICallBack api_callBack) {
 
         JSONObject parameters = new JSONObject();
         try {
@@ -1038,10 +974,10 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.addVideoFavourite, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.addVideoFavourite, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
 
                 if (api_callBack != null)
                     api_callBack.onSuccess(resp);
@@ -1050,7 +986,6 @@ public class Functions {
 
 
     }
-
 
     // this method will like the comment
     public static void callApiForLikeComment(final Activity activity,
@@ -1066,10 +1001,10 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeComment, parameters, Functions.getHeaders(activity),new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeComment, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
 
                 if (api_callBack != null)
                     api_callBack.onSuccess(resp);
@@ -1089,16 +1024,16 @@ public class Functions {
         try {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
             parameters.put("comment_reply_id", comment_reply_id);
-            parameters.put("video_id", video_id );
+            parameters.put("video_id", video_id);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeCommentReply, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.likeCommentReply, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
 
                 Functions.printLog(Constants.tag, "resp at like comment reply : " + resp);
 
@@ -1110,21 +1045,23 @@ public class Functions {
 
     }
 
-
-    public static void callApiForSendComment(final Activity activity, String videoId, String comment, ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
+    public static void callApiForSendComment(final Activity activity, String type, String videoId, String comment, ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
+        if (type == null || type == "") {
+            type = "text";
+        }
 
         JSONObject parameters = new JSONObject();
         try {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
             parameters.put("video_id", videoId);
             parameters.put("comment", comment);
-            JSONArray tagUserArray=new JSONArray();
-            for (UsersModel item:taggedUserList)
-            {
-                if(comment.contains("@"+item.username))
-                {
-                    JSONObject tagUser=new JSONObject();
-                    tagUser.put("user_id",item.fb_id);
+            parameters.put("type", type);
+            JSONArray tagUserArray = new JSONArray();
+
+            for (UsersModel item : taggedUserList) {
+                if (comment.contains("@" + item.username)) {
+                    JSONObject tagUser = new JSONObject();
+                    tagUser.put("user_id", item.fb_id);
                     tagUserArray.put(tagUser);
                 }
             }
@@ -1135,81 +1072,72 @@ public class Functions {
         }
 
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.postCommentOnVideo, parameters,Functions.getHeaders(activity), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.postCommentOnVideo, parameters, Functions.getHeaders(activity), resp -> {
+            Functions.checkStatus(activity, resp);
 
-                ArrayList<CommentModel> arrayList = new ArrayList<>();
-                try {
-                    JSONObject response = new JSONObject(resp);
-                    String code = response.optString("code");
-                    if (code.equals("200")) {
+            ArrayList<CommentModel> arrayList = new ArrayList<>();
+            try {
+                JSONObject response = new JSONObject(resp);
+                String code = response.optString("code");
+                if (code.equals("200")) {
 
-                        JSONObject msg = response.optJSONObject("msg");
-                        JSONObject videoComment = msg.optJSONObject("VideoComment");
-                        JSONObject videoObj = msg.optJSONObject("Video");
+                    JSONObject msg = response.optJSONObject("msg");
+                    JSONObject videoComment = msg.optJSONObject("VideoComment");
+                    JSONObject videoObj = msg.optJSONObject("Video");
 
-                        UserModel userDetailModel=DataParsing.getUserDataModel(msg.optJSONObject("User"));
+                    UserModel userDetailModel = DataParsing.getUserDataModel(msg.optJSONObject("User"));
 
-                        CommentModel item = new CommentModel();
+                    CommentModel item = new CommentModel();
 
-                        item.isLikedByOwner=videoComment.optString("owner_like");
-                        item.videoOwnerId = videoObj.optString("user_id");
-                        item.pin_comment_id = videoObj.optString("pin_comment_id");
-                        item.userId = userDetailModel.getId();
-                        item.isVerified=userDetailModel.getVerified();
-                        item.user_name = userDetailModel.getUsername();
-                        item.first_name = userDetailModel.getFirstName();
-                        item.last_name = userDetailModel.getLastName();
-                        item.setProfile_pic(userDetailModel.getProfilePic());
+                    item.isLikedByOwner = videoComment.optString("owner_like");
+                    item.videoOwnerId = videoObj.optString("user_id");
+                    item.pin_comment_id = videoObj.optString("pin_comment_id");
+                    item.userId = userDetailModel.getId();
+                    item.isVerified = userDetailModel.getVerified();
+                    item.user_name = userDetailModel.getUsername();
+                    item.first_name = userDetailModel.getFirstName();
+                    item.last_name = userDetailModel.getLastName();
+                    item.setProfile_pic(userDetailModel.getProfilePic());
 
-                        item.arrayList = new ArrayList<>();
-                        item.arraylist_size = "0";
-                        item.video_id = videoComment.optString("video_id");
-                        item.comments = videoComment.optString("comment");
-                        item.liked = videoComment.optString("like");
-                        item.like_count = videoComment.optString("like_count");
-                        item.comment_id = videoComment.optString("id");
-                        item.created = videoComment.optString("created");
+                    item.arrayList = new ArrayList<>();
+                    item.arraylist_size = "0";
+                    item.video_id = videoComment.optString("video_id");
+                    item.comments = videoComment.optString("comment");
+                    item.liked = videoComment.optString("like");
+                    item.like_count = videoComment.optString("like_count");
+                    item.comment_id = videoComment.optString("id");
+                    item.created = videoComment.optString("created");
 
-                        arrayList.add(item);
+                    arrayList.add(item);
 
-                        api_callBack.arrayData(arrayList);
+                    api_callBack.arrayData(arrayList);
 
-                    } else {
-                        Functions.showToast(activity, "" + response.optString("msg"));
-                    }
-
-                } catch (Exception e) {
-                    api_callBack.onFail(e.toString());
-                    e.printStackTrace();
+                } else {
+                    Functions.showToast(activity, "" + response.optString("msg"));
                 }
 
+            } catch (Exception e) {
+                api_callBack.onFail(e.toString());
+                e.printStackTrace();
             }
         });
-
-
     }
 
-
     // this method will send the reply to the comment of the video
     // this method will send the reply to the comment of the video
-    public static void callApiForSendCommentReply(final Activity activity, String commentId, String comment,String videoId,String videoOwnerId,ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
+    public static void callApiForSendCommentReply(final Activity activity, String commentId, String comment, String videoId, String videoOwnerId, ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
 
         JSONObject parameters = new JSONObject();
         try {
-            parameters.put("comment_id", ""+commentId);
-            parameters.put("user_id", ""+Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
-            parameters.put("comment", ""+comment);
-            parameters.put("video_id",""+videoId);
-            JSONArray tagUserArray=new JSONArray();
-            for (UsersModel item:taggedUserList)
-            {
-                if(comment.contains("@"+item.username))
-                {
-                    JSONObject tagUser=new JSONObject();
-                    tagUser.put("user_id",item.fb_id);
+            parameters.put("comment_id", "" + commentId);
+            parameters.put("user_id", "" + Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
+            parameters.put("comment", "" + comment);
+            parameters.put("video_id", "" + videoId);
+            JSONArray tagUserArray = new JSONArray();
+            for (UsersModel item : taggedUserList) {
+                if (comment.contains("@" + item.username)) {
+                    JSONObject tagUser = new JSONObject();
+                    tagUser.put("user_id", item.fb_id);
                     tagUserArray.put(tagUser);
                 }
             }
@@ -1221,10 +1149,10 @@ public class Functions {
         }
 
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.postCommentReply, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.postCommentReply, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
                 ArrayList<CommentModel> arrayList = new ArrayList<>();
                 try {
                     JSONObject response = new JSONObject(resp);
@@ -1234,14 +1162,14 @@ public class Functions {
                         JSONObject msg = response.optJSONObject("msg");
                         JSONObject videoComment = msg.optJSONObject("VideoComment");
                         JSONObject videoCommentReply = msg.optJSONObject("VideoCommentReply");
-                        UserModel userDetailModel=DataParsing.getUserDataModel(msg.optJSONObject("User"));
+                        UserModel userDetailModel = DataParsing.getUserDataModel(msg.optJSONObject("User"));
 
                         CommentModel item = new CommentModel();
 
                         item.userId = userDetailModel.getId();
-                        item.isVerified=userDetailModel.getVerified();
-                        item.isLikedByOwner=videoComment.optString("owner_like");
-                        item.videoOwnerId =  videoOwnerId;
+                        item.isVerified = userDetailModel.getVerified();
+                        item.isLikedByOwner = videoComment.optString("owner_like");
+                        item.videoOwnerId = videoOwnerId;
                         item.pin_comment_id = "0";
                         item.first_name = userDetailModel.getFirstName();
                         item.last_name = userDetailModel.getLastName();
@@ -1278,9 +1206,8 @@ public class Functions {
 
     }
 
-
     public static void callApiForUpdateView(final Activity activity,
-                                            String video_id,Callback callback) {
+                                            String video_id, Callback callback) {
 
         JSONObject parameters = new JSONObject();
         try {
@@ -1291,11 +1218,10 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.watchVideo, parameters, Functions.getHeaders(activity),callback);
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.watchVideo, parameters, Functions.getHeaders(activity), callback);
 
 
     }
-
 
     public static void callApiForFollowUnFollow
             (final Activity activity,
@@ -1312,35 +1238,32 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.followUser, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.followUser, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
                 try {
                     JSONObject response = new JSONObject(resp);
                     String code = response.optString("code");
                     if (code.equals("200")) {
                         api_callBack.onSuccess(response.toString());
-                        JSONObject msg=response.optJSONObject("msg");
-                        JSONObject receiver=msg.optJSONObject("User");
+                        JSONObject msg = response.optJSONObject("msg");
+                        JSONObject receiver = msg.optJSONObject("User");
                         UserModel receiverDetailModel = DataParsing.getUserDataModel(receiver);
-                        if (Variables.followMapList.containsKey(receiverDetailModel.getId()))
-                        {
-                            String status=receiverDetailModel.getButton();
+                        if (Variables.followMapList.containsKey(receiverDetailModel.getId())) {
+                            String status = receiverDetailModel.getButton();
 
                             if (status.equalsIgnoreCase("following")) {
-                                Variables.followMapList.put(receiverDetailModel.getId(),status);
+                                Variables.followMapList.put(receiverDetailModel.getId(), status);
                             } else if (status.equalsIgnoreCase("friends")) {
-                                Variables.followMapList.put(receiverDetailModel.getId(),status);
+                                Variables.followMapList.put(receiverDetailModel.getId(), status);
                             } else if (status.equalsIgnoreCase("follow back")) {
                                 Variables.followMapList.remove(receiverDetailModel.getId());
                             } else {
                                 Variables.followMapList.remove(receiverDetailModel.getId());
                             }
-                        }
-                        else
-                        {
-                            Variables.followMapList.put(receiverDetailModel.getId(),receiverDetailModel.getButton());
+                        } else {
+                            Variables.followMapList.put(receiverDetailModel.getId(), receiverDetailModel.getButton());
                         }
 
                     } else {
@@ -1356,7 +1279,6 @@ public class Functions {
 
 
     }
-
 
     public static void callApiForGetUserData
             (final Activity activity,
@@ -1382,10 +1304,10 @@ public class Functions {
 
         Functions.printLog("resp", parameters.toString());
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.showUserDetail, parameters, Functions.getHeaders(activity),new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.showUserDetail, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
                 Functions.cancelLoader();
                 try {
                     JSONObject response = new JSONObject(resp);
@@ -1406,7 +1328,6 @@ public class Functions {
 
     }
 
-
     public static void callApiForDeleteVideo
             (final Activity activity,
              String videoId,
@@ -1420,10 +1341,10 @@ public class Functions {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(activity, ApiLinks.deleteVideo, parameters,Functions.getHeaders(activity), new Callback() {
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.deleteVideo, parameters, Functions.getHeaders(activity), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(activity,resp);
+                Functions.checkStatus(activity, resp);
                 Functions.cancelLoader();
 
                 try {
@@ -1450,11 +1371,10 @@ public class Functions {
 
     }
 
-
     public static HomeModel parseVideoData(JSONObject userObj, JSONObject sound, JSONObject video, JSONObject userPrivacy, JSONObject userPushNotification) {
         HomeModel item = new HomeModel();
 
-        UserModel userDetailModel=DataParsing.getUserDataModel(userObj);
+        UserModel userDetailModel = DataParsing.getUserDataModel(userObj);
         if (!(TextUtils.isEmpty(userDetailModel.getId()))) {
             item.user_id = userDetailModel.getId();
             item.username = userDetailModel.getUsername();
@@ -1468,31 +1388,26 @@ public class Functions {
 
 
         try {
-            if (userObj.has("story"))
-            {
-                ArrayList<StoryModel> storyDataList=new ArrayList<>();
-                JSONArray storyArray=userObj.getJSONArray("story");
-                StoryModel storyItem=new StoryModel();
+            if (userObj.has("story")) {
+                ArrayList<StoryModel> storyDataList = new ArrayList<>();
+                JSONArray storyArray = userObj.getJSONArray("story");
+                StoryModel storyItem = new StoryModel();
                 storyItem.setUserModel(userDetailModel);
-                ArrayList<StoryVideoModel> storyVideoList=new ArrayList<>();
-                for (int i=0; i<storyArray.length();i++)
-                {
-                    JSONObject itemObj=storyArray.getJSONObject(i);
-                    StoryVideoModel storyVideoItem=DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"));
+                ArrayList<StoryVideoModel> storyVideoList = new ArrayList<>();
+                for (int i = 0; i < storyArray.length(); i++) {
+                    JSONObject itemObj = storyArray.getJSONObject(i);
+                    StoryVideoModel storyVideoItem = DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"));
                     storyVideoList.add(storyVideoItem);
                 }
                 storyItem.setVideoList(storyVideoList);
-                if (storyVideoList.size()>0)
-                {
+                if (storyVideoList.size() > 0) {
                     storyDataList.add(storyItem);
                 }
-                item.storyDataList=storyDataList;
+                item.storyDataList = storyDataList;
             }
 
-        }
-        catch (Exception e)
-        {
-            Log.d(Constants.tag,"Exception: story: "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception: story: " + e);
         }
 
 
@@ -1509,9 +1424,9 @@ public class Functions {
             item.like_count = "0" + video.optInt("like_count");
             item.favourite_count = "0" + video.optInt("favourite_count");
             item.share = "0" + video.optInt("share");
-            item.duration = video.optString("duration","0");
+            item.duration = video.optString("duration", "0");
             item.video_comment_count = video.optString("comment_count");
-            item.video_user_id=video.optString("user_id");
+            item.video_user_id = video.optString("user_id");
 
             item.privacy_type = video.optString("privacy_type");
             item.allow_comments = video.optString("allow_comments");
@@ -1523,28 +1438,25 @@ public class Functions {
             item.aws_label = video.optString("aws_label");
 
             try {
-                JSONObject playlistObject=video.getJSONObject("PlaylistVideo");
+                JSONObject playlistObject = video.getJSONObject("PlaylistVideo");
 
-                if (playlistObject.optString("id").equals("0"))
-                {
-                    item.playlistId="0";
-                    item.playlistName="";
+                if (playlistObject.optString("id").equals("0")) {
+                    item.playlistId = "0";
+                    item.playlistName = "";
+                } else {
+                    item.playlistId = playlistObject.getJSONObject("Playlist").optString("id", "0");
+                    item.playlistName = playlistObject.getJSONObject("Playlist").optString("name", "");
                 }
-                else
-                {
-                    item.playlistId=playlistObject.getJSONObject("Playlist").optString("id","0");
-                    item.playlistName=playlistObject.getJSONObject("Playlist").optString("name","");
-                }
-            }catch (Exception e){
-                item.playlistId="0";
-                item.playlistName="";
+            } catch (Exception e) {
+                item.playlistId = "0";
+                item.playlistName = "";
             }
 
-            item.pin=video.optString("pin","0");
+            item.pin = video.optString("pin", "0");
 
-            item.repost= video.optString("repost","0");
-            item.repost_video_id=video.optString("repost_video_id","0");
-            item.repost_user_id=video.optString("repost_user_id","0");
+            item.repost = video.optString("repost", "0");
+            item.repost_video_id = video.optString("repost_video_id", "0");
+            item.repost_user_id = video.optString("repost_user_id", "0");
 
             item.views = video.optString("view");
 
@@ -1556,25 +1468,23 @@ public class Functions {
             item.setGif(video.optString("gif"));
             item.setVideo_url(video.optString("video", ""));
 
-           try {
-               if (Astro.appLevelContext!=null)
-               {
-                   HttpProxyCacheServer proxy = Astro.getProxy(Astro.appLevelContext);
-                   String proxyUrl = proxy.getProxyUrl(item.getVideo_url());
-                   if (Functions.isWebUrl(proxyUrl))
-                   {
-                       item.setVideo_url(proxyUrl);
-                   }
-               }
-           }
-           catch (Exception e){}
+            try {
+                if (Astro.appLevelContext != null) {
+                    HttpProxyCacheServer proxy = Astro.getProxy(Astro.appLevelContext);
+                    String proxyUrl = proxy.getProxyUrl(item.getVideo_url());
+                    if (Functions.isWebUrl(proxyUrl)) {
+                        item.setVideo_url(proxyUrl);
+                    }
+                }
+            } catch (Exception e) {
+            }
 
             item.allow_duet = video.optString("allow_duet");
             item.duet_video_id = video.optString("duet_video_id");
             if (video.has("duet")) {
                 JSONObject duet = video.optJSONObject("duet");
                 if (duet != null) {
-                    UserModel userDetailModelDuet=DataParsing.getUserDataModel(duet.optJSONObject("User"));
+                    UserModel userDetailModelDuet = DataParsing.getUserDataModel(duet.optJSONObject("User"));
                     if (!(TextUtils.isEmpty(userDetailModelDuet.getId())))
                         item.duet_username = userDetailModelDuet.getUsername();
                 }
@@ -1582,13 +1492,11 @@ public class Functions {
             }
             item.promote = video.optString("promote");
             try {
-                if (video.has("Promotion"))
-                {
+                if (video.has("Promotion")) {
                     JSONObject Promotion = video.optJSONObject("Promotion");
-                    if (Promotion != null)
-                    {
-                        JSONObject promotionObj=video.getJSONObject("Promotion");
-                        PromotionModel promotionModel=new PromotionModel();
+                    if (Promotion != null) {
+                        JSONObject promotionObj = video.getJSONObject("Promotion");
+                        PromotionModel promotionModel = new PromotionModel();
                         promotionModel.setId(promotionObj.optString("id"));
                         promotionModel.setUser_id(promotionObj.optString("user_id"));
                         promotionModel.setWebsite_url(promotionObj.optString("website_url"));
@@ -1610,20 +1518,14 @@ public class Functions {
 
                         item.setPromotionModel(promotionModel);
                     }
-                }
-                else
-                {
+                } else {
                     item.setPromotionModel(null);
                 }
 
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 item.setPromotionModel(null);
             }
         }
-
-
-
 
 
         if (userPrivacy != null) {
@@ -1649,18 +1551,13 @@ public class Functions {
 
     }
 
-    // initialize the loader dialog and show
-    public static Dialog dialog;
-
     public static void showLoader(Activity activity, boolean outside_touch, boolean cancleable) {
         try {
-            if (dialog != null)
-            {
+            if (dialog != null) {
                 cancelLoader();
-                dialog=null;
+                dialog = null;
             }
-            if (activity!=null)
-            {
+            if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1668,7 +1565,7 @@ public class Functions {
                         dialog = new Dialog(activity);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setContentView(R.layout.item_dialog_loading_view);
-                        dialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(activity,R.drawable.d_round_white_background));
+                        dialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(activity, R.drawable.d_round_white_background));
 
                         if (!outside_touch)
                             dialog.setCanceledOnTouchOutside(false);
@@ -1681,10 +1578,8 @@ public class Functions {
                     }
                 });
             }
-        }
-        catch (Exception e)
-        {
-            Log.d(Constants.tag,"Exception : "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception : " + e);
         }
     }
 
@@ -1693,23 +1588,19 @@ public class Functions {
             if (dialog != null || dialog.isShowing()) {
                 dialog.cancel();
             }
-        }catch (Exception e){
-            Log.d(Constants.tag,"Exception : "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception : " + e);
         }
     }
 
-    public static Dialog indeterminantDialog;
-
-    public static void showIndeterminentLoader(Activity activity,String title, boolean outside_touch, boolean cancleable) {
+    public static void showIndeterminentLoader(Activity activity, String title, boolean outside_touch, boolean cancleable) {
         try {
 
-            if (indeterminantDialog != null)
-            {
+            if (indeterminantDialog != null) {
                 cancelIndeterminentLoader();
-                indeterminantDialog=null;
+                indeterminantDialog = null;
             }
-            if (activity!=null)
-            {
+            if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1718,17 +1609,14 @@ public class Functions {
                         indeterminantDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         indeterminantDialog.setContentView(R.layout.item_indeterminant_progress_layout);
                         indeterminantDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(activity, R.drawable.d_round_white_background));
-                        TextView tvTitle=indeterminantDialog.findViewById(R.id.tvTitle);
-                        if (title!=null && TextUtils.isEmpty(title))
-                        {
+                        TextView tvTitle = indeterminantDialog.findViewById(R.id.tvTitle);
+                        if (title != null && TextUtils.isEmpty(title)) {
                             tvTitle.setText(title);
                         }
-                        if (!outside_touch)
-                        {
+                        if (!outside_touch) {
                             indeterminantDialog.setCanceledOnTouchOutside(false);
                         }
-                        if (!cancleable)
-                        {
+                        if (!cancleable) {
                             indeterminantDialog.setCancelable(false);
                         }
                         indeterminantDialog.show();
@@ -1737,10 +1625,8 @@ public class Functions {
                 });
             }
 
-        }
-        catch (Exception e)
-        {
-            printLog(Constants.tag,"Exception: "+e);
+        } catch (Exception e) {
+            printLog(Constants.tag, "Exception: " + e);
         }
     }
 
@@ -1749,25 +1635,19 @@ public class Functions {
             if (indeterminantDialog != null || indeterminantDialog.isShowing()) {
                 indeterminantDialog.cancel();
             }
-        }catch (Exception e){
-            Log.d(Constants.tag,"Exception : "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception : " + e);
         }
     }
 
-    public static Dialog determinantDialog;
-    public static ProgressBar determinantProgress;
-
-    public static void showDeterminentLoader(Activity activity, boolean outside_touch, boolean cancleable, boolean isProgressShow,String title) {
-        try
-        {
-            if (determinantDialog != null)
-            {
+    public static void showDeterminentLoader(Activity activity, boolean outside_touch, boolean cancleable, boolean isProgressShow, String title) {
+        try {
+            if (determinantDialog != null) {
                 cancelDeterminentLoader();
-                determinantDialog=null;
+                determinantDialog = null;
             }
 
-            if (activity!=null)
-            {
+            if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1777,37 +1657,31 @@ public class Functions {
                         determinantDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         determinantDialog.setContentView(R.layout.item_determinant_progress_layout);
                         determinantDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(activity, R.drawable.d_round_white_background));
-                        TextView tvTitle=determinantDialog.findViewById(R.id.tvTitle);
+                        TextView tvTitle = determinantDialog.findViewById(R.id.tvTitle);
                         determinantProgress = determinantDialog.findViewById(R.id.pbar);
-                        SimpleDraweeView ivLoadingProgress=determinantDialog.findViewById(R.id.ivLoadingProgress);
+                        SimpleDraweeView ivLoadingProgress = determinantDialog.findViewById(R.id.ivLoadingProgress);
                         ivLoadingProgress.setController(Fresco.newDraweeControllerBuilder()
                                 .setImageRequest(ImageRequestBuilder.newBuilderWithResourceId(R.raw.loading_progress).build())
                                 .setOldController(ivLoadingProgress.getController())
                                 .setAutoPlayAnimations(true)
                                 .build());
 
-                        if (isProgressShow)
-                        {
+                        if (isProgressShow) {
                             ivLoadingProgress.setVisibility(View.GONE);
                             determinantProgress.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
+                        } else {
                             ivLoadingProgress.setVisibility(View.VISIBLE);
                             determinantProgress.setVisibility(View.GONE);
                         }
 
-                        if (!(title.isEmpty()))
-                        {
-                            tvTitle.setText(""+title);
+                        if (!(title.isEmpty())) {
+                            tvTitle.setText("" + title);
                         }
 
-                        if (!outside_touch)
-                        {
+                        if (!outside_touch) {
                             determinantDialog.setCanceledOnTouchOutside(false);
                         }
-                        if (!cancleable)
-                        {
+                        if (!cancleable) {
                             determinantDialog.setCancelable(false);
                         }
                         determinantDialog.show();
@@ -1816,9 +1690,8 @@ public class Functions {
                 });
             }
 
-        }catch (Exception e)
-        {
-            Log.d(Constants.tag,"Exception: "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception: " + e);
         }
     }
 
@@ -1827,21 +1700,20 @@ public class Functions {
             determinantProgress.setProgress(progress);
         }
     }
+
     public static void cancelDeterminentLoader() {
         try {
             if (determinantDialog != null || determinantDialog.isShowing()) {
                 determinantDialog.cancel();
             }
-        }catch (Exception e){
-            Log.d(Constants.tag,"Exception : "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception : " + e);
         }
     }
 
-
-
     //store single account record
     public static void setUpMultipleAccount(Context context) {
-        MultipleAccountModel accountModel=new MultipleAccountModel();
+        MultipleAccountModel accountModel = new MultipleAccountModel();
         accountModel.setId(Functions.getSharedPreference(context).getString(Variables.U_ID, "0"));
         accountModel.setfName(Functions.getSharedPreference(context).getString(Variables.F_NAME, ""));
         accountModel.setlName(Functions.getSharedPreference(context).getString(Variables.L_NAME, ""));
@@ -1863,19 +1735,16 @@ public class Functions {
         accountModel.setApplyVerification(Functions.getSharedPreference(context).getString(Variables.IS_VERIFICATION_APPLY, ""));
         accountModel.setReferalCode(Functions.getSharedPreference(context).getString(Variables.REFERAL_CODE, ""));
         accountModel.setLogin(Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false));
-        Paper.book(Variables.MultiAccountKey).write(accountModel.getId(),accountModel);
+        Paper.book(Variables.MultiAccountKey).write(accountModel.getId(), accountModel);
     }
-
 
     //remove account signout
     public static void removeMultipleAccount(Context context) {
         Paper.book(Variables.MultiAccountKey).delete(Functions.getSharedPreference(context).getString(Variables.U_ID, "0"));
     }
 
-
-
     //store single account record
-    public static void setUpNewSelectedAccount(Context context,MultipleAccountModel item) {
+    public static void setUpNewSelectedAccount(Context context, MultipleAccountModel item) {
 
         SharedPreferences.Editor editor = getSharedPreference(context).edit();
         editor.putString(Variables.U_ID, item.getId());
@@ -1889,52 +1758,44 @@ public class Functions {
         editor.putString(Variables.U_SOCIAL_ID, item.getSocialId());
         editor.putString(Variables.GENDER, item.getGender());
         editor.putString(Variables.U_PIC, item.getuPic());
-        editor.putString(Variables.U_GIF,item.getuGif());
-        editor.putString(Variables.U_PROFILE_VIEW,item.getProfileView());
+        editor.putString(Variables.U_GIF, item.getuGif());
+        editor.putString(Variables.U_PROFILE_VIEW, item.getProfileView());
         editor.putString(Variables.U_WALLET, item.getuWallet());
         editor.putString(Variables.U_total_coins_all_time, item.getuTotalCoinsAllTime());
         editor.putString(Variables.U_PAYOUT_ID, item.getuPayoutId());
         editor.putString(Variables.AUTH_TOKEN, item.getAuthToken());
         editor.putString(Variables.IS_VERIFIED, item.getVerified());
         editor.putString(Variables.IS_VERIFICATION_APPLY, item.getApplyVerification());
-        editor.putString(Variables.REFERAL_CODE,item.getReferalCode());
+        editor.putString(Variables.REFERAL_CODE, item.getReferalCode());
         editor.putBoolean(Variables.IS_LOGIN, true);
         editor.commit();
 
 
-        Intent intent=new Intent(context, SplashA.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = new Intent(context, SplashA.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
 
     // use this method for lod muliple account in case one one account logout and other one can logout
-    public static void setUpExistingAccountLogin(Context context)
-    {
-        if (!(Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false)))
-        {
-            if (Paper.book(Variables.MultiAccountKey).getAllKeys().size()>0)
-            {
-                MultipleAccountModel account=Paper.book(Variables.MultiAccountKey).read(Paper.book(Variables.MultiAccountKey).getAllKeys().get(0));
-                setUpNewSelectedAccount(context,account);
+    public static void setUpExistingAccountLogin(Context context) {
+        if (!(Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false))) {
+            if (Paper.book(Variables.MultiAccountKey).getAllKeys().size() > 0) {
+                MultipleAccountModel account = Paper.book(Variables.MultiAccountKey).read(Paper.book(Variables.MultiAccountKey).getAllKeys().get(0));
+                setUpNewSelectedAccount(context, account);
             }
         }
     }
 
-
-    public static void setUpSwitchOtherAccount(Context context,String userId)
-    {
-        for(String key:Paper.book(Variables.MultiAccountKey).getAllKeys())
-        {
-            MultipleAccountModel account=Paper.book(Variables.MultiAccountKey).read(key);
-            if (userId.equalsIgnoreCase(account.getId()))
-            {
-                setUpNewSelectedAccount(context,account);
+    public static void setUpSwitchOtherAccount(Context context, String userId) {
+        for (String key : Paper.book(Variables.MultiAccountKey).getAllKeys()) {
+            MultipleAccountModel account = Paper.book(Variables.MultiAccountKey).read(key);
+            if (userId.equalsIgnoreCase(account.getId())) {
+                setUpNewSelectedAccount(context, account);
                 return;
             }
 
         }
     }
-
 
     //check login status
     public static boolean checkLoginUser(Activity context) {
@@ -1949,7 +1810,6 @@ public class Functions {
             return false;
         }
     }
-
 
     // these function are remove the cache memory which is very helpfull in memmory managmet
     public static void deleteCache(Context context) {
@@ -1998,8 +1858,7 @@ public class Functions {
             source = new FileInputStream(sourceFile).getChannel();
             destination = new FileOutputStream(destFile).getChannel();
             destination.transferFrom(source, 0, source.size());
-        }
-        finally {
+        } finally {
             if (source != null) {
                 source.close();
             }
@@ -2009,7 +1868,6 @@ public class Functions {
         }
     }
 
-
     public static void showToast(Context context, String msg) {
         if (Constants.IS_TOAST_ENABLE) {
             Toast.makeText(context, "" + msg, Toast.LENGTH_SHORT).show();
@@ -2017,56 +1875,46 @@ public class Functions {
     }
 
     // use for image loader and return controller for image load
-    public static DraweeController frescoImageLoad(String url, SimpleDraweeView simpleDrawee, boolean isGif)
-    {
-        if(url==null){
+    public static DraweeController frescoImageLoad(String url, SimpleDraweeView simpleDrawee, boolean isGif) {
+        if (url == null) {
             url = Constants.BASE_URL;
-        }
-        else if (!url.contains(Variables.http)) {
+        } else if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
         }
 
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
                 .build();
         DraweeController controller;
-        if (isGif)
-        {
+        if (isGif) {
             controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(simpleDrawee.getController())
                     .setAutoPlayAnimations(true)
                     .build();
-        }
-        else
-        {
+        } else {
             controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(simpleDrawee.getController())
                     .build();
         }
-
 
 
         return controller;
     }
 
     // use for image loader and return controller for image load
-    public static DraweeController frescoImageLoad(Drawable drawable, SimpleDraweeView simpleDrawee, boolean isGif)
-    {
+    public static DraweeController frescoImageLoad(Drawable drawable, SimpleDraweeView simpleDrawee, boolean isGif) {
 
 
         DraweeController controller;
         simpleDrawee.getHierarchy().setPlaceholderImage(drawable);
         simpleDrawee.getHierarchy().setFailureImage(drawable);
-        if (isGif)
-        {
+        if (isGif) {
             controller = Fresco.newDraweeControllerBuilder()
                     .setOldController(simpleDrawee.getController())
                     .setAutoPlayAnimations(true)
                     .build();
-        }
-        else
-        {
+        } else {
             controller = Fresco.newDraweeControllerBuilder()
                     .setOldController(simpleDrawee.getController())
                     .build();
@@ -2076,8 +1924,7 @@ public class Functions {
     }
 
     // use for image loader and return controller for image load
-    public static DraweeController frescoImageLoad(Uri resourceUri,int resource, SimpleDraweeView simpleDrawee)
-    {
+    public static DraweeController frescoImageLoad(Uri resourceUri, int resource, SimpleDraweeView simpleDrawee) {
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(resourceUri)
                 .build();
 
@@ -2094,38 +1941,30 @@ public class Functions {
         return controller;
     }
 
-
     // use for image loader and return controller for image load
-    public static DraweeController frescoImageLoad(Uri resourceUri, boolean isGif)
-    {
+    public static DraweeController frescoImageLoad(Uri resourceUri, boolean isGif) {
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(resourceUri)
                 .build();
         DraweeController controller;
-        if (isGif)
-        {
+        if (isGif) {
             controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setAutoPlayAnimations(true)
                     .build();
-        }
-        else
-        {
+        } else {
             controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .build();
         }
-
 
 
         return controller;
     }
 
     // use for image loader and return controller for image load
-    public static DraweeController frescoGifLoad(String url,int resource,SimpleDraweeView simpleDrawee)
-    {
-        if (url==null)
-        {
-            url="null";
+    public static DraweeController frescoGifLoad(String url, int resource, SimpleDraweeView simpleDrawee) {
+        if (url == null) {
+            url = "null";
         }
         if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
@@ -2147,11 +1986,9 @@ public class Functions {
     }
 
     // use for image loader and return controller for image load
-    public static DraweeController frescoImageLoad(String url,int resource, SimpleDraweeView simpleDrawee, boolean isGif)
-    {
-        if (url==null)
-        {
-            url="null";
+    public static DraweeController frescoImageLoad(String url, int resource, SimpleDraweeView simpleDrawee, boolean isGif) {
+        if (url == null) {
+            url = "null";
         }
         if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
@@ -2164,10 +2001,9 @@ public class Functions {
         simpleDrawee.getHierarchy().setPlaceholderImage(resource);
         simpleDrawee.getHierarchy().setFailureImage(resource);
 
-        if (isGif)
-        {
+        if (isGif) {
 
-            RoundingParams roundingParams = RoundingParams.asCircle().setRoundingMethod(RoundingParams.RoundingMethod.OVERLAY_COLOR).setOverlayColor(ContextCompat.getColor(simpleDrawee.getContext(),R.color.white));
+            RoundingParams roundingParams = RoundingParams.asCircle().setRoundingMethod(RoundingParams.RoundingMethod.OVERLAY_COLOR).setOverlayColor(ContextCompat.getColor(simpleDrawee.getContext(), R.color.white));
             roundingParams.setRoundAsCircle(true);
             simpleDrawee.getHierarchy().setRoundingParams(roundingParams);
 
@@ -2176,9 +2012,7 @@ public class Functions {
                     .setOldController(simpleDrawee.getController())
                     .setAutoPlayAnimations(true)
                     .build();
-        }
-        else
-        {
+        } else {
             controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(simpleDrawee.getController())
@@ -2186,19 +2020,16 @@ public class Functions {
         }
 
 
-
         return controller;
     }
 
-
     // use for image loader and return controller for image load
-    public static DraweeController frescoBlurImageLoad(String url,Context context,int radius)
-    {
+    public static DraweeController frescoBlurImageLoad(String url, Context context, int radius) {
         if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
         }
 
-        Postprocessor postprocessor = new BlurPostprocessor(context,radius);
+        Postprocessor postprocessor = new BlurPostprocessor(context, radius);
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
                 .setPostprocessor(postprocessor)
                 .build();
@@ -2208,17 +2039,14 @@ public class Functions {
         return controller;
     }
 
-
-    public static DraweeController frescoImageLoad(Context context,String name,String url, SimpleDraweeView simpleDrawee)
-    {
-        if(url==null || url.equals("null")){
+    public static DraweeController frescoImageLoad(Context context, String name, String url, SimpleDraweeView simpleDrawee) {
+        if (url == null || url.equals("null")) {
             url = Constants.BASE_URL;
-        }
-        else if (!url.contains(Variables.http)) {
+        } else if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
         }
 
-        String placeholderName=getNameFirstLatter(name);
+        String placeholderName = getNameFirstLatter(name);
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .textColor(ContextCompat.getColor(context, R.color.black))
@@ -2227,7 +2055,7 @@ public class Functions {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(""+placeholderName,ContextCompat.getColor(context,R.color.graycolor));
+                .buildRound("" + placeholderName, ContextCompat.getColor(context, R.color.graycolor));
 
         simpleDrawee.getHierarchy().setPlaceholderImage(drawable);
         simpleDrawee.getHierarchy().setFailureImage(drawable);
@@ -2243,25 +2071,23 @@ public class Functions {
         return controller;
     }
 
-    public static DraweeController frescoImageLoad(Context context,String name,int fontSize,String url, SimpleDraweeView simpleDrawee)
-    {
-        if(url==null || url.equals("null")){
+    public static DraweeController frescoImageLoad(Context context, String name, int fontSize, String url, SimpleDraweeView simpleDrawee) {
+        if (url == null || url.equals("null")) {
             url = Constants.BASE_URL;
-        }
-        else if (!url.contains(Variables.http)) {
+        } else if (!url.contains(Variables.http)) {
             url = Constants.BASE_URL + url;
         }
 
-        String placeholderName=getNameFirstLatter(name);
+        String placeholderName = getNameFirstLatter(name);
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .textColor(ContextCompat.getColor(context, R.color.black))
                 .useFont(Typeface.DEFAULT)
-                .fontSize( fontSize) /* size in px */
+                .fontSize(fontSize) /* size in px */
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(""+placeholderName,ContextCompat.getColor(context, R.color.gainsboro));
+                .buildRound("" + placeholderName, ContextCompat.getColor(context, R.color.gainsboro));
 
         simpleDrawee.getHierarchy().setPlaceholderImage(drawable);
         simpleDrawee.getHierarchy().setFailureImage(drawable);
@@ -2277,80 +2103,46 @@ public class Functions {
         return controller;
     }
 
-
-
     private static String getNameFirstLatter(String name) {
         try {
-            if (TextUtils.isEmpty(name))
-            {
+            if (TextUtils.isEmpty(name)) {
                 return "";
-            }
-            else
-            {
-                String[] str=name.split(" ");
-                if (str.length>0)
-                {
-                    return str[0].charAt(0)+""+str[1].charAt(0);
-                }
-                else
-                {
-                    return str[0].charAt(0)+"";
+            } else {
+                String[] str = name.split(" ");
+                if (str.length > 0) {
+                    return str[0].charAt(0) + "" + str[1].charAt(0);
+                } else {
+                    return str[0].charAt(0) + "";
                 }
             }
-        }
-        catch (Exception e)
-        {
-            return ""+name.charAt(0);
+        } catch (Exception e) {
+            return "" + name.charAt(0);
         }
     }
 
-
-    public static String getFollowButtonStatus(String button,Context context) {
-        String userStatus=button;
-        if (userStatus.equalsIgnoreCase("following"))
-        {
-            return  context.getString(R.string.following);
-        }
-        else
-        if (userStatus.equalsIgnoreCase("friends"))
-        {
-            return  context.getString(R.string.friends_);
-        }
-        else
-        if (userStatus.equalsIgnoreCase("follow back"))
-        {
-            return  context.getString(R.string.follow_back);
-        }
-        else
-        {
-            return  context.getString(R.string.follow);
+    public static String getFollowButtonStatus(String button, Context context) {
+        String userStatus = button;
+        if (userStatus.equalsIgnoreCase("following")) {
+            return context.getString(R.string.following);
+        } else if (userStatus.equalsIgnoreCase("friends")) {
+            return context.getString(R.string.friends_);
+        } else if (userStatus.equalsIgnoreCase("follow back")) {
+            return context.getString(R.string.follow_back);
+        } else {
+            return context.getString(R.string.follow);
         }
     }
-
 
     public static boolean isNotificaitonShow(String userStatus) {
-        if (userStatus.equalsIgnoreCase("following"))
-        {
+        if (userStatus.equalsIgnoreCase("following")) {
             return true;
-        }
-        else
-        if (userStatus.equalsIgnoreCase("friends"))
-        {
-            return  true;
-        }
-        else
-        if (userStatus.equalsIgnoreCase("follow back"))
-        {
+        } else if (userStatus.equalsIgnoreCase("friends")) {
             return true;
-        }
-        else
-        {
-            return  false;
-        }
+        } else return userStatus.equalsIgnoreCase("follow back");
     }
 
-    public static void addDeviceData(Activity context){
-        JSONObject headers=new JSONObject();
+    public static void addDeviceData(Activity context) {
+        JSONObject headers = new JSONObject();
         try {
             headers.put("user_id", getSharedPreference(context).getString(Variables.U_ID, null));
             headers.put("device", "android");
@@ -2360,22 +2152,21 @@ public class Functions {
             headers.put("ip", getSharedPreference(context).getString(Variables.DEVICE_IP, null));
             headers.put("device_token", getSharedPreference(context).getString(Variables.DEVICE_TOKEN, null));
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.tag, "Exception: " + e);
         }
-        VolleyRequest.JsonPostRequest(context, ApiLinks.addDeviceData, headers, Functions.getHeaders(context),new Callback() {
+        VolleyRequest.JsonPostRequest(context, ApiLinks.addDeviceData, headers, Functions.getHeaders(context), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(context,resp);
+                Functions.checkStatus(context, resp);
             }
         });
 
     }
 
-
     //    app language change
-    public static void setLocale(String lang, Activity context, Class<?> className,boolean isRefresh) {
+    public static void setLocale(String lang, Activity context, Class<?> className, boolean isRefresh) {
 
-        String[] languageArray=context.getResources().getStringArray(R.array.app_language_code);
+        String[] languageArray = context.getResources().getStringArray(R.array.app_language_code);
         List<String> languageCode = Arrays.asList(languageArray);
         if (languageCode.contains(lang)) {
             Locale myLocale = new Locale(lang);
@@ -2386,9 +2177,8 @@ public class Functions {
             res.updateConfiguration(conf, dm);
             context.onConfigurationChanged(conf);
 
-            if (isRefresh)
-            {
-                updateActivity(context,className);
+            if (isRefresh) {
+                updateActivity(context, className);
             }
         }
 
@@ -2399,16 +2189,16 @@ public class Functions {
         }
 
     }
+
     public static void updateActivity(Activity context, Class<?> className) {
-        Intent intent = new Intent(context,className);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(context, className);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 
     }
 
-
     // manage for store user data
-    public static void storeUserLoginDataIntoDb(Context context,UserModel userDetailModel) {
+    public static void storeUserLoginDataIntoDb(Context context, UserModel userDetailModel) {
         SharedPreferences.Editor editor = Functions.getSharedPreference(context).edit();
         editor.putString(Variables.U_ID, userDetailModel.getId());
         editor.putString(Variables.F_NAME, userDetailModel.getFirstName());
@@ -2423,28 +2213,27 @@ public class Functions {
         editor.putString(Variables.U_PIC, userDetailModel.getProfilePic());
         editor.putString(Variables.U_GIF, userDetailModel.getProfileGif());
         editor.putString(Variables.U_PROFILE_VIEW, userDetailModel.getProfileView());
-        editor.putString(Variables.U_WALLET, ""+userDetailModel.getWallet());
-        editor.putString(Variables.U_total_coins_all_time, ""+userDetailModel.getTotal_all_time_coins());
+        editor.putString(Variables.U_WALLET, "" + userDetailModel.getWallet());
+        editor.putString(Variables.U_total_coins_all_time, "" + userDetailModel.getTotal_all_time_coins());
         editor.putString(Variables.U_PAYOUT_ID, userDetailModel.getPaypal());
         editor.putString(Variables.AUTH_TOKEN, userDetailModel.getAuthToken());
         editor.putString(Variables.IS_VERIFIED, userDetailModel.getVerified());
         editor.putString(Variables.IS_VERIFICATION_APPLY, userDetailModel.getApplyVerification());
-        editor.putString(Variables.REFERAL_CODE,userDetailModel.getReferalCode());
+        editor.putString(Variables.REFERAL_CODE, userDetailModel.getReferalCode());
         editor.putBoolean(Variables.IS_LOGIN, true);
         editor.commit();
     }
-
 
     //use to get Directory Storage Used Capacity
     public static String getDirectorySize(String path) {
 
         File dir = new File(path);
 
-        if(dir.exists()) {
+        if (dir.exists()) {
             long bytes = getFolderSize(dir);
             if (bytes < 1024) return bytes + " B";
             int exp = (int) (Math.log(bytes) / Math.log(1024));
-            String pre = ("KMGTPE").charAt(exp-1) + "";
+            String pre = ("KMGTPE").charAt(exp - 1) + "";
 
             return String.format("%.1f %sB", bytes / Math.pow(1024, exp), pre);
         }
@@ -2456,9 +2245,9 @@ public class Functions {
         if (dir.exists()) {
             long result = 0;
             File[] fileList = dir.listFiles();
-            for(int i = 0; i < fileList.length; i++) {
+            for (int i = 0; i < fileList.length; i++) {
                 // Recursive call if it's a directory
-                if(fileList[i].isDirectory()) {
+                if (fileList[i].isDirectory()) {
                     result += getFolderSize(fileList[i]);
                 } else {
                     // Sum the file size in bytes
@@ -2469,11 +2258,6 @@ public class Functions {
         }
         return 0;
     }
-
-
-
-    public static BroadcastReceiver broadcastReceiver;
-    public static IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
 
     public static void unRegisterConnectivity(Context mContext) {
         try {
@@ -2506,21 +2290,18 @@ public class Functions {
 
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                return true;
-            } else {
-                return false;
-            }
+            return networkInfo != null && networkInfo.isConnected();
         } catch (Exception e) {
-            Log.e(Constants.tag, "Exception : "+e.getMessage());
+            Log.e(Constants.tag, "Exception : " + e.getMessage());
             return false;
         }
     }
 
-    //check rational permission status
+
+    // check rational permission status
     public static String getPermissionStatus(Activity activity, String androidPermissionName) {
-        if(ContextCompat.checkSelfPermission(activity, androidPermissionName) != PackageManager.PERMISSION_GRANTED) {
-            if(!ActivityCompat.shouldShowRequestPermissionRationale(activity, androidPermissionName)){
+        if (ContextCompat.checkSelfPermission(activity, androidPermissionName) != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, androidPermissionName)) {
                 return "blocked";
             }
             return "denied";
@@ -2528,40 +2309,37 @@ public class Functions {
         return "granted";
     }
 
-    //show permission setting screen
-    public static void showPermissionSetting(Context context,String message) {
-        showDoubleButtonAlert(context, context.getString(R.string.permission_alert),message,
-                context.getString(R.string.cancel_), context.getString(R.string.settings), false, new FragmentCallBack() {
-                    @Override
-                    public void onResponce(Bundle bundle) {
-                        if (bundle.getBoolean("isShow",false))
-                        {
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package",context.getPackageName(), null);
-                            intent.setData(uri);
-                            context.startActivity(intent);
-                        }
-                    }
-                });
+
+    // show permission setting screen
+    public static void showPermissionSetting(Context context, String message) {
+        showDoubleButtonAlert(context, context.getString(R.string.permission_alert), message,
+            context.getString(R.string.cancel_), context.getString(R.string.settings), false, bundle -> {
+                if (bundle.getBoolean("isShow", false)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                    intent.setData(uri);
+                    context.startActivity(intent);
+                }
+            });
     }
 
-//    check app is exist or not
-    public static boolean appInstalledOrNot(Context context,String uri) {
+
+    // check app is exist or not
+    public static boolean appInstalledOrNot(Context context, String uri) {
         PackageManager pm = context.getPackageManager();
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
             return true;
-        } catch (PackageManager.NameNotFoundException e) {
-        }
+        } catch (PackageManager.NameNotFoundException ignored) { }
 
         return false;
     }
 
-    public static File getBitmapToUri(Context context, Bitmap bitmap,String fileName) {
+    public static File getBitmapToUri(Context context, Bitmap bitmap, String fileName) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-        File file = new File(Functions.getAppFolder(context)+Variables.APP_HIDED_FOLDER + fileName);
+        File file = new File(Functions.getAppFolder(context) + Variables.APP_HIDED_FOLDER + fileName);
         try {
             FileOutputStream fo = new FileOutputStream(file);
             fo.write(bytes.toByteArray());
@@ -2570,48 +2348,43 @@ public class Functions {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (file.exists())
-        {
+        if (file.exists()) {
             return file;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     // logout to app automatically when the login token expire
-    public static void checkStatus(Activity activity, String responce) {
+    public static void checkStatus(Activity activity, String response) {
         try {
-        JSONObject response=new JSONObject(responce);
-        if (response.optString("code", "").equalsIgnoreCase("501")) {
+            JSONObject jSonResponse = new JSONObject(response);
+            if (jSonResponse.optString("code", "").equalsIgnoreCase("501")) {
 
-            GoogleSignInOptions gso = new GoogleSignInOptions.
-                    Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
-                    build();
-            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(activity, gso);
-            googleSignInClient.signOut();
+                GoogleSignInOptions gso = new GoogleSignInOptions.
+                    Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(activity, gso);
+                googleSignInClient.signOut();
 
-            LoginManager.getInstance().logOut();
+                LoginManager.getInstance().logOut();
 
-            removeMultipleAccount(activity);
+                removeMultipleAccount(activity);
 
-            SharedPreferences.Editor editor = getSharedPreference(activity).edit();
-            Paper.book(Variables.PrivacySetting).destroy();
-            editor.clear();
-            editor.commit();
-            activity.finish();
+                SharedPreferences.Editor editor = getSharedPreference(activity).edit();
+                Paper.book(Variables.PrivacySetting).destroy();
+                editor.clear();
+                editor.apply();
+                activity.finish();
 
-            setUpExistingAccountLogin(activity);
-            activity.startActivity(new Intent(activity, MainMenuActivity.class));
-
-        }
+                setUpExistingAccountLogin(activity);
+                activity.startActivity(new Intent(activity, MainMenuActivity.class));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public static HashMap<String, String> getHeaders(Context context){
+    public static HashMap<String, String> getHeaders(Context context) {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Api-Key", Constants.API_KEY);
 //        headers.put("User-Id", getSharedPreference(context).getString(Variables.U_ID, null));
@@ -2623,7 +2396,7 @@ public class Functions {
         return headers;
     }
 
-    public static HashMap<String, String> getHeadersWithOutLogin(Context context){
+    public static HashMap<String, String> getHeadersWithOutLogin(Context context) {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Api-Key", Constants.API_KEY);
 //        headers.put("User-Id", "");
@@ -2644,7 +2417,7 @@ public class Functions {
         try {
 
             //create output directory if it doesn't exist
-            String path=getAppFolder(context)+"videoCache";
+            String path = getAppFolder(context) + "videoCache";
             File dir = new File(path);
             File newFile = new File(dir, ".nomedia");
             if (!dir.exists()) {
@@ -2664,13 +2437,13 @@ public class Functions {
             }
 
         } catch (Exception e) {
-            Log.e(Constants.tag, ""+e);
+            Log.e(Constants.tag, "" + e);
         }
 
     }
 
 
-    public static void refreshFile(Context context,String path) {
+    public static void refreshFile(Context context, String path) {
 
         try {
 
@@ -2684,7 +2457,7 @@ public class Functions {
                     });
 
         } catch (Exception e) {
-            Log.e(Constants.tag, ""+e);
+            Log.e(Constants.tag, "" + e);
         }
 
     }
@@ -2697,17 +2470,16 @@ public class Functions {
     }
 
 
-    public static void showValidationMsg(Activity activity,View containerView,String message)
-    {
+    public static void showValidationMsg(Activity activity, View containerView, String message) {
 
         View layout = activity.getLayoutInflater().inflate(R.layout.validation_message_view, null);
         TextView tvMessage = layout.findViewById(R.id.tvMessage);
         tvMessage.setText(message);
 
-        Snackbar snackbar= Snackbar.make(containerView, "", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(containerView, "", Snackbar.LENGTH_LONG);
 
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-        TextView textView = (TextView) snackbarLayout.findViewById(R.id.snackbar_text);
+        TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
         textView.setVisibility(View.INVISIBLE);
 
         final ViewGroup.LayoutParams params = snackbar.getView().getLayoutParams();
@@ -2755,15 +2527,10 @@ public class Functions {
     }
 
     @JvmStatic
-    public static void clearFilesCacheBeforeOperation(File...files) {
-        if (files.length>0)
-        {
-            for (File file:files)
-            {
-                if (file.exists())
-                {
-                    file.delete();
-                }
+    public static void clearFilesCacheBeforeOperation(File... files) {
+        for (File file : files) {
+            if (file.exists()) {
+                file.delete();
             }
         }
     }
@@ -2776,14 +2543,14 @@ public class Functions {
             Calendar endDateCal = Calendar.getInstance();
 
 
-            SimpleDateFormat f = new SimpleDateFormat(format,Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat(format, Locale.ENGLISH);
 
             Date startDate = null;
             try {
                 startDate = f.parse(start);
                 startDateCal.setTime(startDate);
             } catch (Exception e) {
-                Log.d(Constants.tag,"Exception startDate: "+e);
+                Log.d(Constants.tag, "Exception startDate: " + e);
             }
 
             Date endDate = null;
@@ -2791,18 +2558,17 @@ public class Functions {
                 endDate = f.parse(end);
                 endDateCal.setTime(endDate);
             } catch (Exception e) {
-                Log.d(Constants.tag,"Exception endDate: "+e);
+                Log.d(Constants.tag, "Exception endDate: " + e);
             }
 
             long difference = (endDateCal.getTimeInMillis() - startDateCal.getTimeInMillis()) / 1000;
 
-            long days=difference/86400;
+            long days = difference / 86400;
 
-            return ""+days;
+            return "" + days;
 
-        }
-        catch (Exception e) {
-            Log.d(Constants.tag,"Exception days: "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception days: " + e);
             return "0";
         }
 
@@ -2816,14 +2582,14 @@ public class Functions {
             Calendar endDateCal = Calendar.getInstance();
 
 
-            SimpleDateFormat f = new SimpleDateFormat(format,Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat(format, Locale.ENGLISH);
 
             Date startDate = null;
             try {
                 startDate = f.parse(start);
                 startDateCal.setTime(startDate);
             } catch (Exception e) {
-                Log.d(Constants.tag,"Exception startDate: "+e);
+                Log.d(Constants.tag, "Exception startDate: " + e);
             }
 
             Date endDate = null;
@@ -2831,33 +2597,30 @@ public class Functions {
                 endDate = f.parse(end);
                 endDateCal.setTime(endDate);
             } catch (Exception e) {
-                Log.d(Constants.tag,"Exception endDate: "+e);
+                Log.d(Constants.tag, "Exception endDate: " + e);
             }
 
             long difference = (endDateCal.getTimeInMillis() - startDateCal.getTimeInMillis()) / 1000;
 
-            double days=((double)difference)/86400;
+            double days = ((double) difference) / 86400;
 
-            return ""+days;
+            return "" + days;
 
-        }
-        catch (Exception e) {
-            Log.d(Constants.tag,"Exception days: "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception days: " + e);
             return "0";
         }
 
     }
 
 
-
-
-    public static String changeDateLatterFormat(String format,Context context, String date) {
+    public static String changeDateLatterFormat(String format, Context context, String date) {
         try {
             Calendar current_cal = Calendar.getInstance();
 
             Calendar date_cal = Calendar.getInstance();
 
-            SimpleDateFormat f = new SimpleDateFormat(format,Locale.ENGLISH);
+            SimpleDateFormat f = new SimpleDateFormat(format, Locale.ENGLISH);
             Date d = null;
             try {
                 d = f.parse(date);
@@ -2870,48 +2633,35 @@ public class Functions {
             long difference = (current_cal.getTimeInMillis() - date_cal.getTimeInMillis()) / 1000;
 
             if (difference < 60) {
-                return difference + " "+context.getString(R.string.s_ago);
-            }  else
-            if (difference < 3600) {
-                return (0+(difference / 60)) + " "+context.getString(R.string.m_ago);
-            }  else
-            if (difference < 86400) {
-                return (0+(difference / 3600)) + " "+context.getString(R.string.h_ago);
-            }  else
-            if (difference<604800)
-            {
-                return (0+(difference / 86400)) + " "+context.getString(R.string.d_ago);
-            }
-            else
-            {
-                if (difference<2592000)
-                {
-                    return (0+(difference / 604800)) + " "+context.getString(R.string.week_ago);
-                }
-                else
-                {
-                    if (difference<31536000)
-                    {
-                        return (0+(difference / 2592000)) + " "+context.getString(R.string.month_ago);
-                    }
-                    else
-                    {
-                        return (0+(difference / 31536000)) + " "+context.getString(R.string.year_ago);
+                return difference + " " + context.getString(R.string.s_ago);
+            } else if (difference < 3600) {
+                return ((difference / 60)) + " " + context.getString(R.string.m_ago);
+            } else if (difference < 86400) {
+                return ((difference / 3600)) + " " + context.getString(R.string.h_ago);
+            } else if (difference < 604800) {
+                return ((difference / 86400)) + " " + context.getString(R.string.d_ago);
+            } else {
+                if (difference < 2592000) {
+                    return ((difference / 604800)) + " " + context.getString(R.string.week_ago);
+                } else {
+                    if (difference < 31536000) {
+                        return ((difference / 2592000)) + " " + context.getString(R.string.month_ago);
+                    } else {
+                        return ((difference / 31536000)) + " " + context.getString(R.string.year_ago);
                     }
 
                 }
 
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return date;
         }
 
 
     }
 
-    public static void UrlToBitmapGenrator(String imgUrl, GenrateBitmapCallback callback){
+    public static void UrlToBitmapGenrator(String imgUrl, GenrateBitmapCallback callback) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
@@ -2932,7 +2682,7 @@ public class Functions {
                     executor.shutdownNow();
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.tag, "Exception: " + e);
                     executor.shutdownNow();
                 }
 
@@ -2942,7 +2692,7 @@ public class Functions {
     }
 
 
-    public static void UrlToFileGenrator(String imgUrl,File directory,String id, GenrateFileCallback callback){
+    public static void UrlToFileGenrator(String imgUrl, File directory, String id, GenrateFileCallback callback) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
@@ -2951,20 +2701,18 @@ public class Functions {
 
                 //Background work here
                 try {
-                    if (!(directory.exists()))
-                    {
+                    if (!(directory.exists())) {
                         directory.mkdirs();
                     }
-                    File downloadUrl=new File((directory+ "/"+id+".png"));
-                    if (downloadUrl.exists())
-                    {
+                    File downloadUrl = new File((directory + "/" + id + ".png"));
+                    if (downloadUrl.exists()) {
                         callback.onResult(downloadUrl);
                         executor.shutdownNow();
                     }
                     URL url = new URL(imgUrl);
                     InputStream input = url.openStream();
                     try {
-                        OutputStream output = new FileOutputStream (directory + "/"+id+".png");
+                        OutputStream output = new FileOutputStream(directory + "/" + id + ".png");
                         try {
                             byte[] buffer = new byte[1024];
                             int bytesRead = 0;
@@ -2991,9 +2739,9 @@ public class Functions {
     }
 
     //use to get fomated time
-    public static double getTimeInMilli(String dateFormat,String date) {
+    public static double getTimeInMilli(String dateFormat, String date) {
         Calendar calendarDate = Calendar.getInstance();
-        SimpleDateFormat f = new SimpleDateFormat(dateFormat,Locale.ENGLISH);
+        SimpleDateFormat f = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         Date d = null;
         try {
             d = f.parse(date);
@@ -3004,25 +2752,23 @@ public class Functions {
         return calendarDate.getTime().getTime();
     }
 
-    public static int CalculateFFMPEGTimeToPercentage(String message,int allowRecordingDuration) {
-        double preViousPercent =0f;
+    public static int CalculateFFMPEGTimeToPercentage(String message, int allowRecordingDuration) {
+        double preViousPercent = 0f;
         try {
 
-            String array[]=message.split(" ");
-            String startTime=Functions.getTimeWithAdditionalSecond("HH:mm:ss", (int) 0);
-            String endTime=Functions.getTimeWithAdditionalSecond("HH:mm:ss", (int) allowRecordingDuration);
-            String currentTime=array[4];
+            String[] array = message.split(" ");
+            String startTime = Functions.getTimeWithAdditionalSecond("HH:mm:ss", 0);
+            String endTime = Functions.getTimeWithAdditionalSecond("HH:mm:ss", allowRecordingDuration);
+            String currentTime = array[4];
 
-            double start = Functions.getTimeInMilli("HH:mm:ss",startTime);
-            double end = Functions.getTimeInMilli("HH:mm:ss",endTime);
-            double cur = Functions.getTimeInMilli("HH:mm:ss",currentTime);
+            double start = Functions.getTimeInMilli("HH:mm:ss", startTime);
+            double end = Functions.getTimeInMilli("HH:mm:ss", endTime);
+            double cur = Functions.getTimeInMilli("HH:mm:ss", currentTime);
 
             double percent = ((cur - start) / (end - start)) * 100f;
-            preViousPercent=percent;
+            preViousPercent = percent;
             return (int) percent;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return (int) preViousPercent;
         }
     }
@@ -3031,26 +2777,24 @@ public class Functions {
     public static String decodeFFMPEGMessage(String message) {
         try {
 
-            message=message.replaceAll("  "," ");
-            message=message.replaceAll("  "," ");
-            message=message.replaceAll("  "," ");
-            message=message.replaceAll("fps= ","");
-            message=message.replaceAll("fps=","");
-            message=message.replaceAll("frame= ","");
-            message=message.replaceAll("frame=","");
-            message=message.replaceAll("size= ","");
-            message=message.replaceAll("size=","");
-            message=message.replaceAll("q= ","");
-            message=message.replaceAll("q=","");
-            message=message.replaceAll("time= ","");
-            message=message.replaceAll("time=","");
+            message = message.replaceAll("  ", " ");
+            message = message.replaceAll("  ", " ");
+            message = message.replaceAll("  ", " ");
+            message = message.replaceAll("fps= ", "");
+            message = message.replaceAll("fps=", "");
+            message = message.replaceAll("frame= ", "");
+            message = message.replaceAll("frame=", "");
+            message = message.replaceAll("size= ", "");
+            message = message.replaceAll("size=", "");
+            message = message.replaceAll("q= ", "");
+            message = message.replaceAll("q=", "");
+            message = message.replaceAll("time= ", "");
+            message = message.replaceAll("time=", "");
 
             return message;
 
-        }
-        catch (Exception e)
-        {
-            Log.d(Constants.tag,"Exception: "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception: " + e);
         }
         return "";
     }
@@ -3073,33 +2817,32 @@ public class Functions {
                 }
             }
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
-        }finally {
+            Log.d(Constants.tag, "Exception: " + e);
+        } finally {
             extractor.release();
-            return ""+frameRate;
+            return "" + frameRate;
         }
     }
 
 
     public static int showVideoDurationInSec(String videoPath) {
-       try {
-           MediaMetadataRetriever retriever=new MediaMetadataRetriever();
-           retriever.setDataSource(videoPath);
-           Bitmap bit = retriever.getFrameAtTime();
-           int width = bit.getWidth();
-           int height = bit.getHeight();
-           String duration=retriever.extractMetadata(METADATA_KEY_DURATION);
-           int second= Integer.valueOf(duration)/1000;
-           return second;
-       }catch (Exception e)
-       {
-           Log.d(Constants.tag,"Exception: "+e);
-           return 10;
-       }
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videoPath);
+            Bitmap bit = retriever.getFrameAtTime();
+            int width = bit.getWidth();
+            int height = bit.getHeight();
+            String duration = retriever.extractMetadata(METADATA_KEY_DURATION);
+            int second = Integer.valueOf(duration) / 1000;
+            return second;
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception: " + e);
+            return 10;
+        }
     }
 
     public static long getDevidedChunks(int maxProgressTime, int chunkSize) {
-        return (maxProgressTime*1000)/chunkSize;
+        return (maxProgressTime * 1000L) / chunkSize;
     }
 
 
@@ -3116,33 +2859,22 @@ public class Functions {
     }
 
     //check activity stackclear or not
-    public static boolean isAnyActivityRemain(Context context)
-    {
-        ActivityManager mngr = (ActivityManager) context.getSystemService( Context.ACTIVITY_SERVICE );
+    public static boolean isAnyActivityRemain(Context context) {
+        ActivityManager mngr = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
         List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
 
-        if(taskList.get(0).numActivities == 1 &&
-                taskList.get(0).topActivity.getClassName().equals(context.getClass().getName())) {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return taskList.get(0).numActivities != 1 ||
+                !taskList.get(0).topActivity.getClassName().equals(context.getClass().getName());
     }
 
 
-    public static void showToastOnTop(Activity activity,View mainView,String message)
-    {
+    public static void showToastOnTop(Activity activity, View mainView, String message) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout;
-        if (mainView==null)
-        {
+        if (mainView == null) {
             layout = inflater.inflate(R.layout.custom_toast, null);
-        }
-        else
-        {
+        } else {
             layout = inflater.inflate(R.layout.custom_toast, mainView.findViewById(R.id.custom_toast_container));
         }
 
@@ -3157,14 +2889,14 @@ public class Functions {
     }
 
     //custom snackbar top
-    public static void showSnakbarOnTop(Activity activity,View mainView,String message) {
+    public static void showSnakbarOnTop(Activity activity, View mainView, String message) {
         View layout = activity.getLayoutInflater().inflate(R.layout.custom_message_top_layout, null);
         TextView tvMessage = layout.findViewById(R.id.tvMessage);
         tvMessage.setText(message);
         Snackbar snackbar = Snackbar.make(mainView, "", Snackbar.LENGTH_LONG);
 
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-        TextView textView = (TextView) snackbarLayout.findViewById(R.id.snackbar_text);
+        TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
         textView.setVisibility(View.INVISIBLE);
 
         final ViewGroup.LayoutParams params = snackbar.getView().getLayoutParams();
@@ -3205,8 +2937,8 @@ public class Functions {
         });
     }
 
-    public static int getPercentage(int currentValue,int totalValue){
-        return ((currentValue*100)/totalValue);
+    public static int getPercentage(int currentValue, int totalValue) {
+        return ((currentValue * 100) / totalValue);
     }
 
     public static List<List<KeyMatricsModel>> createChunksOfListKeyMatrics(List<KeyMatricsModel> originalList,
@@ -3217,7 +2949,7 @@ public class Functions {
                     + chunkSize));
         }
         if (originalList.size() % chunkSize != 0) {
-            listOfChunks.add((List<KeyMatricsModel>) originalList.subList(originalList.size()
+            listOfChunks.add(originalList.subList(originalList.size()
                     - originalList.size() % chunkSize, originalList.size()));
         }
         return listOfChunks;
@@ -3225,41 +2957,29 @@ public class Functions {
 
 
     public static String getUserName(UserModel userModel) {
-        if (TextUtils.isEmpty(userModel.getFirstName()) && TextUtils.isEmpty(userModel.getLastName()))
-        {
+        if (TextUtils.isEmpty(userModel.getFirstName()) && TextUtils.isEmpty(userModel.getLastName())) {
             return userModel.getUsername();
-        }
-        else
-        {
-            if (TextUtils.isEmpty(userModel.getLastName()))
-            {
+        } else {
+            if (TextUtils.isEmpty(userModel.getLastName())) {
                 return userModel.getFirstName();
-            }
-            else
-            {
-                return userModel.getFirstName()+" "+userModel.getLastName();
+            } else {
+                return userModel.getFirstName() + " " + userModel.getLastName();
             }
 
         }
     }
 
     public static String getUserName(Context context) {
-        String firstName=Functions.getSharedPreference(context).getString(Variables.F_NAME,"");
-        String lastName=Functions.getSharedPreference(context).getString(Variables.L_NAME,"");
-        String userName=Functions.getSharedPreference(context).getString(Variables.U_NAME,"");
-        if (TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
-        {
+        String firstName = Functions.getSharedPreference(context).getString(Variables.F_NAME, "");
+        String lastName = Functions.getSharedPreference(context).getString(Variables.L_NAME, "");
+        String userName = Functions.getSharedPreference(context).getString(Variables.U_NAME, "");
+        if (TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName)) {
             return userName;
-        }
-        else
-        {
-            if (TextUtils.isEmpty(userName))
-            {
+        } else {
+            if (TextUtils.isEmpty(userName)) {
                 return firstName;
-            }
-            else
-            {
-                return firstName+" "+lastName;
+            } else {
+                return firstName + " " + lastName;
             }
 
         }
@@ -3267,38 +2987,28 @@ public class Functions {
 
 
     public static String getButtonStatus(String status) {
-        status=status.toLowerCase();
+        status = status.toLowerCase();
 
-        if (status.equalsIgnoreCase("following"))
-        {
+        if (status.equalsIgnoreCase("following")) {
             return "Following";
-        }
-        else
-        if (status.equalsIgnoreCase("friends"))
-        {
+        } else if (status.equalsIgnoreCase("friends")) {
             return "Following";
-        }
-        else
-        if (status.equalsIgnoreCase("follow back"))
-        {
+        } else if (status.equalsIgnoreCase("follow back")) {
             return "Follow";
-        }
-        else
-        {
+        } else {
             return "Follow";
         }
     }
 
 
-    public static void showError(Activity activity,String msg)
-    {
+    public static void showError(Activity activity, String msg) {
         CookieBar.build(activity)
                 .setCustomView(R.layout.custom_error)
                 .setCustomViewInitializer(new CookieBar.CustomViewInitializer() {
                     @Override
                     public void initView(View view) {
-                        TextView tvTitle=view.findViewById(R.id.tvTitle);
-                        tvTitle.setText(""+msg);
+                        TextView tvTitle = view.findViewById(R.id.tvTitle);
+                        tvTitle.setText("" + msg);
                     }
                 })
                 .setEnableAutoDismiss(false)
@@ -3307,15 +3017,14 @@ public class Functions {
                 .show();
     }
 
-    public static void showSuccess(Activity activity,String msg)
-    {
+    public static void showSuccess(Activity activity, String msg) {
         CookieBar.build(activity)
                 .setCustomView(R.layout.custom_success)
                 .setCustomViewInitializer(new CookieBar.CustomViewInitializer() {
                     @Override
                     public void initView(View view) {
-                        TextView tvTitle=view.findViewById(R.id.tvTitle);
-                        tvTitle.setText(""+msg);
+                        TextView tvTitle = view.findViewById(R.id.tvTitle);
+                        tvTitle.setText("" + msg);
                     }
                 })
                 .setDuration(4000)
@@ -3326,26 +3035,26 @@ public class Functions {
 
     }
 
-    public static String getShareRoomLink(Context context,String userID){
-        return Variables.https+"://"+context.getString(R.string.share_profile_domain)+context.getString(R.string.share_room_endpoint_second) +userID;
+    public static String getShareRoomLink(Context context, String userID) {
+        return Variables.https + "://" + context.getString(R.string.share_profile_domain) + context.getString(R.string.share_room_endpoint_second) + userID;
 
     }
 
 
-    public static void shareData(Activity activity,String data){
+    public static void shareData(Activity activity, String data) {
         try {
             Intent sendIntent = new Intent("android.intent.action.MAIN");
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.setType("text/plain");
             sendIntent.putExtra(Intent.EXTRA_TEXT, data);
             activity.startActivity(sendIntent);
-        } catch(Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+        } catch (Exception e) {
+            Log.d(Constants.tag, "Exception : " + e);
         }
     }
 
 
-    public static String ChangeDateFormat(String fromFormat, String toFormat, String date){
+    public static String ChangeDateFormat(String fromFormat, String toFormat, String date) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(fromFormat, Locale.ENGLISH);
         Date sourceDate = null;
@@ -3353,9 +3062,9 @@ public class Functions {
         try {
             sourceDate = dateFormat.parse(date);
 
-            SimpleDateFormat targetFormat = new SimpleDateFormat(toFormat,Locale.ENGLISH);
+            SimpleDateFormat targetFormat = new SimpleDateFormat(toFormat, Locale.ENGLISH);
 
-            return  targetFormat.format(sourceDate);
+            return targetFormat.format(sourceDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -3365,16 +3074,15 @@ public class Functions {
     }
 
     public static int convertDpToPx(Context context, int dp) {
-        return (int) ((int) dp * context.getResources().getDisplayMetrics().density);
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
-    public static String ParseDouble(double doubleValue,int digit)
-    {
-        return String.format("%."+digit+"f", doubleValue);
+    public static String ParseDouble(double doubleValue, int digit) {
+        return String.format("%." + digit + "f", doubleValue);
     }
 
-    public static ImageHeightWidthModel getDropboxIMGSize(Uri uri){
-        ImageHeightWidthModel model=new ImageHeightWidthModel();
+    public static ImageHeightWidthModel getDropboxIMGSize(Uri uri) {
+        ImageHeightWidthModel model = new ImageHeightWidthModel();
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -3385,8 +3093,7 @@ public class Functions {
     }
 
 
-    public static Bitmap convertImage(String imagePath)
-    {
+    public static Bitmap convertImage(String imagePath) {
         // Load the original image from a file or any source
         Bitmap originalImage = BitmapFactory.decodeFile(imagePath);
 
@@ -3441,40 +3148,38 @@ public class Functions {
         // Remove extra forward slashes
         String correctedURL = url.replaceAll("(?<!http:|https:|ftp:)\\/\\/+", "/");
 
-        Log.d(Constants.tag,"correctedURL: "+correctedURL);
+        Log.d(Constants.tag, "correctedURL: " + correctedURL);
         return correctedURL;
     }
 
 
-    public static int changeValueToInt(String value){
-        Double longvalue=Double.parseDouble(value);
+    public static int changeValueToInt(String value) {
+        Double longvalue = Double.parseDouble(value);
         return Integer.valueOf(longvalue.intValue());
     }
 
 
-    public static Boolean checkProfileOpenValidation(String userId){
+    public static Boolean checkProfileOpenValidation(String userId) {
         if (Variables.sharedPreferences.getString(Variables.U_ID, "0").equals(userId)) {
 
             TabLayout.Tab profile = MainMenuActivity.tabLayout.getTabAt(4);
             profile.select();
 
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
 
 
-    public static Boolean checkProfileOpenValidationByUserName(String userName){
+    public static Boolean checkProfileOpenValidationByUserName(String userName) {
         if (Variables.sharedPreferences.getString(Variables.U_NAME, "0").equals(userName)) {
 
             TabLayout.Tab profile = MainMenuActivity.tabLayout.getTabAt(4);
             profile.select();
 
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }

@@ -12,7 +12,7 @@ object Variables {
     const val videoHeight = 1102
     const val videoWidth = 620
     const val SelectedAudio_AAC = "SelectedAudio.aac"
-    const val APP_STORY_EDITED_FOLDER = "Hided/"
+    const val APP_STORY_EDITED_FOLDER = "Hidden/"
     const val APP_OUTPUT_FOLDER = "Output/"
     const val APP_HIDED_FOLDER = "HiddenAstro/"
     const val APP_HIDED_RESULT_FOLDER = "HiddenResultAstro/"

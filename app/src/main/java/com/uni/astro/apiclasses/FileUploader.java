@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -27,18 +28,19 @@ import retrofit2.Response;
 
 public class FileUploader {
 
-    private FileUploaderCallback mFileUploaderCallback;
-    long filesize = 0l;
+    long filesize = 0L;
     UploadVideoModel uploadModel;
+    private FileUploaderCallback mFileUploaderCallback;
+
 
     public FileUploader(File file, Context context, UploadVideoModel uploadModel) {
-        this.uploadModel=uploadModel;
+        this.uploadModel = uploadModel;
         filesize = file.length();
 
         InterfaceFileUpload interfaceFileUpload = ApiClient.getRetrofitInstance(context)
                 .create(InterfaceFileUpload.class);
 
-        Log.d(Constants.tag,"UploadFile: "+file.getAbsolutePath());
+        Log.d(Constants.tag, "UploadFile: " + file.getAbsolutePath());
         PRRequestBody mFile = new PRRequestBody(file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("video",
                 file.getName(), mFile);
@@ -73,64 +75,54 @@ public class FileUploader {
 
 
         Call<Object> fileUpload;
-        if (uploadModel.getVideoId().equalsIgnoreCase("0"))
-        {
+        if (uploadModel.getVideoId().equalsIgnoreCase("0")) {
             RequestBody videoId = RequestBody.create(
                     okhttp3.MultipartBody.FORM, uploadModel.getVideoId());
 
-            fileUpload = interfaceFileUpload.UploadFile(fileToUpload,PrivacyType,UserId,
-                    SoundId,AllowComments,Description,AllowDuet,UsersJson,HashtagsJson,storyJson,videoId);
-        }
-        else
-        {
+            fileUpload = interfaceFileUpload.UploadFile(fileToUpload, PrivacyType, UserId,
+                    SoundId, AllowComments, Description, AllowDuet, UsersJson, HashtagsJson, storyJson, videoId);
+        } else {
             RequestBody videoId = RequestBody.create(
                     okhttp3.MultipartBody.FORM, uploadModel.getVideoId());
             RequestBody duet = RequestBody.create(
                     okhttp3.MultipartBody.FORM, uploadModel.getDuet());
 
-            fileUpload = interfaceFileUpload.UploadFile(fileToUpload,PrivacyType,UserId,
-                    SoundId,AllowComments,Description,AllowDuet,UsersJson,HashtagsJson,videoId,storyJson,duet);
+            fileUpload = interfaceFileUpload.UploadFile(fileToUpload, PrivacyType, UserId,
+                    SoundId, AllowComments, Description, AllowDuet, UsersJson, HashtagsJson, videoId, storyJson, duet);
         }
 
-        Log.d(Constants.tag, "************************  before call : " +
-                fileUpload.request().url());
+        Log.d(Constants.tag, "******** before call: " + fileUpload.request().url());
 
-        fileUpload.enqueue(new Callback<Object>() {
-
+        fileUpload.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<Object> call,
-                                   @NonNull Response<Object> response) {
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
 
-                String bodyRes=new Gson().toJson(response.body());
-                Log.d(Constants.tag,"Responce: "+bodyRes);
+                String bodyRes = new Gson().toJson(response.body());
+                Log.d(Constants.tag, "Response1: " + bodyRes + " \nCall: " + call);
+
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
-                    int code = jsonObject.optInt("code",0);
-                    if (code==200) {
+                    int code = jsonObject.optInt("code", 0);
+                    if (code == 200) {
                         mFileUploaderCallback.onFinish(bodyRes);
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.d(Constants.tag,"Exception :"+e);
+                } catch (Exception e) {
+                    Log.d(Constants.tag, "Exception1: " + e);
                     mFileUploaderCallback.onError();
                 }
-
-
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag,"Exception onFailure :"+t.toString());
+                Log.d(Constants.tag, "1- Exception onFailure :" + t);
                 mFileUploaderCallback.onError();
             }
         });
-
-
     }
 
 
-    public FileUploader(File imagefile,File nullFile, Context context, String userID) {
+
+    public FileUploader(File imagefile, File nullFile, Context context, String userID) {
 
         InterfaceFileUpload interfaceFileUpload = ApiClient.getRetrofitInstance(context)
                 .create(InterfaceFileUpload.class);
@@ -145,51 +137,45 @@ public class FileUploader {
         RequestBody ExtensionId = RequestBody.create(
                 okhttp3.MultipartBody.FORM, "png");
 
-        Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(imageFileToUpload,UserId,ExtensionId);
+        Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(imageFileToUpload, UserId, ExtensionId);
 
         Log.d(Constants.tag, "URL: " + fileUpload.request().url());
         Log.d(Constants.tag, "file: " + imagefile.getAbsolutePath());
         Log.d(Constants.tag, "UserId: " + userID);
         Log.d(Constants.tag, "ExtensionId: " + "png");
 
-        fileUpload.enqueue(new Callback<Object>() {
+        fileUpload.enqueue(new Callback<>() {
 
             @Override
-            public void onResponse(@NonNull Call<Object> call,
-                                   @NonNull Response<Object> response) {
-                String bodyRes=new Gson().toJson(response.body());
-                Log.d(Constants.tag,"Responce: "+bodyRes);
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
+                String bodyRes = new Gson().toJson(response.body());
+                Log.d(Constants.tag, "Response2: " + bodyRes);
+
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
-                    int code = jsonObject.optInt("code",0);
-                    if (code==200) {
+                    int code = jsonObject.optInt("code", 0);
+                    if (code == 200) {
                         mFileUploaderCallback.onFinish(bodyRes);
-                    }
-                    else
-                    {
+                    } else {
                         mFileUploaderCallback.onError();
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.d(Constants.tag,"Exception :"+e);
+                } catch (Exception e) {
+                    Log.d(Constants.tag, "Exception2: " + e);
                     mFileUploaderCallback.onError();
                 }
-
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag,"Exception onFailure :"+t.toString());
+                Log.d(Constants.tag, "2- Exception onFailure2: " + t);
                 mFileUploaderCallback.onError();
             }
         });
-
-
     }
 
-    public FileUploader(File file, Context context, String userID) {
 
+
+    public FileUploader(File file, Context context, String userID) {
         InterfaceFileUpload interfaceFileUpload = ApiClient.getRetrofitInstance(context)
                 .create(InterfaceFileUpload.class);
 
@@ -203,58 +189,59 @@ public class FileUploader {
         RequestBody ExtensionId = RequestBody.create(
                 okhttp3.MultipartBody.FORM, "mp4");
 
-        Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(fileToUpload,UserId,ExtensionId);
+        Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(fileToUpload, UserId, ExtensionId);
 
         Log.d(Constants.tag, "URL: " + fileUpload.request().url());
         Log.d(Constants.tag, "file: " + file.getAbsolutePath());
         Log.d(Constants.tag, "UserId: " + userID);
         Log.d(Constants.tag, "ExtensionId: " + "mp4");
 
-        fileUpload.enqueue(new Callback<Object>() {
-
+        fileUpload.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<Object> call,
-                                   @NonNull Response<Object> response) {
-                String bodyRes=new Gson().toJson(response.body());
-                Log.d(Constants.tag,"Responce: "+bodyRes);
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
+                String bodyRes = new Gson().toJson(response.body());
+                Log.d(Constants.tag, "Response3: " + bodyRes);
+
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
-                    int code = jsonObject.optInt("code",0);
-                    if (code==200) {
+                    int code = jsonObject.optInt("code", 0);
+                    if (code == 200) {
                         mFileUploaderCallback.onFinish(bodyRes);
-                    }
-                    else
-                    {
+                    } else {
                         mFileUploaderCallback.onError();
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.d(Constants.tag,"Exception :"+e);
+                } catch (Exception e) {
+                    Log.d(Constants.tag, "Exception3: " + e);
                     mFileUploaderCallback.onError();
                 }
-
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag,"Exception onFailure :"+t.toString());
+                Log.d(Constants.tag, "3- Exception onFailure3: " + t);
                 mFileUploaderCallback.onError();
             }
         });
-
-
     }
+
 
     public void SetCallBack(FileUploaderCallback fileUploaderCallback) {
         this.mFileUploaderCallback = fileUploaderCallback;
     }
 
 
-    public class PRRequestBody extends RequestBody {
-        private File mFile;
+    public interface FileUploaderCallback {
+        void onError();
 
+        void onFinish(String responses);
+
+        void onProgressUpdate(int currentpercent, int totalpercent, String msg);
+    }
+
+
+    public class PRRequestBody extends RequestBody {
         private static final int DEFAULT_BUFFER_SIZE = 1024;
+        private final File mFile;
 
         public PRRequestBody(final File file) {
             mFile = file;
@@ -267,7 +254,7 @@ public class FileUploader {
         }
 
         @Override
-        public long contentLength() throws IOException {
+        public long contentLength() {
             return mFile.length();
         }
 
@@ -290,18 +277,17 @@ public class FileUploader {
                     uploaded += read;
                     sink.write(buffer, 0, read);
                 }
-            } catch (Exception e){
-                Log.d(Constants.tag,"Exception : "+e);
+            } catch (Exception e) {
+                Log.d(Constants.tag, "Exception : " + e);
             } finally {
                 in.close();
             }
         }
     }
 
-
     private class ProgressUpdater implements Runnable {
-        private long mUploaded=0;
-        private long mTotal=0;
+        private long mUploaded = 0;
+        private long mTotal = 0;
 
         ProgressUpdater(long uploaded, long total) {
             mUploaded = uploaded;
@@ -315,15 +301,6 @@ public class FileUploader {
             mFileUploaderCallback.onProgressUpdate(current_percent, total_percent,
                     "File Size: " + Functions.readableFileSize(filesize));
         }
-    }
-
-    public interface FileUploaderCallback {
-
-        void onError();
-
-        void onFinish(String responses);
-
-        void onProgressUpdate(int currentpercent, int totalpercent, String msg);
     }
 
 
