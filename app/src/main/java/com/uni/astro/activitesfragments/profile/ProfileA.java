@@ -141,8 +141,8 @@ public class ProfileA extends AppCompatLocaleActivity {
         RelativeLayout tabShareProfile=alertDialog.findViewById(R.id.tabShareProfile);
         tvBlockUser = alertDialog.findViewById(R.id.tvBlockUser);
 
-        Log.d(Constants.tag,"blockObj: "+blockByUserId);
-        Log.d(Constants.tag,"isUserAlreadyBlock: "+isUserAlreadyBlock);
+        Log.d(Constants.TAG_,"blockObj: "+blockByUserId);
+        Log.d(Constants.TAG_,"isUserAlreadyBlock: "+isUserAlreadyBlock);
 
         if (blockByUserId.equals(Functions.getSharedPreference(context).getString(Variables.U_ID,"")))
         {
@@ -896,7 +896,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
 
@@ -1005,7 +1005,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                     isLikeVideoShow=true;
                 }
 
-                Log.d(Constants.tag,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
+                Log.d(Constants.TAG_,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
                 //perform block functionality
                 if (isUserAlreadyBlock.equals("1"))
                 {
@@ -1014,7 +1014,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                     followCountTxt.setText(Functions.getSuffix("0"));
                     fansCountTxt.setText(Functions.getSuffix("0"));
                     heartCountTxt.setText(Functions.getSuffix("0"));
-                    Log.d(Constants.tag,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
+                    Log.d(Constants.TAG_,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
                 }
                 else
                 {
@@ -1115,7 +1115,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                     }
                     callApiForGetAllvideos();
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });

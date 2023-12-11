@@ -292,7 +292,7 @@ public class LiveUsersA extends AppCompatLocaleActivity implements View.OnClickL
                         startActivity(new Intent(context, MyWallet.class));
                     }
                 } catch (Exception e) {
-                    android.util.Log.d(Constants.tag,"Exception : "+e);
+                    android.util.Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -336,7 +336,7 @@ public class LiveUsersA extends AppCompatLocaleActivity implements View.OnClickL
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists())
                 {
-                    Functions.printLog(Constants.tag,dataSnapshot.toString());
+                    Functions.printLog(Constants.TAG_,dataSnapshot.toString());
 
                     LiveUserModel model = dataSnapshot.getValue(LiveUserModel.class);
                     if (model.getUserId()!=null && !(TextUtils.isEmpty(model.getUserId())) && !(model.getUserId().equals("null")))
@@ -351,7 +351,7 @@ public class LiveUsersA extends AppCompatLocaleActivity implements View.OnClickL
                     }
                     else
                     {
-                        Log.d(Constants.tag,"Removing Key: "+dataSnapshot.getKey());
+                        Log.d(Constants.TAG_,"Removing Key: "+dataSnapshot.getKey());
                         removeStreamingHead(""+dataSnapshot.getKey());
                     }
                 }
@@ -408,7 +408,7 @@ public class LiveUsersA extends AppCompatLocaleActivity implements View.OnClickL
         rootref.child("LiveUsers").child(key).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                Log.d(Constants.tag,"Remove: "+error);
+                Log.d(Constants.TAG_,"Remove: "+error);
             }
         });
     }

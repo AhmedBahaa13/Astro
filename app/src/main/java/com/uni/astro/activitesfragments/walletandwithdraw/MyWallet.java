@@ -126,13 +126,13 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingServiceDisconnected() {
-                Log.d(Constants.tag,"Not Connected Connect Again");
+                Log.d(Constants.TAG_,"Not Connected Connect Again");
                 startBillingConnection();
             }
 
             @Override
             public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                Log.d(Constants.tag,"startConnection: "+billingResult.getResponseCode());
+                Log.d(Constants.TAG_,"startConnection: "+billingResult.getResponseCode());
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     InitPurchases();
                     MyWallet.this.runOnUiThread(new Runnable() {
@@ -225,9 +225,9 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
                 });
             }
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            Log.d(Constants.tag,"" + billingResult.getResponseCode() + "--" + BillingClient.BillingResponseCode.USER_CANCELED);
+            Log.d(Constants.TAG_,"" + billingResult.getResponseCode() + "--" + BillingClient.BillingResponseCode.USER_CANCELED);
         } else {
-            Log.d(Constants.tag,"" + billingResult.getResponseCode());
+            Log.d(Constants.TAG_,"" + billingResult.getResponseCode());
         }
     }
 
@@ -241,12 +241,12 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
                     @Override
                     public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
                         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                            Log.d(Constants.tag,"Billing : Call API Fo Success "+purchase.getOriginalJson());
+                            Log.d(Constants.TAG_,"Billing : Call API Fo Success "+purchase.getOriginalJson());
                             callAPIUpdateWallet(selectedWalletModel.coins+" coins", selectedWalletModel.coins, selectedWalletModel.price,purchase.getPurchaseToken());
                         }
                         else
                         {
-                            Log.d(Constants.tag,"ResponseCode : "+billingResult.getResponseCode());
+                            Log.d(Constants.TAG_,"ResponseCode : "+billingResult.getResponseCode());
                         }
                     }
                 });
@@ -258,7 +258,7 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
     // when we click the continue btn this method will call
     public void PurchaseItem(int postion) {
         ProductDetails selectedProduct=null;
-        Log.d(Constants.tag,"inAppProductList Size: "+inAppProductList.size());
+        Log.d(Constants.TAG_,"inAppProductList Size: "+inAppProductList.size());
         for(ProductDetails item :inAppProductList)
         {
             if (item.getProductId().equals(""+datalist.get(postion).getId()))
@@ -287,7 +287,7 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
         billingClient.queryProductDetailsAsync(queryProductDetailsParams.build(), new ProductDetailsResponseListener() {
             @Override
             public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList) {
-                Log.d(Constants.tag,"queryProductDetailsAsync: "+billingResult.getResponseCode());
+                Log.d(Constants.TAG_,"queryProductDetailsAsync: "+billingResult.getResponseCode());
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     populateRegisterInAppProducts(productDetailsList);
                 }
@@ -296,11 +296,11 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
     }
 
     private void populateRegisterInAppProducts(List<ProductDetails> productDetailsList) {
-        Log.d(Constants.tag,"populateRegisterInAppProducts: "+productDetailsList);
+        Log.d(Constants.TAG_,"populateRegisterInAppProducts: "+productDetailsList);
         inAppProductList.clear();
         for(ProductDetails item:productDetailsList)
         {
-            Log.d(Constants.tag,"productDetails: "+item.getProductId());
+            Log.d(Constants.TAG_,"productDetails: "+item.getProductId());
             inAppProductList.add(item);
         }
     }
@@ -368,7 +368,7 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
             params.put("transaction_id",Tid);
             params.put("device","android");
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
       MyWallet.super.runOnUiThread(new Runnable() {
@@ -380,7 +380,7 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
                   public void onResponce(String resp) {
                 Functions.checkStatus(MyWallet.this,resp);
                       Functions.cancelLoader();
-                      Log.d(Constants.tag,"get coins before run \n"+params);
+                      Log.d(Constants.TAG_,"get coins before run \n"+params);
                       try {
                           JSONObject jsonObject=new JSONObject(resp);
 
@@ -395,7 +395,7 @@ public class MyWallet extends AppCompatLocaleActivity  implements PurchasesUpdat
                               callApiForUserDetail();
                           }
                       } catch (Exception e) {
-                          Log.d(Constants.tag,"Exception : "+e);
+                          Log.d(Constants.TAG_,"Exception : "+e);
                       }
 
 

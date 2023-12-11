@@ -244,7 +244,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             parameters.put("user_id",  Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""));
             parameters.put("starting_point", "0");
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showSuggestedUsers, parameters,Functions.getHeaders(getActivity()), new Callback() {
@@ -285,7 +285,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -723,8 +723,8 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
         RelativeLayout tabShareProfile=alertDialog.findViewById(R.id.tabShareProfile);
         tvBlockUser = alertDialog.findViewById(R.id.tvBlockUser);
 
-        Log.d(Constants.tag,"blockObj: "+blockByUserId);
-        Log.d(Constants.tag,"isUserAlreadyBlock: "+isUserAlreadyBlock);
+        Log.d(Constants.TAG_,"blockObj: "+blockByUserId);
+        Log.d(Constants.TAG_,"isUserAlreadyBlock: "+isUserAlreadyBlock);
 
         if (blockByUserId.equals(Functions.getSharedPreference(getActivity()).getString(Variables.U_ID,"")))
         {
@@ -815,7 +815,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
                     }
                     hitUserprofileDetail();
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });
@@ -923,7 +923,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: hitUserprofileDetail "+e);
+            Log.d(Constants.TAG_,"Exception: hitUserprofileDetail "+e);
         }
 
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showUserDetail, parameters,Functions.getHeaders(getActivity()), new Callback() {
@@ -980,7 +980,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -993,7 +993,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             speakInvitationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(Constants.tag,"roomUpdateListener : "+dataSnapshot);
+                    Log.d(Constants.TAG_,"roomUpdateListener : "+dataSnapshot);
                     if (dataSnapshot.exists())
                     {
                         InviteForSpeakModel invitation=dataSnapshot.getValue(InviteForSpeakModel.class);

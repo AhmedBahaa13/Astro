@@ -44,7 +44,7 @@ public class WebviewA extends AppCompatLocaleActivity implements View.OnClickLis
         }
 
 
-        Functions.printLog(Constants.tag,url);
+        Functions.printLog(Constants.TAG_,url);
 
 
         findViewById(R.id.goBack).setOnClickListener(this);

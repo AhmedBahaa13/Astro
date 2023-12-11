@@ -260,7 +260,7 @@ public class ReferenceCamera1 extends ReferenceCamera {
         try {
             camera = createCamera();
         } catch (Exception e) {
-            Log.d(Constants.tag,"initCameraPreview: "+e);
+            Log.d(Constants.TAG_,"initCameraPreview: "+e);
         }
     }
 

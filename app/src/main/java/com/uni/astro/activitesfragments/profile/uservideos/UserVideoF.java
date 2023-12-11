@@ -283,7 +283,7 @@ public class UserVideoF extends Fragment {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
     }
@@ -490,7 +490,7 @@ public class UserVideoF extends Fragment {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         } finally {
             loadMoreProgress.setVisibility(View.GONE);
         }

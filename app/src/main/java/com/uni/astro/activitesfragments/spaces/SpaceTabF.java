@@ -255,7 +255,7 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
 
         }
         catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
         finally {
             isRoomApiRunning=false;
@@ -396,8 +396,8 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
                     - (Functions.convertDpToPx(getActivity(),35)));
         }
 
-        Functions.printLog(Constants.tag,"anchorView.getWidth()"+anchorView.getWidth());
-        Functions.printLog(Constants.tag,"anchorView.getHeight()"+anchorView.getHeight());
+        Functions.printLog(Constants.TAG_,"anchorView.getWidth()"+anchorView.getWidth());
+        Functions.printLog(Constants.TAG_,"anchorView.getHeight()"+anchorView.getHeight());
 
     }
 

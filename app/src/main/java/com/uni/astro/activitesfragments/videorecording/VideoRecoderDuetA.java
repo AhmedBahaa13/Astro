@@ -280,7 +280,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             }
             catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
 
         }
@@ -363,13 +363,13 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             }
             catch (Exception e)
             {
-                Functions.printLog(Constants.tag,"Exception: "+e);
+                Functions.printLog(Constants.TAG_,"Exception: "+e);
             }
             try {
                 stopRecording();
             }catch (Exception e)
             {
-                Log.d(Constants.tag,"Stop cameraView: "+e);
+                Log.d(Constants.TAG_,"Stop cameraView: "+e);
             }
 
 
@@ -382,7 +382,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             tabRotateCam.setVisibility(View.VISIBLE);
 
 
-            Log.d(Constants.tag,"Camera Facing: "+mCamera.isCameraFacingFront());
+            Log.d(Constants.TAG_,"Camera Facing: "+mCamera.isCameraFacingFront());
             applySpeedFunctionality();
 
         }
@@ -405,7 +405,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
         int frameRate=Integer.valueOf(Functions.getTrimVideoFrameRate(new File(""+intputPath).getAbsolutePath()));
 
@@ -424,7 +424,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
                             Functions.cancelDeterminentLoader();
                             int index=(videopaths.size()-1);
                             videopaths.remove(index);
-                            Log.d(Constants.tag,"index:"+index+" path:"+intputPath);
+                            Log.d(Constants.TAG_,"index:"+index+" path:"+intputPath);
                             videopaths.add(index,intputPath);
                         }
                         else
@@ -489,8 +489,8 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
 
 
     public void checkDoneBtnEnable() {
-        Log.d(Constants.tag,"secPassed: "+secPassed);
-        Log.d(Constants.tag,"MIN_TIME_RECORDING: "+(Constants.MIN_TIME_RECORDING / 1000));
+        Log.d(Constants.TAG_,"secPassed: "+secPassed);
+        Log.d(Constants.TAG_,"MIN_TIME_RECORDING: "+(Constants.MIN_TIME_RECORDING / 1000));
         if (secPassed > (Constants.MIN_TIME_RECORDING / 1000)) {
             doneBtn.setImageDrawable(ContextCompat.getDrawable(VideoRecoderDuetA.this,R.drawable.ic_done_red));
             doneBtn.setEnabled(true);
@@ -527,7 +527,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
                                 video_list.add(videopaths.get(i));
                             }
                         } catch (Exception e) {
-                            Functions.printLog(Constants.tag, e.toString());
+                            Functions.printLog(Constants.TAG_, e.toString());
                         }
                     }
                 }
@@ -571,7 +571,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
                     });
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: combineVideo: "+e);
+                    Log.d(Constants.TAG_,"Exception: combineVideo: "+e);
                 }
             }
         }).start();
@@ -627,7 +627,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"removeLastSection: "+e);
+            Log.d(Constants.TAG_,"removeLastSection: "+e);
         }
     }
 
@@ -857,7 +857,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
         }
         catch (CameraAccessException e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag,e.toString());
+            Functions.printLog(Constants.TAG_,e.toString());
         }
 
 
@@ -1033,7 +1033,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             new FileDeleteAsyncTask(new File(filePath), new FileDeleteAsyncTask.OnAsyncFileDeleteListener() {
                 @Override
                 public void processFinish(Object result) {
-                    Functions.printLog(Constants.tag,"file delete success!");
+                    Functions.printLog(Constants.TAG_,"file delete success!");
 
                     setFilterUpdateAt(context, item.uuid, getLastUpdateAt(context));
                     requestSignedUrl(item, filePath, false);
@@ -1067,7 +1067,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
                 mCurrentStickeritem = null;
                 mHasTrigger = false;
                 if (e instanceof InvalidContentsException) {
-                    Functions.printLog(Constants.tag,"InvalidContentsException");
+                    Functions.printLog(Constants.TAG_,"InvalidContentsException");
                 }
             }
         });
@@ -1085,9 +1085,9 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             public void onError(Throwable e) {
                 if (e instanceof SignedUrlGenerationException) {
 
-                    Functions.printLog(Constants.tag,"SignedUrlGenerationException !! ");
+                    Functions.printLog(Constants.TAG_,"SignedUrlGenerationException !! ");
                 } else if (e instanceof NetworkException) {
-                    Functions.printLog(Constants.tag,"NetworkException !!");
+                    Functions.printLog(Constants.TAG_,"NetworkException !!");
                 }
 
                 progressBar.setVisibility(View.INVISIBLE);
@@ -1106,9 +1106,9 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
                     } else {
                         setItem(ARGContents.Type.FilterItem, targetPath, item);
                     }
-                    Functions.printLog(Constants.tag,"download success!");
+                    Functions.printLog(Constants.TAG_,"download success!");
                 } else {
-                    Functions.printLog(Constants.tag, "download failed!");
+                    Functions.printLog(Constants.TAG_, "download failed!");
                 }
             }
         }).execute();
@@ -1120,7 +1120,7 @@ public class VideoRecoderDuetA extends AppCompatLocaleActivity implements View.O
             new FileDeleteAsyncTask(new File(filePath), new FileDeleteAsyncTask.OnAsyncFileDeleteListener() {
                 @Override
                 public void processFinish(Object result) {
-                    Functions.printLog(Constants.tag,"file delete success!");
+                    Functions.printLog(Constants.TAG_,"file delete success!");
 
                     setStickerUpdateAt(context, item.uuid, getLastUpdateAt(context));
                     requestSignedUrl(item, filePath, true);

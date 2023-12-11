@@ -127,7 +127,7 @@ public class RoomStreamService extends Service {
 
     @Override
     public void onDestroy() {
-        Functions.printLog(Constants.tag,"RoomStreamService:onDestroy");
+        Functions.printLog(Constants.TAG_,"RoomStreamService:onDestroy");
         if (streamingInstance!=null)
         {
             streamingInstance.quitCall();

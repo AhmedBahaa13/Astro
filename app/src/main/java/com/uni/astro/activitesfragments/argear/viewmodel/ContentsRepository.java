@@ -40,11 +40,11 @@ class ContentsRepository {
 
             @Override
             public void onResponse(@Nullable Call<ContentsResponse> call, @NonNull Response<ContentsResponse> response) {
-                Log.d(Constants.tag,"URL: "+call.request().url());
+                Log.d(Constants.TAG_,"URL: "+call.request().url());
                 if (response.isSuccessful()) {
                     Gson gson = new Gson();
                     String json = gson.toJson(response.body());
-                    Log.d(Constants.tag,json);
+                    Log.d(Constants.TAG_,json);
 
                     contents.setValue(response.body());
 
@@ -54,8 +54,8 @@ class ContentsRepository {
             @Override
             public void onFailure(@Nullable Call<ContentsResponse> call, @NonNull Throwable t) {
                 contents.setValue(null);
-                Log.d(Constants.tag,"onFailure"+call.request().toString());
-                Log.d(Constants.tag,"onFailure"+t);
+                Log.d(Constants.TAG_,"onFailure"+call.request().toString());
+                Log.d(Constants.TAG_,"onFailure"+t);
             }
         });
         return contents;

@@ -143,7 +143,7 @@ public class NotificationPriorityF extends BottomSheetDialogFragment implements 
 
                     @Override
                     public void onSuccess(String responce) {
-                        Log.d(Constants.tag,"Response : "+responce);
+                        Log.d(Constants.TAG_,"Response : "+responce);
 
 
                         try {
@@ -171,7 +171,7 @@ public class NotificationPriorityF extends BottomSheetDialogFragment implements 
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception : "+e);
+                            Log.d(Constants.TAG_,"Exception : "+e);
                         }
 
 
@@ -223,7 +223,7 @@ public class NotificationPriorityF extends BottomSheetDialogFragment implements 
                   }
                   catch (Exception e)
                   {
-                      Log.d(Constants.tag,"Exception : "+e);
+                      Log.d(Constants.TAG_,"Exception : "+e);
                   }
               }
             }

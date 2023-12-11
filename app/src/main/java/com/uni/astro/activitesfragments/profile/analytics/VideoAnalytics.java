@@ -88,7 +88,7 @@ public class VideoAnalytics extends AppCompatLocaleActivity {
 
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 

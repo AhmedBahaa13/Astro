@@ -148,7 +148,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 sendIntent.setPackage("com.whatsapp");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -162,7 +162,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 sendIntent.setPackage("com.facebook.katana");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -176,7 +176,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 sendIntent.setPackage("com.facebook.orca");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -188,7 +188,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 smsIntent.putExtra("sms_body",""+profielLink);
                 startActivity(smsIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -201,7 +201,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
 
                 Toast.makeText(InviteFriendsFromContactsA.this, getString(R.string.link_copy_in_clipboard), Toast.LENGTH_SHORT).show();
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -215,7 +215,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 sendIntent.setPackage("com.google.android.gm");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -228,7 +228,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 sendIntent.putExtra(Intent.EXTRA_TEXT, profielLink);
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
 
@@ -323,7 +323,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                                             }
                                             catch (Exception e)
                                             {
-                                                Log.d(Constants.tag,"Exception : "+e);
+                                                Log.d(Constants.TAG_,"Exception : "+e);
                                             }
                                         }
                                     });
@@ -336,12 +336,12 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                     }
                     @Override
                     public void onCancel() {
-                        Log.d(Constants.tag, "onCancel");
+                        Log.d(Constants.TAG_, "onCancel");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Log.d(Constants.tag, "onError : "+exception);
+                        Log.d(Constants.TAG_, "onError : "+exception);
                     }
                 });
 
@@ -401,7 +401,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -478,7 +478,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception : "+e);
+                            Log.d(Constants.TAG_,"Exception : "+e);
                         }
                     }
 
@@ -529,7 +529,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                     smsIntent.putExtra("sms_body",""+sendingMessage);
                     startActivity(smsIntent);
                 } catch(Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -609,7 +609,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                                     }
                                     catch (Exception e)
                                     {
-                                        Log.d(Constants.tag,"Exception : "+e);
+                                        Log.d(Constants.TAG_,"Exception : "+e);
                                     }
 
 
@@ -621,7 +621,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                     }
 
                 }catch (Exception e){
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
                 finally {
                     return null;
@@ -658,7 +658,7 @@ public class InviteFriendsFromContactsA extends AppCompatLocaleActivity implemen
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         }.execute();

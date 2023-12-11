@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import cat.ereza.customactivityoncrash.config.CaocConfig
-import com.banuba.sdk.token.storage.license.BanubaVideoEditor
 import com.danikula.videocache.HttpProxyCacheServer
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.google.android.exoplayer2.database.DatabaseProvider
@@ -34,7 +33,6 @@ import com.uni.astro.models.UserOnlineModel
 import com.smartnsoft.backgrounddetector.BackgroundDetectorCallback
 import com.smartnsoft.backgrounddetector.BackgroundDetectorHandler
 import com.volley.plus.VPackages.VolleyRequest
-import com.wmocca.com.activitesfragments.videorecording.banuba.VideoEditorModule
 import io.agora.rtc.RtcEngine
 import io.paperdb.Paper
 import java.io.File
@@ -43,7 +41,6 @@ import com.uni.astro.R
 
 class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandler.OnVisibilityChangedListener {
     private var proxy: HttpProxyCacheServer? = null
-    private var videoEditor: BanubaVideoEditor? = null
     private var backgroundDetectorHandler: BackgroundDetectorHandler? = null
 
 
@@ -92,13 +89,6 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
         initCrashActivity()
         initConfig()
         Functions.createNoMediaFile(applicationContext)
-
-        videoEditor = BanubaVideoEditor.initialize(Constants.banubaToken)
-        if (videoEditor == null) {
-            Log.e(TAG, ERR_SDK_NOT_INITIALIZED)
-        } else {
-            VideoEditorModule().initialize(this@Astro)
-        }
     }
 
     private fun initAdsView() {
@@ -214,7 +204,7 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
             )
                 .removeValue().addOnCompleteListener {
                     Log.d(
-                        Constants.tag, "removeOnlineStatus: " + Functions.getSharedPreference(
+                        Constants.TAG_, "removeOnlineStatus: " + Functions.getSharedPreference(
                             applicationContext
                         ).getString(Variables.U_ID, "0")
                     )
@@ -259,7 +249,7 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
             ).setValue(onlineModel)
                 .addOnCompleteListener {
                     Log.d(
-                        Constants.tag,
+                        Constants.TAG_,
                         "addOnlineStatus: " + onlineModel.getUserId()
                     )
                 }
@@ -274,7 +264,7 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
                 }
                 // Get new FCM registration token
                 val token = task.result
-                Log.d(Constants.tag, "token: $token")
+                Log.d(Constants.TAG_, "token: $token")
                 val editor = Functions.getSharedPreference(
                     applicationContext
                 ).edit()
@@ -426,13 +416,13 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
     override fun onActivityDestroyed(activity: Activity) {}
     override fun onAppGoesToBackground(context: Context?) {
-        Log.d(Constants.tag, "onAppGoesToBackground")
+        Log.d(Constants.TAG_, "onAppGoesToBackground")
         removeOnlineListener()
         removeStreamingListener()
     }
 
     override fun onAppGoesToForeground(context: Context?) {
-        Log.d(Constants.tag, "onAppGoesToForeground")
+        Log.d(Constants.TAG_, "onAppGoesToForeground")
         addOnlineListener()
         addStreamingListener()
     }
@@ -459,10 +449,5 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
                 app.newProxy()
             }
         }
-
-
-        const val TAG = "BanubaVideoEditor"
-        // Please set your license token for Banuba Video Editor SDK
-        const val ERR_SDK_NOT_INITIALIZED = "Banuba Video Editor SDK is not initialized: license token is unknown or incorrect.\nPlease check your license token or contact Banuba"
     }
 }

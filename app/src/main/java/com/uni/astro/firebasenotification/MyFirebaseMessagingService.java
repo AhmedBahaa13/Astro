@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 	private void NotificationHandlerBroadcast(Map<String, String> data) {
 		try {
 
-			Log.d(Constants.tag,"Notification check : "+data);
+			Log.d(Constants.TAG_,"Notification check : "+data);
 
 			if (data.containsKey("type"))
 			{
@@ -74,7 +74,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		}
 
 		catch (Exception e) {
-			Log.d(Constants.tag,"Error Notification: "+e);
+			Log.d(Constants.TAG_,"Error Notification: "+e);
 		}
 
 	}

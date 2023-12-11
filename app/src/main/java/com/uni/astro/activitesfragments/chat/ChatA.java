@@ -480,7 +480,7 @@ public class ChatA extends AppCompatLocaleActivity implements View.OnClickListen
        }
        catch (Exception e)
        {
-           Log.d(Constants.tag,"Exception : "+e);
+           Log.d(Constants.TAG_,"Exception : "+e);
        }
     }
 

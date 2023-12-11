@@ -59,7 +59,7 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 import com.uni.astro.Constants;
 import com.uni.astro.R;
-import com.uni.astro.activitesfragments.EditTextSheetF;
+import com.uni.astro.activitesfragments.comments.EditTextSheetF;
 import com.uni.astro.activitesfragments.livestreaming.adapter.LiveCommentsAdapter;
 import com.uni.astro.activitesfragments.livestreaming.fragments.ViewersListF;
 import com.uni.astro.activitesfragments.livestreaming.model.CameraRequestModel;
@@ -154,7 +154,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
 
                 viewflliper.setInAnimation(inPrevAnim);
                 viewflliper.setOutAnimation(outPrevAnim);
-                Log.d(Constants.tag,"start");
+                Log.d(Constants.TAG_,"start");
 
                 if (viewTwo==viewflliper.getCurrentView())
                 {
@@ -171,7 +171,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
             public void onSwipeLeft() {
                 viewflliper.setInAnimation(inAnim);
                 viewflliper.setOutAnimation(outAnim);
-                Log.d(Constants.tag,"end");
+                Log.d(Constants.TAG_,"end");
 
                 viewflliper.showNext();
 
@@ -442,7 +442,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
             tabGift.setVisibility(View.VISIBLE);
         }
 
-        Functions.printLog(Constants.tag,"item.isVideoEnable():"+item.isVideoEnable() + " previousIsVideoEnable:"+previousIsVideoEnable);
+        Functions.printLog(Constants.TAG_,"item.isVideoEnable():"+item.isVideoEnable() + " previousIsVideoEnable:"+previousIsVideoEnable);
         if(mVideoGridContainer!=null) {
 
             if (item.isVideoEnable() && !previousIsVideoEnable) {
@@ -795,7 +795,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
 
@@ -838,7 +838,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });
@@ -947,7 +947,7 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
                     String counter=bundle.getString("count");
                     addGiftComment("gift",counter,model);
 
-                    Log.d(Constants.tag,"Test : "+item.getUserCoins());
+                    Log.d(Constants.TAG_,"Test : "+item.getUserCoins());
                     if(item!=null)
                     {
                         double userCoins=Double.valueOf(item.getUserCoins());
@@ -1439,15 +1439,15 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
                                 liveUserCount.setText(Functions.getSuffix(""+jointUserList.size()));
 
 
-                                Functions.printLog(Constants.tag,snapshot.toString());
+                                Functions.printLog(Constants.TAG_,snapshot.toString());
                                 item = snapshot.getValue(LiveUserModel.class);
 
 
-                                Log.d(Constants.tag,"Stream: userChange");
+                                Log.d(Constants.TAG_,"Stream: userChange");
 
 
                                 item.setVideoEnable((boolean) snapshot.child("isVideoEnable").getValue());
-                                Functions.printLog(Constants.tag,"item.setVideoEnable"+item.isVideoEnable());
+                                Functions.printLog(Constants.TAG_,"item.setVideoEnable"+item.isVideoEnable());
 
                                 setUpScreenData();
 
@@ -1517,14 +1517,14 @@ public class SingleCastJoinA extends RtcBaseActivity implements View.OnClickList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Functions.printLog(Constants.tag, "onFirstRemoteVideoDecoded");
+                Functions.printLog(Constants.TAG_, "onFirstRemoteVideoDecoded");
                 renderRemoteUser(uid);
             }
         });
     }
 
     private void renderRemoteUser(int uid) {
-        Functions.printLog(Constants.tag, "renderRemoteUser");
+        Functions.printLog(Constants.TAG_, "renderRemoteUser");
         SurfaceView surface = prepareRtcVideo(uid);
         mVideoGridContainer.addUserVideoSurface(uid, surface);
     }

@@ -273,7 +273,7 @@ public class RepostVideoF extends Fragment {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         } finally {
             loadMoreProgress.setVisibility(View.GONE);
         }

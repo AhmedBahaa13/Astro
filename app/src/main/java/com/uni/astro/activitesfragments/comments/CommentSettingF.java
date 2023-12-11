@@ -1,4 +1,4 @@
-package com.uni.astro.activitesfragments;
+package com.uni.astro.activitesfragments.comments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -80,7 +80,7 @@ public class DataParsing {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         return model;
@@ -177,7 +177,7 @@ public class DataParsing {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : getTopicDataModel"+e);
+            Log.d(Constants.TAG_,"Exception : getTopicDataModel"+e);
         }
 
         return model;

@@ -458,7 +458,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 sendIntent.setPackage("com.whatsapp");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -472,7 +472,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 sendIntent.setPackage("com.facebook.katana");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -486,7 +486,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 sendIntent.setPackage("com.facebook.orca");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -498,7 +498,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 smsIntent.putExtra("sms_body",""+profielLink);
                 startActivity(smsIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -511,7 +511,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
 
                 Toast.makeText(context, context.getString(R.string.link_copy_in_clipboard), Toast.LENGTH_SHORT).show();
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -525,7 +525,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 sendIntent.setPackage("com.google.android.gm");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -538,7 +538,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                 sendIntent.putExtra(Intent.EXTRA_TEXT, profielLink);
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
 
@@ -653,7 +653,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
                     }
                 }catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -694,7 +694,7 @@ public class ShareUserProfileF extends BottomSheetDialogFragment implements View
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Functions.printLog(Constants.tag,"UserNotExit "+error);
+                Functions.printLog(Constants.TAG_,"UserNotExit "+error);
             }
         });
 

@@ -116,7 +116,7 @@ public class QrCodeProfileA extends AppCompatLocaleActivity implements View.OnCl
 
             img_qr.setController(Functions.frescoImageLoad(Uri.fromFile(uriPath),false));
         } catch (Exception e) {
-            Functions.printLog(Constants.tag,"Exception : "+e);
+            Functions.printLog(Constants.TAG_,"Exception : "+e);
         }
 
     }
@@ -232,7 +232,7 @@ public class QrCodeProfileA extends AppCompatLocaleActivity implements View.OnCl
         }
         catch (Exception e)
         {
-            Functions.printLog(Constants.tag,"Exception : "+e);
+            Functions.printLog(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -266,7 +266,7 @@ public class QrCodeProfileA extends AppCompatLocaleActivity implements View.OnCl
             outputStream.close();
             uri = FileProvider.getUriForFile(this, getPackageName()+".fileprovider", file);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
         return uri;
     }

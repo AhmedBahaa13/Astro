@@ -229,7 +229,7 @@ public class UpdateEmailPhoneA extends AppCompatLocaleActivity implements View.O
             case R.id.btnSendCodePhone:
                 if (checkPhoneValidation()) {
 
-                    Log.d(Constants.tag,"Phone : "+phoneNo);
+                    Log.d(Constants.TAG_,"Phone : "+phoneNo);
                     callApiOtpForPhone();
                 }
                 break;
@@ -237,7 +237,7 @@ public class UpdateEmailPhoneA extends AppCompatLocaleActivity implements View.O
             {
                 if (checkEmailValidation())
                 {
-                    Log.d(Constants.tag,"Email : "+ edtEmail.getText().toString());
+                    Log.d(Constants.TAG_,"Email : "+ edtEmail.getText().toString());
                     callApiOtpForEmail();
                 }
             }

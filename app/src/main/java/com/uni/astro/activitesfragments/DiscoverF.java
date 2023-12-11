@@ -306,7 +306,7 @@ public class DiscoverF extends Fragment implements View.OnClickListener {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showDiscoverySections, parameters,Functions.getHeaders(getActivity()), new Callback() {
             @Override
@@ -443,7 +443,7 @@ public class DiscoverF extends Fragment implements View.OnClickListener {
                             }
                             catch (Exception e)
                             {
-                                Functions.printLog(Constants.tag,"Exception: "+e);
+                                Functions.printLog(Constants.TAG_,"Exception: "+e);
                             }
                         }
                     }

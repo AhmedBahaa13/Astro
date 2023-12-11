@@ -218,7 +218,7 @@ public class Cookie extends LinearLayout implements View.OnTouchListener {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(Constants.tag,"triger :");
+                    Log.d(Constants.TAG_,"triger :");
                     timeOutDismiss = true;
                     dismiss();
                 }

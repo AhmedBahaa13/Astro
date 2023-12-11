@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -25,9 +24,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.banuba.sdk.cameraui.data.PipConfig
-import com.banuba.sdk.export.data.ExportResult
-import com.banuba.sdk.ve.flow.VideoCreationActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -67,9 +63,7 @@ import com.uni.astro.models.StreamJoinModel
 import com.uni.astro.models.UserModel
 import com.uni.astro.simpleclasses.*
 import com.volley.plus.VPackages.VolleyRequest
-import com.wmocca.com.activitesfragments.videorecording.banuba.CustomExportResultVideoContract
 import org.json.JSONObject
-import java.io.File
 import com.uni.astro.R
 
 
@@ -86,8 +80,8 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         super.onCreate(savedInstanceState)
         try {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) { }
+
         Functions.setLocale(
             Functions.getSharedPreference(this@MainMenuActivity)
                 .getString(Variables.APP_LANGUAGE_CODE, Variables.DEFAULT_LANGUAGE_CODE),
@@ -95,10 +89,12 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             javaClass,
             false
         )
+
         binding = DataBindingUtil.setContentView(
             this@MainMenuActivity,
             R.layout.activity_main_menu
         )
+
         context = this@MainMenuActivity
         mainMenuActivity = this
         rootRef = FirebaseDatabase.getInstance().reference
@@ -116,9 +112,11 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             actionIntent.putExtra("type", "" + intent.getStringExtra("type"))
             sendBroadcast(actionIntent)
         }
+
         if (Functions.getSharedPreference(this).getBoolean(Variables.IS_LOGIN, false)) {
             publicIP
         }
+
         if (!Functions.getSharedPreference(this)
                 .getBoolean(Variables.IsExtended, false)
         ) checkLicence()
@@ -392,6 +390,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 )
             }
         }
+
         tabStrip.getChildAt(3).isClickable = false
         view4.setOnClickListener { v: View? ->
             if (Functions.checkLoginUser(this@MainMenuActivity)) {
@@ -443,45 +442,12 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             val giftFragment = CreateContentF(object :FragmentCallBack{
                 override fun onResponce(bundle: Bundle?) {
                     if(bundle!=null){
-                        openVideoEditor()
                     }
                 }
             })
             giftFragment.show(supportFragmentManager, "")
         }
     }
-
-    private fun openVideoEditor(pipVideo: Uri = Uri.EMPTY) {
-
-        val videoCreationIntent = VideoCreationActivity.startFromCamera(
-            context = this,
-            // set PiP video configuration
-            pictureInPictureConfig = PipConfig(
-                video = pipVideo,
-                openPipSettings = false
-            ),
-            // setup what kind of action you want to do with VideoCreationActivity
-            // setup data that will be acceptable during export flow
-            additionalExportData = null,
-            // set TrackData object if you open VideoCreationActivity with preselected music track
-            audioTrackData = null
-        )
-        videoEditorExportResult.launch(videoCreationIntent)
-    }
-
-
-    private val videoEditorExportResult =
-        registerForActivityResult(CustomExportResultVideoContract()) { exportResult ->
-            if (exportResult is ExportResult.Success) {
-                exportResult.videoList.firstOrNull()?.let {
-                    Functions.copyFile(
-                        File(it.sourceUri.toString()),
-                        File(Functions.getAppFolder(this@MainMenuActivity) + Variables.output_filter_file)
-                    )
-                    gotopostScreen()
-                }
-            }
-        }
 
     fun gotopostScreen() {
         val intent = Intent(this@MainMenuActivity, PostVideoA::class.java)
@@ -655,7 +621,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     .putString(Variables.DEVICE_LNG, "" + longitude).commit()
                 locationTracker.stopUsingGPS()
             } else {
-                Log.d(Constants.tag, "You Have no services")
+                Log.d(Constants.TAG_, "You Have no services")
                 // Handle the case where the necessary services are not available
             }
         }
@@ -743,7 +709,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 userId = parts[1]
                 OpenProfileScreen(userId)
             } else if (linkUri.contains(getString(R.string.share_referal_code))) {
-                Log.d(Constants.tag, "Link : $linkUri")
+                Log.d(Constants.TAG_, "Link : $linkUri")
                 val parts =
                     linkUri.split("code=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 userId = parts[1]
@@ -756,7 +722,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 openWatchVideo(videoId)
             }
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception Link : $e")
+            Log.d(Constants.TAG_, "Exception Link : $e")
         }
     }
 
@@ -804,7 +770,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
     private fun goLive(streamId: String) {
-        Log.d(Constants.tag, "StreamingID: $streamId")
+        Log.d(Constants.TAG_, "StreamingID: $streamId")
         rootRef!!.child("LiveStreamingUsers")
             .child(streamId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -863,7 +829,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     }
 
     private fun joinStream(selectLiveModel: LiveUserModel?) {
-        Log.d(Constants.tag, "getOnlineType: " + selectLiveModel!!.getOnlineType())
+        Log.d(Constants.TAG_, "getOnlineType: " + selectLiveModel!!.getOnlineType())
         if (selectLiveModel.getOnlineType() == "single" || selectLiveModel.getOnlineType() == "oneTwoOne") {
             Functions.showLoader(this@MainMenuActivity, false, false)
             rootRef!!.child("LiveStreamingUsers").child(selectLiveModel.getStreamingId())
@@ -916,7 +882,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
 
                     override fun onCancelled(error: DatabaseError) {
                         runOnUiThread { Functions.cancelLoader() }
-                        Log.d(Constants.tag, "DatabaseError: $error")
+                        Log.d(Constants.TAG_, "DatabaseError: $error")
                     }
                 })
         } else if (selectLiveModel.getOnlineType() == "multicast") {
@@ -998,7 +964,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     startActivity(Intent(context, MyWallet::class.java))
                 }
             } catch (e: Exception) {
-                Log.d(Constants.tag, "Exception : $e")
+                Log.d(Constants.TAG_, "Exception : $e")
             }
         }
     }
@@ -1113,7 +1079,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         Functions.addDeviceData(this@MainMenuActivity)
                     }
                 } catch (e: Exception) {
-                    Log.d(Constants.tag, "Exception : $e")
+                    Log.d(Constants.TAG_, "Exception : $e")
                 }
             }
         }
@@ -1207,7 +1173,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             override fun JoinedRoom(bundle: Bundle) {
                 if (bundle != null) {
                     val roomId = bundle.getString("roomId")
-                    Functions.printLog(Constants.tag, "JoinedRoom roomId$roomId")
+                    Functions.printLog(Constants.TAG_, "JoinedRoom roomId$roomId")
                     if (!TextUtils.isEmpty(bundle.getString("roomId"))) {
                         roomManager!!.showRoomDetailAfterJoin(roomId)
                     }
@@ -1364,7 +1330,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         })
         roomManager!!.addResponseListener(object : RoomApisListener {
             override fun roomInvitationsSended(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "roomInvitationsSended")
+                Functions.printLog(Constants.TAG_, "roomInvitationsSended")
                 if (bundle.getString("action") == "roomInvitationSended") {
                     Functions.showSuccess(
                         this@MainMenuActivity,
@@ -1377,7 +1343,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             override fun goAheadForRoomGenrate(bundle: Bundle) {
                 if (bundle.getString("action") == "goAheadForRoomGenrate") {
                     if (roomManager!!.roomName != null && roomManager!!.privacyType != null) {
-                        Log.d(Constants.tag, "roomName: " + roomManager!!.roomName)
+                        Log.d(Constants.TAG_, "roomName: " + roomManager!!.roomName)
                         roomManager!!.createRoomBYUserId()
                     } else {
                         Functions.showError(
@@ -1389,14 +1355,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
             override fun onRoomJoined(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "onRoomJoined")
+                Functions.printLog(Constants.TAG_, "onRoomJoined")
                 val myUserModel = bundle.getSerializable("model") as HomeUserModel?
                 val roomID = bundle.getString("roomId")
                 roomFirebaseManager!!.joinRoom(roomID, myUserModel)
             }
 
             override fun onRoomReJoin(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "onRoomReJoin")
+                Functions.printLog(Constants.TAG_, "onRoomReJoin")
                 val myUserModel = bundle.getSerializable("model") as HomeUserModel?
                 val roomID = bundle.getString("roomId")
                 roomFirebaseManager!!.joinRoom(roomID, myUserModel)
@@ -1413,7 +1379,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
             override fun doRoomLeave(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "doRoomLeave")
+                Functions.printLog(Constants.TAG_, "doRoomLeave")
                 if (bundle.getString("action") == "leaveRoom") {
                     val roomId = bundle.getString("roomId")
                     roomManager!!.leaveRoom(roomId)
@@ -1421,7 +1387,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
             override fun doRoomDelete(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "doRoomDelete")
+                Functions.printLog(Constants.TAG_, "doRoomDelete")
                 if (bundle.getString("action") == "deleteRoom") {
                     val roomId = bundle.getString("roomId")
                     roomManager!!.deleteRoom(roomId)
@@ -1437,10 +1403,10 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
             override fun goAheadForRoomJoin(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "goAheadForRoomJoin")
+                Functions.printLog(Constants.TAG_, "goAheadForRoomJoin")
                 if (bundle.getString("action") == "goAheadForJoinRoom") {
                     val roomId = bundle.getString("roomId")
-                    Log.d(Constants.tag, "roomId: $roomId")
+                    Log.d(Constants.TAG_, "roomId: $roomId")
                     roomManager!!.joinRoom(
                         Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
                         roomId,
@@ -1450,7 +1416,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
             override fun roomCreated(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "roomCreated")
+                Functions.printLog(Constants.TAG_, "roomCreated")
                 if (bundle.getString("action") == "roomCreated") {
                     val model = bundle.getSerializable("model") as MainStreamingModel?
                     if (roomManager!!.selectedInviteFriends != null && roomManager!!.selectedInviteFriends.size > 0) {
@@ -1468,14 +1434,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
 
             @SuppressLint("SuspiciousIndentation")
             override fun showRoomDetailAfterJoin(bundle: Bundle) {
-                Functions.printLog(Constants.tag, "showRoomDetailAfterJoin()")
+                Functions.printLog(Constants.TAG_, "showRoomDetailAfterJoin()")
                 if (bundle != null) {
                     model = bundle["model"] as MainStreamingModel?
                     roomFirebaseManager!!.setMainStreamingModel(model)
                     roomFirebaseManager!!.addAllRoomListerner()
                     startRoomService()
                     binding!!.sheetBottomBar.visibility = View.VISIBLE
-                    Functions.printLog(Constants.tag, "showRoomDetailAfterJoin()")
+                    Functions.printLog(Constants.TAG_, "showRoomDetailAfterJoin()")
                     if (tabLayout!!.selectedTabPosition == 3) openRoomScreen()
                 }
             }

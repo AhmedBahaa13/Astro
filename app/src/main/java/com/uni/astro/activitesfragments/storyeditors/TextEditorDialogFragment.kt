@@ -99,7 +99,7 @@ class TextEditorDialogFragment() : DialogFragment(),View.OnClickListener {
         addTextColorPickerRecyclerView.adapter = colorPickerAdapter
 
 
-        Log.d(Constants.tag,"mColorCode: $model.colorCode")
+        Log.d(Constants.TAG_,"mColorCode: $model.colorCode")
         //Make a callback on activity when user is done with text editing
         mAddTextDoneTextView.setOnClickListener { onClickListenerView ->
             model.text = mAddTextEditText.text.toString()

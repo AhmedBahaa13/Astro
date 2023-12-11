@@ -84,7 +84,7 @@ public class BeautyFragment extends BottomSheetDialogFragment
 
         if (getActivity()!=null)
         {
-            Log.d(Constants.tag,"onActivityCreated: 123: ");
+            Log.d(Constants.TAG_,"onActivityCreated: 123: ");
             if (getActivity() instanceof VideoRecoderA)
             {
                 mBeautyItemData = ((VideoRecoderA)getActivity()).getBeautyItemData();

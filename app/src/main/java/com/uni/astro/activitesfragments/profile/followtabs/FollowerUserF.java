@@ -218,7 +218,7 @@ public class FollowerUserF extends Fragment {
             e.printStackTrace();
         }
 
-        Log.d(Constants.tag,"check working");
+        Log.d(Constants.TAG_,"check working");
 
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.deleteFollower, parameters,Functions.getHeaders(getActivity()), new Callback() {
             @Override
@@ -233,7 +233,7 @@ public class FollowerUserF extends Fragment {
                     }
                 }catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -298,7 +298,7 @@ public class FollowerUserF extends Fragment {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception : "+e);
+                            Log.d(Constants.TAG_,"Exception : "+e);
                         }
                     }
 

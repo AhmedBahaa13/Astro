@@ -69,13 +69,13 @@ public class MultiViewLiveA extends RtcBaseMultiviewA implements View.OnClickLis
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                    Functions.printLog(com.uni.astro.Constants.tag,"snap:"+snapshot.toString());
+                    Functions.printLog(com.uni.astro.Constants.TAG_,"snap:"+snapshot.toString());
 
                     if(snapshot.exists()) {
                         LiveUserModel model = snapshot.getValue(LiveUserModel.class);
                         if(model.streamingId!=null) {
 
-                            Functions.printLog(com.uni.astro.Constants.tag, "model.streamingId:" + model.streamingId);
+                            Functions.printLog(com.uni.astro.Constants.TAG_, "model.streamingId:" + model.streamingId);
 
                             boolean isAlreadyexist=false;
                             for (int i = 0; i < dataList.size(); i++) {
@@ -87,7 +87,7 @@ public class MultiViewLiveA extends RtcBaseMultiviewA implements View.OnClickLis
                             }
 
                             if ((!isAlreadyexist && model.getOnlineType() != null) && model.getOnlineType().equals("multicast")) {
-                                Functions.printLog(com.uni.astro.Constants.tag, "added streamingId:" + model.streamingId);
+                                Functions.printLog(com.uni.astro.Constants.TAG_, "added streamingId:" + model.streamingId);
 
                                 dataList.add(model);
 
@@ -260,14 +260,14 @@ public class MultiViewLiveA extends RtcBaseMultiviewA implements View.OnClickLis
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Functions.printLog(com.uni.astro.Constants.tag, "onFirstRemoteVideoDecoded");
+                Functions.printLog(com.uni.astro.Constants.TAG_, "onFirstRemoteVideoDecoded");
                 renderRemoteUser(uid);
             }
         });
     }
 
     private void renderRemoteUser(int uid) {
-        Functions.printLog(com.uni.astro.Constants.tag, "renderRemoteUser "+uid);
+        Functions.printLog(com.uni.astro.Constants.TAG_, "renderRemoteUser "+uid);
         SurfaceView surface = prepareRtcVideo(uid);
         mVideoGridContainer.addUserVideoSurface(uid, surface);
     }

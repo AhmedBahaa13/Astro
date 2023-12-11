@@ -60,9 +60,9 @@ public class RecordingTimeRangF extends BottomSheetDialogFragment implements Vie
             @Override
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
 
-                Functions.printLog(Constants.tag, "" + leftPinIndex);
-                Functions.printLog(Constants.tag, "" + rightPinIndex);
-                Functions.printLog(Constants.tag, "" + selectedValue);
+                Functions.printLog(Constants.TAG_, "" + leftPinIndex);
+                Functions.printLog(Constants.TAG_, "" + rightPinIndex);
+                Functions.printLog(Constants.TAG_, "" + selectedValue);
 
 
                 if (leftPinIndex > 0) {

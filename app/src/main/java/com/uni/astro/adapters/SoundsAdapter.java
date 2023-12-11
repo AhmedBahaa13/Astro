@@ -176,7 +176,7 @@ class SoundItemsAdapter extends RecyclerView.Adapter<SoundItemsAdapter.CustomVie
 
 
         } catch (Exception e) {
-            Functions.printLog(Constants.tag,"Exception : "+e);
+            Functions.printLog(Constants.TAG_,"Exception : "+e);
         }
 
     }

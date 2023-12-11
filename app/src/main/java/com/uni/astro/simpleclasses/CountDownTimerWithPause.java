@@ -82,7 +82,7 @@ public abstract class CountDownTimerWithPause {
     public void pause() {
         if (isRunning()) {
             mPauseTimeRemaining = timeLeft();
-            Functions.printLog(Constants.tag, "mPauseTimeRemaining " + mPauseTimeRemaining / 1000);
+            Functions.printLog(Constants.TAG_, "mPauseTimeRemaining " + mPauseTimeRemaining / 1000);
             cancel();
         }
     }
@@ -97,7 +97,7 @@ public abstract class CountDownTimerWithPause {
             mHandler.sendMessage(mHandler.obtainMessage(MSG));
             mPauseTimeRemaining = 0;
 
-            Functions.printLog(Constants.tag, "mStopTimeInFuture " + mStopTimeInFuture / 1000);
+            Functions.printLog(Constants.TAG_, "mStopTimeInFuture " + mStopTimeInFuture / 1000);
         }
     }
 

@@ -205,7 +205,7 @@ public class ViewProfileHistoryA extends AppCompatLocaleActivity {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception : "+e);
+                            Log.d(Constants.TAG_,"Exception : "+e);
                         }
                     }
 
@@ -357,7 +357,7 @@ public class ViewProfileHistoryA extends AppCompatLocaleActivity {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         } finally {
             binding.loadMoreProgress.setVisibility(View.GONE);
         }
@@ -400,7 +400,7 @@ public class ViewProfileHistoryA extends AppCompatLocaleActivity {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });

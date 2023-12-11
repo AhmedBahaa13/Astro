@@ -94,7 +94,7 @@ public class MyVideosAdapter extends RecyclerView.Adapter<MyVideosAdapter.Custom
                 }
             }
         } catch (Exception e) {
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         }
 
         if (whereFrom.equals("myProfile"))

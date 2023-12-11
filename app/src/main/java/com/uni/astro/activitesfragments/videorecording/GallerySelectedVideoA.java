@@ -223,12 +223,12 @@ public class GallerySelectedVideoA extends AppCompatLocaleActivity implements Vi
 
         try {
             File videoPath=new File(path);
-            Log.d(Constants.tag,"Preview Path : "+videoPath.getAbsolutePath());
+            Log.d(Constants.TAG_,"Preview Path : "+videoPath.getAbsolutePath());
             Functions.copyFile(videoPath,
                     new File(Functions.getAppFolder(this)+Variables.outputfile2));
         }
         catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         if (videoType.equals("Video"))

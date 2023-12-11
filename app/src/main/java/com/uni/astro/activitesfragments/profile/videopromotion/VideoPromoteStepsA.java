@@ -68,7 +68,7 @@ public class VideoPromoteStepsA extends AppCompatLocaleActivity {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
 
@@ -120,7 +120,7 @@ public class VideoPromoteStepsA extends AppCompatLocaleActivity {
             try {
                 adapter.removeFrag(Counts);
                 adapter.notifyItemRemoved(Counts);
-            }catch (Exception e){Log.d(Constants.tag,"Exception Index: "+e);}
+            }catch (Exception e){Log.d(Constants.TAG_,"Exception Index: "+e);}
             Counts=Counts-1;
             viewpager.setCurrentItem(Counts,true);
             progressBar.setProgress(Counts);

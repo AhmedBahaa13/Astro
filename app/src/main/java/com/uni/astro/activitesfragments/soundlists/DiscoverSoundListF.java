@@ -291,7 +291,7 @@ public class DiscoverSoundListF extends Fragment implements Player.Listener {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         } finally {
             if (temp_list.isEmpty())
             {
@@ -439,7 +439,7 @@ public class DiscoverSoundListF extends Fragment implements Player.Listener {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         } finally {
             loadMoreProgress.setVisibility(View.GONE);
         }
@@ -522,7 +522,7 @@ public class DiscoverSoundListF extends Fragment implements Player.Listener {
             }
             catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception audio focus : "+e);
+                Log.d(Constants.TAG_,"Exception audio focus : "+e);
             }
         }
 

@@ -923,8 +923,7 @@
     <string name="streaming_welcome_txt">Welcome to TicTic! Enjoy interacting with others in real time. Hosts must be 18 or older to go LIVE.Viewers must be 18 or older to recharge and send gift.Remember to follow our Community Guidelines</string>
     <string name="we_need_notification_permission_to_show_notification">We need Notification permission to show you the notifications.</string>
     <string name="replay">Replay</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="this_user_has_not_repost_any_video">This user has not repost any video</string>
 
 
@@ -942,7 +941,5 @@
     <string name="_1_coins">1 Coins</string>
     <string name="earn_coins">Earn Coins</string>
     <string name="daily_checkin">Daily Check In</string>
-    <string name="post_with_argear">Post with ARGear</string>
-    <string name="post_with_banuba">Post with Banuba</string>
-
+    <string name="post_new_video">Post New Video</string>
 </resources>

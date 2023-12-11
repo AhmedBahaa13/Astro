@@ -7,7 +7,7 @@
         android:background="@color/white"
         android:clickable="true"
         android:focusable="true"
-        tools:context=".activitesfragments.CommentSettingF">
+        tools:context=".activitesfragments.comments.CommentSettingF">
 
         <LinearLayout
             android:paddingTop="@dimen/_20sdp"

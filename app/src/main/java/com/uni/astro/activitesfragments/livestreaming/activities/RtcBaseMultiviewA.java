@@ -84,10 +84,10 @@ public abstract class RtcBaseMultiviewA extends BaseActivity implements EventHan
 
     public void removeRtcVideo(int uid) {
         if (uid==userID) {
-            Log.d(com.uni.astro.Constants.tag,"local True: ");
+            Log.d(com.uni.astro.Constants.TAG_,"local True: ");
             rtcEngine().setupLocalVideo(null);
         } else {
-            Log.d(com.uni.astro.Constants.tag,"local false: ");
+            Log.d(com.uni.astro.Constants.TAG_,"local false: ");
             rtcEngine().setupRemoteVideo(new VideoCanvas(null, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         }
     }

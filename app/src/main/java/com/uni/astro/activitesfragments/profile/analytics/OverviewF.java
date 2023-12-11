@@ -344,7 +344,7 @@ public class OverviewF extends Fragment implements View.OnClickListener{
                         graphData.date=data.optString("date");
                         graphData.count= Integer.parseInt(data.optString("count"));
                         graphDataArrayList.add(graphData);
-                        Functions.printLog(Constants.tag,"video_views_graph"+graphDataArrayList.get(i).count);
+                        Functions.printLog(Constants.TAG_,"video_views_graph"+graphDataArrayList.get(i).count);
                     }
                 }
 
@@ -356,7 +356,7 @@ public class OverviewF extends Fragment implements View.OnClickListener{
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 

@@ -436,14 +436,14 @@ public class SendDirectMsg extends AppCompatLocaleActivity implements  View.OnCl
             tempList.clear();
             for (String key : mapData.keySet())
             {
-                Log.d(Constants.tag,"Data : "+key);
+                Log.d(Constants.TAG_,"Data : "+key);
                 tempList.add(mapData.get(key));
             }
 
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         if(tempList.size()>0){
@@ -876,7 +876,7 @@ public class SendDirectMsg extends AppCompatLocaleActivity implements  View.OnCl
                     if(code!=null && code.equals("200")){
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }
@@ -965,7 +965,7 @@ public class SendDirectMsg extends AppCompatLocaleActivity implements  View.OnCl
                             receiverArray.put(new JSONObject().put("receiver_id",receiverId));
                             notimap.put("receivers", receiverArray);
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception: "+e);
+                            Log.d(Constants.TAG_,"Exception: "+e);
                         }
 
                         VolleyRequest.JsonPostRequest(SendDirectMsg.this, ApiLinks.sendPushNotification, notimap,Functions.getHeaders(SendDirectMsg.this), new Callback() {

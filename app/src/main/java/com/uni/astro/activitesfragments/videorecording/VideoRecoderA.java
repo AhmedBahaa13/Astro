@@ -358,7 +358,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
         }
         catch (CameraAccessException e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag,e.toString());
+            Functions.printLog(Constants.TAG_,e.toString());
         }
 
 
@@ -480,7 +480,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                         changeVideoSize(filepath, Functions.getAppFolder(context)+Variables.gallery_resize_video);
 
                     } else
-                        Log.d(Constants.tag,"videoTrimResultLauncher data is null");
+                        Log.d(Constants.TAG_,"videoTrimResultLauncher data is null");
                 }
             });
 
@@ -569,13 +569,13 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                 }
                 catch (Exception e)
                 {
-                    Functions.printLog(Constants.tag,"Exception: "+e);
+                    Functions.printLog(Constants.TAG_,"Exception: "+e);
                 }
                 try {
                     stopRecording();
                 }catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Stop cameraView: "+e);
+                    Log.d(Constants.TAG_,"Stop cameraView: "+e);
                 }
 
 
@@ -605,7 +605,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                 tabRotateCam.setVisibility(View.VISIBLE);
 
 
-                Log.d(Constants.tag,"Camera Facing: "+mCamera.isCameraFacingFront());
+                Log.d(Constants.TAG_,"Camera Facing: "+mCamera.isCameraFacingFront());
                 applySpeedFunctionality();
 
             }
@@ -719,11 +719,11 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                         if (bundle.getString("action").equals("success"))
                         {
                             Functions.cancelDeterminentLoader();
-                            Log.d(Constants.tag,"pathpath: "+bundle.getString("path"));
+                            Log.d(Constants.TAG_,"pathpath: "+bundle.getString("path"));
                             try {
                                 Functions.copyFile(new File(""+bundle.getString("path")), new File(Functions.getAppFolder(context)+Variables.outputfile2));
                             } catch (Exception e) {
-                                Functions.printLog(Constants.tag, ""+e);
+                                Functions.printLog(Constants.TAG_, ""+e);
                             }
                             Functions.clearFilesCacheBeforeOperation(new File(bundle.getString("path")));
                             goToPreviewActivity();
@@ -750,7 +750,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                                 Functions.showLoadingProgress(progressPercentage);
                             }
                             catch (Exception e){
-                                Functions.printLog(Constants.tag,"Exception: "+e);
+                                Functions.printLog(Constants.TAG_,"Exception: "+e);
                             }
 
                         }
@@ -790,7 +790,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                                 video_list.add(videopaths.get(i));
                             }
                         } catch (Exception e) {
-                            Functions.printLog(Constants.tag, e.toString());
+                            Functions.printLog(Constants.TAG_, e.toString());
                         }
                     }
                 }
@@ -834,7 +834,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                     });
 
                 } catch (Exception e) {
-                    Functions.printLog(Constants.tag,"Exception: "+e);
+                    Functions.printLog(Constants.TAG_,"Exception: "+e);
                 }
             }
         }).start();
@@ -894,7 +894,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"removeLastSection: "+e);
+            Log.d(Constants.TAG_,"removeLastSection: "+e);
         }
     }
 
@@ -972,7 +972,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                     try {
                         mCameraManager.setTorchMode(mCameraId, false);
                     } catch (Exception e) {
-                        Functions.printLog(Constants.tag,"Exception: "+e);
+                        Functions.printLog(Constants.TAG_,"Exception: "+e);
                     }
 
                     isFlashOn = false;
@@ -982,7 +982,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                     try {
                         mCameraManager.setTorchMode(mCameraId, true);
                     } catch (Exception e) {
-                        Functions.printLog(Constants.tag,"Exception: "+e);
+                        Functions.printLog(Constants.TAG_,"Exception: "+e);
                     }
 
                     isFlashOn = true;
@@ -1397,7 +1397,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
 
         } catch (Exception e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         }
     }
 
@@ -1428,7 +1428,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
             }
             catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
                 Toast.makeText(this, getString(R.string.you_cannot_create_video_using_this_sound), Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -1612,7 +1612,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
             new FileDeleteAsyncTask(new File(filePath), new FileDeleteAsyncTask.OnAsyncFileDeleteListener() {
                 @Override
                 public void processFinish(Object result) {
-                    Functions.printLog(Constants.tag,"file delete success!");
+                    Functions.printLog(Constants.TAG_,"file delete success!");
 
                     setFilterUpdateAt(VideoRecoderA.this, item.uuid, getLastUpdateAt(VideoRecoderA.this));
                     requestSignedUrl(item, filePath, false);
@@ -1646,7 +1646,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                 mCurrentStickeritem = null;
                 mHasTrigger = false;
                 if (e instanceof InvalidContentsException) {
-                    Functions.printLog(Constants.tag,"InvalidContentsException");
+                    Functions.printLog(Constants.TAG_,"InvalidContentsException");
                 }
             }
         });
@@ -1664,9 +1664,9 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
             public void onError(Throwable e) {
                 if (e instanceof SignedUrlGenerationException) {
 
-                    Functions.printLog(Constants.tag,"SignedUrlGenerationException !! ");
+                    Functions.printLog(Constants.TAG_,"SignedUrlGenerationException !! ");
                 } else if (e instanceof NetworkException) {
-                    Functions.printLog(Constants.tag,"NetworkException !!");
+                    Functions.printLog(Constants.TAG_,"NetworkException !!");
                 }
 
                 progressBar.setVisibility(View.INVISIBLE);
@@ -1685,9 +1685,9 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                     } else {
                         setItem(ARGContents.Type.FilterItem, targetPath, item);
                     }
-                    Functions.printLog(Constants.tag,"download success!");
+                    Functions.printLog(Constants.TAG_,"download success!");
                 } else {
-                    Functions.printLog(Constants.tag, "download failed!");
+                    Functions.printLog(Constants.TAG_, "download failed!");
                 }
             }
         }).execute();
@@ -1699,7 +1699,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
             new FileDeleteAsyncTask(new File(filePath), new FileDeleteAsyncTask.OnAsyncFileDeleteListener() {
                 @Override
                 public void processFinish(Object result) {
-                    Functions.printLog(Constants.tag,"file delete success!");
+                    Functions.printLog(Constants.TAG_,"file delete success!");
 
                     setStickerUpdateAt(VideoRecoderA.this, item.uuid, getLastUpdateAt(VideoRecoderA.this));
                     requestSignedUrl(item, filePath, true);
@@ -1861,7 +1861,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
             },2000);
         }catch (Exception e)
         {
-            Log.d(Constants.tag,"Argear not init");
+            Log.d(Constants.TAG_,"Argear not init");
         }
     }
 
@@ -1927,7 +1927,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
 //        progress synced with two filter
@@ -1946,7 +1946,7 @@ public class VideoRecoderA  extends AppCompatLocaleActivity implements View.OnCl
                             Functions.cancelDeterminentLoader();
                             int index=(videopaths.size()-1);
                             videopaths.remove(index);
-                            Log.d(Constants.tag,"index:"+index+" path:"+intputPath);
+                            Log.d(Constants.TAG_,"index:"+index+" path:"+intputPath);
                             videopaths.add(index,intputPath);
                         }
                         else

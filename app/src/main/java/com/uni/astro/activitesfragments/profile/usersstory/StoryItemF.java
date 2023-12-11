@@ -113,23 +113,23 @@ public class StoryItemF extends Fragment implements Player.Listener{
                 float x=e.getX();
 
                 if(x < ( bindingRef.mediaContainer.getWidth() * 0.5 )){
-                    Log.d(Constants.tag,"OnLeft click");
+                    Log.d(Constants.TAG_,"OnLeft click");
 
                 }else{
-                    Log.d(Constants.tag,"OnRight click");
+                    Log.d(Constants.TAG_,"OnRight click");
                     moveToRightChunk();
                 }
             }
 
             @Override
             public void onButtonReleased() {
-                Log.d(Constants.tag,"onReleased Press");
+                Log.d(Constants.TAG_,"onReleased Press");
                 performResumeAction();
             }
 
             @Override
             public void onButtonPressed(MotionEvent e) {
-                Log.d(Constants.tag,"onPressed Press");
+                Log.d(Constants.TAG_,"onPressed Press");
                 performStopAction();
             }
         });
@@ -451,7 +451,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception callBack: "+e);
+                    Log.d(Constants.TAG_,"Exception callBack: "+e);
                 }
 
             }
@@ -489,7 +489,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
 
 
     private void setuplinearLayoutWithProgress() {
-        Log.d(Constants.tag,"onSetup StoryProgress");
+        Log.d(Constants.TAG_,"onSetup StoryProgress");
         bindingRef.progressView.removeAllViews();
         bindingRef.progressView.setWeightSum(selectedStoryItem.getVideoList().size());
 
@@ -666,7 +666,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception showMedia: "+e);
+            Log.d(Constants.TAG_,"Exception showMedia: "+e);
         }
     }
 
@@ -681,7 +681,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
         }
         else
         {
-            Log.d(Constants.tag,"videoAttachment: "+videoAttachment);
+            Log.d(Constants.TAG_,"videoAttachment: "+videoAttachment);
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -697,13 +697,13 @@ public class StoryItemF extends Fragment implements Player.Listener{
 
 
     private void storyProgressComplete() {
-        Log.d(Constants.tag,"Complete Story Progress");
+        Log.d(Constants.TAG_,"Complete Story Progress");
         if (currentTimer!=null)
         {
             currentTimer.cancel();
             currentTimer=null;
         }
-        Log.d(Constants.tag,currentPagePosition+" currentPagePosition: "+ allDataList.size());
+        Log.d(Constants.TAG_,currentPagePosition+" currentPagePosition: "+ allDataList.size());
         if (currentPagePosition==(allDataList.size()))
         {
             getActivity().onBackPressed();
@@ -721,7 +721,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
         if(exoplayer==null && videoAttachment!=null)
         {
 
-            Log.d(Constants.tag,"Check Exo player Init: "+videoAttachment);
+            Log.d(Constants.TAG_,"Check Exo player Init: "+videoAttachment);
             maxProgressTime= Functions.showVideoDurationInSec(videoAttachment);
             exoplayer =new ExoPlayer.Builder(bindingRef.getRoot().getContext()).
                     setTrackSelector(new DefaultTrackSelector(bindingRef.getRoot().getContext())).
@@ -741,7 +741,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
             }
             catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception audio focus : "+e);
+                Log.d(Constants.TAG_,"Exception audio focus : "+e);
             }
             setPlayer();
             getActivity().runOnUiThread(new Runnable() {
@@ -758,7 +758,7 @@ public class StoryItemF extends Fragment implements Player.Listener{
         }
         else
         {
-            Log.d(Constants.tag,"initExoPlayer: ");
+            Log.d(Constants.TAG_,"initExoPlayer: ");
         }
     }
 
@@ -793,13 +793,13 @@ public class StoryItemF extends Fragment implements Player.Listener{
     public void onPlaybackStateChanged(int playbackState) {
         if (playbackState == Player.STATE_BUFFERING) {
             bindingRef.progressBar.setVisibility(View.VISIBLE);
-            Log.d(Constants.tag," buffering ");
+            Log.d(Constants.TAG_," buffering ");
 
         }
         else if (playbackState == Player.STATE_READY) {
             bindingRef.progressBar.setVisibility(View.GONE);
             performResumeAction();
-            Log.d(Constants.tag," ready ");
+            Log.d(Constants.TAG_," ready ");
         }
     }
 

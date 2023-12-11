@@ -70,7 +70,7 @@ public class RoomManager {
                 parameters.put("topic_id",selectedTopics.get(0).getId());
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         Functions.showLoader(activity,false,false);
@@ -123,7 +123,7 @@ public class RoomManager {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
             @Override
@@ -149,7 +149,7 @@ public class RoomManager {
             }
             parameters.put("receivers", friendsArray);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -185,7 +185,7 @@ public class RoomManager {
             parameters.put("moderator", moderator);
         }
         catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         VolleyRequest.JsonPostRequest(activity, ApiLinks.joinRoom, parameters, Functions.getHeaders(activity), new Callback() {
@@ -216,7 +216,7 @@ public class RoomManager {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -231,7 +231,7 @@ public class RoomManager {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID,""));
             parameters.put("room_id", roomId);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -262,7 +262,7 @@ public class RoomManager {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID,""));
             parameters.put("id", roomId);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -295,7 +295,7 @@ public class RoomManager {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID,""));
             parameters.put("room_id", roomId);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
         ApiCalling.showRoomDetail(activity, parameters, new APICallBack() {
             @Override
@@ -343,7 +343,7 @@ public class RoomManager {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
             @Override
@@ -363,7 +363,7 @@ public class RoomManager {
         try {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID,""));
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         ApiCalling.checkMyRoomJoinStatus(activity, parameters, new APICallBack() {
@@ -423,7 +423,7 @@ public class RoomManager {
 
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
             @Override
@@ -596,7 +596,7 @@ public class RoomManager {
 
         }
         catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -639,7 +639,7 @@ public class RoomManager {
 
                 }
                 catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });

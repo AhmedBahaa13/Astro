@@ -91,7 +91,7 @@ public class QrCodeScannerA extends AppCompatLocaleActivity implements View.OnCl
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(Constants.tag,"QR Code "+result.getText());
+                        Log.d(Constants.TAG_,"QR Code "+result.getText());
                         if (result.getText().contains(Variables.https+"://"+getString(R.string.share_profile_domain)+"/profile/"))
                         {
                             try {
@@ -291,7 +291,7 @@ public class QrCodeScannerA extends AppCompatLocaleActivity implements View.OnCl
     private DecodeImageCallback mDecodeImageCallback = new DecodeImageCallback() {
         @Override
         public void decodeSucceed(Result result) {
-            Log.d(Constants.tag,"QR Code "+result.getText());
+            Log.d(Constants.TAG_,"QR Code "+result.getText());
             QrCodeScannerA.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -315,7 +315,7 @@ public class QrCodeScannerA extends AppCompatLocaleActivity implements View.OnCl
 
         @Override
         public void decodeFail(int type, String reason) {
-            Log.d(Constants.tag, reason);
+            Log.d(Constants.TAG_, reason);
             QrCodeScannerA.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

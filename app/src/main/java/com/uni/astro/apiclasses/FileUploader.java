@@ -40,7 +40,7 @@ public class FileUploader {
         InterfaceFileUpload interfaceFileUpload = ApiClient.getRetrofitInstance(context)
                 .create(InterfaceFileUpload.class);
 
-        Log.d(Constants.tag, "UploadFile: " + file.getAbsolutePath());
+        Log.d(Constants.TAG_, "UploadFile: " + file.getAbsolutePath());
         PRRequestBody mFile = new PRRequestBody(file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("video",
                 file.getName(), mFile);
@@ -91,14 +91,14 @@ public class FileUploader {
                     SoundId, AllowComments, Description, AllowDuet, UsersJson, HashtagsJson, videoId, storyJson, duet);
         }
 
-        Log.d(Constants.tag, "******** before call: " + fileUpload.request().url());
+        Log.d(Constants.TAG_, "******** before call: " + fileUpload.request().url());
 
         fileUpload.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
 
                 String bodyRes = new Gson().toJson(response.body());
-                Log.d(Constants.tag, "Response1: " + bodyRes + " \nCall: " + call);
+                Log.d(Constants.TAG_, "Response1: " + bodyRes + " \nCall: " + call);
 
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
@@ -107,14 +107,14 @@ public class FileUploader {
                         mFileUploaderCallback.onFinish(bodyRes);
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception1: " + e);
+                    Log.d(Constants.TAG_, "Exception1: " + e);
                     mFileUploaderCallback.onError();
                 }
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag, "1- Exception onFailure :" + t);
+                Log.d(Constants.TAG_, "1- Exception onFailure :" + t);
                 mFileUploaderCallback.onError();
             }
         });
@@ -139,17 +139,17 @@ public class FileUploader {
 
         Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(imageFileToUpload, UserId, ExtensionId);
 
-        Log.d(Constants.tag, "URL: " + fileUpload.request().url());
-        Log.d(Constants.tag, "file: " + imagefile.getAbsolutePath());
-        Log.d(Constants.tag, "UserId: " + userID);
-        Log.d(Constants.tag, "ExtensionId: " + "png");
+        Log.d(Constants.TAG_, "URL: " + fileUpload.request().url());
+        Log.d(Constants.TAG_, "file: " + imagefile.getAbsolutePath());
+        Log.d(Constants.TAG_, "UserId: " + userID);
+        Log.d(Constants.TAG_, "ExtensionId: " + "png");
 
         fileUpload.enqueue(new Callback<>() {
 
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 String bodyRes = new Gson().toJson(response.body());
-                Log.d(Constants.tag, "Response2: " + bodyRes);
+                Log.d(Constants.TAG_, "Response2: " + bodyRes);
 
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
@@ -160,14 +160,14 @@ public class FileUploader {
                         mFileUploaderCallback.onError();
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception2: " + e);
+                    Log.d(Constants.TAG_, "Exception2: " + e);
                     mFileUploaderCallback.onError();
                 }
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag, "2- Exception onFailure2: " + t);
+                Log.d(Constants.TAG_, "2- Exception onFailure2: " + t);
                 mFileUploaderCallback.onError();
             }
         });
@@ -191,16 +191,16 @@ public class FileUploader {
 
         Call<Object> fileUpload = interfaceFileUpload.UploadProfileImageVideo(fileToUpload, UserId, ExtensionId);
 
-        Log.d(Constants.tag, "URL: " + fileUpload.request().url());
-        Log.d(Constants.tag, "file: " + file.getAbsolutePath());
-        Log.d(Constants.tag, "UserId: " + userID);
-        Log.d(Constants.tag, "ExtensionId: " + "mp4");
+        Log.d(Constants.TAG_, "URL: " + fileUpload.request().url());
+        Log.d(Constants.TAG_, "file: " + file.getAbsolutePath());
+        Log.d(Constants.TAG_, "UserId: " + userID);
+        Log.d(Constants.TAG_, "ExtensionId: " + "mp4");
 
         fileUpload.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 String bodyRes = new Gson().toJson(response.body());
-                Log.d(Constants.tag, "Response3: " + bodyRes);
+                Log.d(Constants.TAG_, "Response3: " + bodyRes);
 
                 try {
                     JSONObject jsonObject = new JSONObject(bodyRes);
@@ -211,14 +211,14 @@ public class FileUploader {
                         mFileUploaderCallback.onError();
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception3: " + e);
+                    Log.d(Constants.TAG_, "Exception3: " + e);
                     mFileUploaderCallback.onError();
                 }
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(Constants.tag, "3- Exception onFailure3: " + t);
+                Log.d(Constants.TAG_, "3- Exception onFailure3: " + t);
                 mFileUploaderCallback.onError();
             }
         });
@@ -278,7 +278,7 @@ public class FileUploader {
                     sink.write(buffer, 0, read);
                 }
             } catch (Exception e) {
-                Log.d(Constants.tag, "Exception : " + e);
+                Log.d(Constants.TAG_, "Exception : " + e);
             } finally {
                 in.close();
             }

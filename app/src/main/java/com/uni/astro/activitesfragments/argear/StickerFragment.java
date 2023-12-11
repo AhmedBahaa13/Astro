@@ -74,7 +74,7 @@ public class StickerFragment extends BottomSheetDialogFragment implements View.O
         super.onActivityCreated(savedInstanceState);
 
         if (getActivity() != null) {
-            Log.d(Constants.tag,"onActivityCreated: ");
+            Log.d(Constants.TAG_,"onActivityCreated: ");
             mContentsViewModel = new ViewModelProvider(getActivity()).get(ContentsViewModel.class);
             mContentsViewModel.getContents().observe(getViewLifecycleOwner(), new Observer<ContentsResponse>() {
                 @Override

@@ -1,28 +1,22 @@
 package com.uni.astro
 
 object Constants {
-    const val BASE_URL = "http://197.52.142.136:80/new_astro/"
+    const val BASE_URL = "http://www.astrowolf.me/new_astro/"
     const val API_KEY = "156c4675-9608-4591-1111-00000"
 
-    //for referral deep linking
     const val REFERRAL_LINK = BASE_URL + "ref/?code="
 
-    //here we place dummy key please replace it with your original one
     const val API_URL = "https://apis.argear.io/"
     const val API_KEY_ARGEAR = "ffc5e797a396f89d8812c831"
     const val SECRET_KEY = "12bc915afc8f6e10449552f8fd4108f6a7e5f9e3d1107550ef37419e7057f221"
-    const val AUTH_KEY =
-        "U2FsdGVkX182aPzEQtG/vJizeGcmtIai1rf91IvhZ9EwxjGCbNU6unNgAVE163XsD6ylhgK8zFKP9xBK8rBdeA=="
+    const val AUTH_KEY = "U2FsdGVkX182aPzEQtG/vJizeGcmtIai1rf91IvhZ9EwxjGCbNU6unNgAVE163XsD6ylhgK8zFKP9xBK8rBdeA=="
 
-    // banuba token
-    const val banubaToken =
-        "E2JR9K8rYMQf8b/HLYcWOjRKfl6KoEI4M7W1GH3HmBnIrkvZ5UFkfyXBArfdDPJ+ruILLhDjOrIbQji4RQLoFqZ6zIvTZOOVAcdrM/qGgzdNiv1jLHq12mexlUOOm7mxDBeuccYFsN5AggiYDzhEQAD42AxMTvFOvMP+3tmO8h9yOzUbFjK4AlOFL0jWE703NrxoOfEs7NWKfdi9gS/ONAAocVD8ErO+WUOCmnHSqhzoGvtviNv/PZUBtoxZp2Pp2Hs/r+Id2/7WwqUx4N3+g75l5B1UwBsQv73upPFHmlNIbz7z/KJuSpNu5T+g26UlChfzQLzs3XEC96zTNXD7I/tIkZSHnBBWdnBLjTP8kDB+f1kG0WmkhUoP1opxJ0okBsAUqEf3y2XcnZvaMTQcK7co6qLwR46GBBFWieIVMfo/jBV/iUaAyLDFbAs6B8+ed0LO+7FCEeHhM5omyQ1/xZTzqmRg4curzydcK+Ig4B30vXFrWGOWJXx6yrJR6z5GED1CG9ckvwfxQrPExACNavOCNEowI10acdRGMTmyDF7wTJCV5lq173bc6ELl0kFIGeUj4iTGpRabOsD6JDtGlzNTP9xrPI62exJNVeJ4y/GgSg=="
     const val APP_AD_COLONY_ID = "appc2e347b482d54cab8b"
     const val AD_COLONY_BANNER_ID = "vzdb67721f381948c292"
     const val AD_COLONY_INTERSTITIAL_ID = "vza31e4740f6e94f5d9b"
     val AD_COLONY_UNIT_Zone_Ids = arrayOf(AD_COLONY_BANNER_ID, AD_COLONY_INTERSTITIAL_ID)
     const val privacy_policy = "encept.co"
-    const val terms_conditions = "\"encept.co"
+    const val terms_conditions = "encept.co"
 
     // if you want a user can't share a video from your app then you have to set this value to true
     const val IS_SECURE_INFO = false
@@ -98,7 +92,6 @@ object Constants {
     const val Product_ID4 = "com.uni.astro.coin5"
 
 
-    @JvmField
-    var tag = "astro_"
+    const val TAG_ = "astro_"
     const val ALL_IMAGE_DEFAULT_SIZE = 500
 }

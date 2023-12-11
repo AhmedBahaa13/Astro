@@ -1,917 +1,1058 @@
-package com.uni.astro.activitesfragments;
+package com.uni.astro.activitesfragments.comments
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.text.TextUtils
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AbsListView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.devlomi.record_view.OnRecordListener
+import com.downloader.Error
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.hendraanggrian.appcompat.widget.SocialView
+import com.uni.astro.Constants
+import com.uni.astro.R
+import com.uni.astro.activitesfragments.chat.ChatA.playingId
+import com.uni.astro.activitesfragments.comments.adapters.CommentsAdapter
+import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.OnRelyItemCLickListener
+import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.LinkClickListener
+import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.OnLongClickListener
+import com.uni.astro.activitesfragments.comments.voice.VoiceCommentManager
+import com.uni.astro.activitesfragments.profile.ProfileA
+import com.uni.astro.apiclasses.ApiLinks
+import com.uni.astro.databinding.FragmentCommentBinding
+import com.uni.astro.interfaces.FragmentDataSend
+import com.uni.astro.models.CommentModel
+import com.uni.astro.models.HomeModel
+import com.uni.astro.models.UsersModel
+import com.uni.astro.simpleclasses.DataParsing
+import com.uni.astro.simpleclasses.DebounceClickHandler
+import com.uni.astro.simpleclasses.Functions
+import com.uni.astro.simpleclasses.PermissionUtils
+import com.uni.astro.simpleclasses.Variables
+import com.volley.plus.VPackages.VolleyRequest
+import com.volley.plus.interfaces.APICallBack
+import org.json.JSONObject
+import java.io.File
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.hendraanggrian.appcompat.widget.SocialView;
-import com.uni.astro.Constants;
-import com.uni.astro.R;
-import com.uni.astro.activitesfragments.profile.ProfileA;
-import com.uni.astro.adapters.CommentsAdapter;
-import com.uni.astro.apiclasses.ApiLinks;
-import com.uni.astro.interfaces.FragmentCallBack;
-import com.uni.astro.interfaces.FragmentDataSend;
-import com.uni.astro.models.CommentModel;
-import com.uni.astro.models.HomeModel;
-import com.uni.astro.models.UserModel;
-import com.uni.astro.models.UsersModel;
-import com.uni.astro.simpleclasses.DataParsing;
-import com.uni.astro.simpleclasses.DebounceClickHandler;
-import com.uni.astro.simpleclasses.Functions;
-import com.uni.astro.simpleclasses.Variables;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-
-public class CommentF extends BottomSheetDialogFragment {
-
-    private static int commentCount = 0;
-    View view;
-    Context context;
-    RecyclerView recyclerView;
-    CommentsAdapter adapter;
-    ImageView send_btn;
-    ProgressBar send_progress;
-    ArrayList<CommentModel> dataList = new ArrayList<>();
-    HomeModel item;
-    String videoId;
-    String userId;
-    ProgressBar noDataLoader;
-    TextView commentCountTxt, tvNoCommentData, tvComment;
-    RelativeLayout send_btn_layout;
-    boolean isSendAllow = true;
-    String replyStatus = null;
-    CommentModel selectedComment = null;
-    int selectedCommentPosition;
-    CommentModel selectedReplyComment = null;
-    int selectedReplyCommentPosition;
-
-    int pageCount = 0;
-    boolean ispostFinsh;
-    ProgressBar loadMoreProgress;
-    LinearLayoutManager linearLayoutManager;
-    BottomSheetDialog dialog;
-    FragmentDataSend fragmentDataSend;
-    RelativeLayout write_layout;
-    ArrayList<UsersModel> taggedUserList = new ArrayList<>();
-    String commentType = "OwnComment";
-    private BottomSheetBehavior mBehavior;
+class CommentF @SuppressLint("ValidFragment") constructor(
+    count: Int,
+    var fragmentDataSend: FragmentDataSend?
+) : BottomSheetDialogFragment() {
+    private lateinit var bind: FragmentCommentBinding
 
 
-    public CommentF() {
+    private var homeModel: HomeModel = HomeModel()
+    var commentsAdapter: CommentsAdapter? = null
+
+    var dataList: ArrayList<CommentModel> = ArrayList()
+    private var taggedUserList: ArrayList<UsersModel>? = ArrayList()
+
+    var userId: String? = null
+    var videoId: String? = null
+    var replyStatus: String? = null
+    private var commentType = "OwnComment"
+
+    var ispostFinsh = false
+    private var isSendAllow = true
+
+    var pageCount = 0
+    var selectedCommentPosition = 0
+    var selectedReplyCommentPosition = 0
+
+    var selectedComment: CommentModel? = null
+    var selectedReplyComment: CommentModel? = null
+
+    var dialog: BottomSheetDialog? = null
+
+    private lateinit var mBehavior: BottomSheetBehavior<View>
+
+
+    // Voice Comment Variables
+    var audioPostion = 0
+    var selectedAudioPosition = 0
+
+    var audioPermissionCheck = "player"
+    var selectedAudioView: View? = null
+    private var countDownTimer: CountDownTimer? = null
+    private var sendAudio: VoiceCommentManager? = null
+    private var permissionUtils: PermissionUtils? = null
+    var takePermissionUtils: PermissionUtils? = null
+
+
+    companion object {
+        @JvmStatic
+        var mediaPlayer: MediaPlayer = MediaPlayer()
+
+        @JvmStatic
+        var mediaPlayerProgress = 0
+
+        @JvmStatic
+        private var commentsCount = 0
     }
 
 
-    @SuppressLint("ValidFragment")
-    public CommentF(int count, FragmentDataSend fragmentDataSend) {
-        commentCount = count;
-        this.fragmentDataSend = fragmentDataSend;
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        val dialogView = FragmentCommentBinding.inflate(layoutInflater)
 
+        dialog?.setContentView(dialogView.root)
+        mBehavior = BottomSheetBehavior.from(dialogView.root.parent as View)
 
-    }
+        mBehavior.isHideable = false
+        mBehavior.isDraggable = false
+        mBehavior.setPeekHeight(resources.getDimension(R.dimen._450sdp).toInt(), true)
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-
-        View view = View.inflate(getContext(), R.layout.fragment_comment, null);
-        dialog.setContentView(view);
-
-        mBehavior = BottomSheetBehavior.from((View) view.getParent());
-        mBehavior.setHideable(false);
-        mBehavior.setDraggable(false);
-        mBehavior.setPeekHeight((int) view.getContext().getResources().getDimension(R.dimen._450sdp), true);
-        mBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        mBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState != BottomSheetBehavior.STATE_EXPANDED) {
-                    mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-        return dialog;
+        return dialog as BottomSheetDialog
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        bind = FragmentCommentBinding.inflate(inflater, container, false)
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_comment, container, false);
-        context = view.getContext();
-        write_layout = view.findViewById(R.id.write_layout);
+        Log.d(Constants.TAG_, "onCreateView: Dialog Started")
 
-        tvNoCommentData = view.findViewById(R.id.tvNoCommentData);
-        send_btn = view.findViewById(R.id.send_btn);
-        send_progress = view.findViewById(R.id.send_progress);
-        tvComment = view.findViewById(R.id.tvComment);
-        send_btn_layout = view.findViewById(R.id.send_btn_layout);
+        bind.apply {
+            tvComment.setOnClickListener(DebounceClickHandler {
+                replyStatus = null
+                hitComment()
+            })
 
+            btnSend.setOnClickListener(DebounceClickHandler {
+                replyStatus = null
+                hitComment()
+            })
 
-        tvComment.setOnClickListener(new DebounceClickHandler(view -> {
-            replyStatus = null;
-            hitComment();
-        }));
-
-        send_btn_layout.setOnClickListener(new DebounceClickHandler(view -> {
-            replyStatus = null;
-            hitComment();
-        }));
-
-        view.findViewById(R.id.goBack).setOnClickListener(new DebounceClickHandler(v -> dismiss()));
+            goBack.setOnClickListener(DebounceClickHandler {
+                dismiss()
+            })
 
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            videoId = bundle.getString("video_id");
-            userId = bundle.getString("user_id");
-            item = (HomeModel) bundle.getSerializable("data");
+            val bundle = arguments
+            if (bundle != null) {
+                videoId = bundle.getString("video_id")
+                userId = bundle.getString("user_id")
+                homeModel = bundle.getSerializable("data") as HomeModel
+            }
+
+            isSendAllow = if (Functions.isShowContentPrivacy(context, homeModel.apply_privacy_model.video_comment,
+                    homeModel.follow_status_button.equals("friends", ignoreCase = true))) {
+                btnSend.visibility = View.VISIBLE
+                true
+            } else {
+                btnSend.visibility = View.GONE
+                false
+            }
+
+
+            val linearLayoutManager = LinearLayoutManager(context)
+            linearLayoutManager.orientation = RecyclerView.VERTICAL
+            recyclerView.layoutManager = linearLayoutManager
+            recyclerView.setHasFixedSize(true)
+
+            commentsAdapter = CommentsAdapter(requireContext(), dataList,
+                object : CommentsAdapter.OnItemClickListener {
+                    override fun onItemClick(
+                        positon: Int,
+                        itemUpdate: CommentModel,
+                        view: View
+                    ) {
+                        selectedCommentPosition = positon
+                        selectedComment = dataList[selectedCommentPosition]
+                        when (view.id) {
+                            R.id.tabUserPic, R.id.user_pic, R.id.username -> {
+                                openProfile(selectedComment)
+                            }
+
+                            R.id.tabMessageReply -> {
+                                if (Functions.checkLoginUser(activity)) {
+                                    replyStatus = "reply"
+                                    selectedReplyComment = null
+                                    hitComment()
+                                }
+                            }
+
+                            R.id.like_layout -> {
+                                if (Functions.checkLoginUser(activity)) {
+                                    likeComment(selectedCommentPosition, selectedComment)
+                                }
+                            }
+
+                            R.id.reply_count -> {
+                                selectedComment!!.isExpand = !selectedComment!!.isExpand
+                                dataList[selectedCommentPosition] = selectedComment as CommentModel
+                                commentsAdapter?.notifyDataSetChanged()
+                            }
+
+                            R.id.show_less_txt -> {
+                                selectedComment!!.isExpand = false
+                                dataList[selectedCommentPosition] = selectedComment as CommentModel
+                                commentsAdapter?.notifyDataSetChanged()
+                            }
+
+                            R.id.comment_audio_bubble -> {
+                                Log.d(Constants.TAG_, "onItemClick: " + view.id)
+                                Toast.makeText(
+                                    requireContext(),
+                                    "audio bubble clicked",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                selectedComment?.isPlaying = true
+                                selectedAudioView = view
+                                selectedAudioPosition = selectedCommentPosition
+
+                                takePermissionUtils = PermissionUtils(
+                                    requireActivity(),
+                                    permissionStorageRecordingResult
+                                )
+
+                                audioPermissionCheck = "playing"
+                                playingId = selectedComment!!.comment_id
+                                if (takePermissionUtils!!.isStorageRecordingPermissionGranted) {
+                                    audioPlaying(
+                                        selectedAudioView,
+                                        selectedComment,
+                                        selectedAudioPosition
+                                    )
+                                } else {
+                                    takePermissionUtils!!.showStorageRecordingPermissionDailog(
+                                        getString(R.string.we_need_recording_permission_for_upload_sound)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onItemLongPress(
+                        positon: Int,
+                        itemUpdate: CommentModel,
+                        view: View
+                    ) {
+                        selectedCommentPosition = positon
+                        selectedComment = dataList[selectedCommentPosition]
+                        if (view.id == R.id.message_layout) {
+                            openCommentSetting(selectedComment, selectedCommentPosition)
+                        }
+                    }
+                },
+
+                object : OnRelyItemCLickListener {
+                    override fun onItemClick(
+                        arrayList: ArrayList<CommentModel>,
+                        postion: Int,
+                        view: View
+                    ) {
+                        selectedReplyCommentPosition = postion
+                        selectedReplyComment = arrayList[selectedReplyCommentPosition]
+                        when (view.id) {
+                            R.id.user_pic, R.id.username -> openProfile(
+                                arrayList[selectedReplyCommentPosition]
+                            )
+
+                            R.id.tabMessageReply -> {
+                                replyStatus = "commentReply"
+                                hitComment()
+                            }
+
+                            R.id.like_layout -> if (Functions.checkLoginUser(activity)) {
+                                likeCommentReply()
+                            }
+                        }
+                    }
+
+                    override fun onItemLongPress(
+                        arrayList: ArrayList<CommentModel>,
+                        postion: Int,
+                        view: View
+                    ) {
+                        selectedReplyCommentPosition = postion
+                        selectedReplyComment = arrayList[selectedReplyCommentPosition]
+                        if (view.id == R.id.reply_layout) {
+                            Functions.copyCode(
+                                view.context,
+                                selectedReplyComment!!.comment_reply
+                            )
+                        }
+                    }
+
+                },
+
+                object : LinkClickListener {
+                    override fun onLinkClicked(view: SocialView?, matchedText: String?) {
+                        openProfileByUsername(matchedText ?: "")
+                    }
+                },
+
+                { bundle1 ->
+                    if (bundle1.getBoolean("isShow")) {
+                        openTagUser(bundle1.getString("name"))
+                    }
+                },
+
+                object : OnLongClickListener {
+                    override fun onLongclick(item: CommentModel?, view: View?) {
+                        openCommentSetting(item, selectedCommentPosition)
+                    }
+                }
+            )
+
+            recyclerView.adapter = commentsAdapter
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var userScrolled = false
+                var scrollOutitems = 0
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                        userScrolled = true
+                    }
+                }
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    scrollOutitems = linearLayoutManager.findLastVisibleItemPosition()
+
+                    if (userScrolled && scrollOutitems == dataList.size - 1) {
+                        userScrolled = false
+                        if (loadMoreProgress.visibility != View.VISIBLE && !ispostFinsh) {
+                            loadMoreProgress.visibility = View.VISIBLE
+                            pageCount += 1
+                            getComments()
+                        }
+                    }
+                }
+            })
+
+
+            sendAudio = VoiceCommentManager(videoId, requireActivity())
+            takePermissionUtils = PermissionUtils(requireActivity(), permissionStorageRecordingResult)
+
+
+            if (homeModel.apply_privacy_model.video_comment.equals("everyone", ignoreCase = true)
+                || homeModel.apply_privacy_model.video_comment.equals("friend", ignoreCase = true)
+                && homeModel.follow_status_button.equals("friends", ignoreCase = true)) {
+
+                writeLayout.visibility = View.VISIBLE
+                getComments()
+
+            } else {
+                noDataLoader.visibility = View.GONE
+                writeLayout.visibility = View.GONE
+
+                tvNoCommentData.text = getString(R.string.comments_are_turned_off)
+                commentCount.text = "0 ${getString(R.string.comments)}"
+                tvNoCommentData.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            }
+
+
+            // Init Voice Comment
+            bind.btnMic.setRecordView(recordView)
+            recordView.setSoundEnabled(true)
+
+
+            recordView.setOnRecordListener(object : OnRecordListener {
+                override fun onStart() {
+                    permissionUtils = PermissionUtils(activity, permissionStorageRecordingResult)
+                    audioPermissionCheck = "recording"
+                    if (takePermissionUtils!!.isStorageRecordingPermissionGranted) {
+                        sendAudio?.startVoiceRecording(requireActivity())
+                    } else {
+                        takePermissionUtils?.showStorageRecordingPermissionDailog(getString(R.string.we_need_recording_permission_for_upload_sound))
+                    }
+                }
+
+                override fun onCancel() {
+                    sendAudio?.stopTimer()
+                }
+
+                override fun onFinish(recordTime: Long) {
+                    Log.d(Constants.TAG_, "onFinish: recordSopped")
+                    sendAudio?.stopRecording(requireActivity())
+                }
+
+                override fun onLessThanSecond() {
+                    sendAudio?.stopTimerWithoutRecorder()
+                }
+            })
+
+
+            recordView.setSlideToCancelText(getString(R.string.slide_to_cancel))
+            btnMic.isListenForRecord = true
+            recordView.setLessThanSecondAllowed(false)
         }
 
-        if (Functions.isShowContentPrivacy(context, item.apply_privacy_model.getVideo_comment(), item.follow_status_button.equalsIgnoreCase("friends"))) {
-            send_btn.setVisibility(View.VISIBLE);
-            isSendAllow = true;
-
-        } else {
-            send_btn.setVisibility(View.GONE);
-            isSendAllow = false;
-        }
-
-        commentCountTxt = view.findViewById(R.id.comment_count);
-
-
-        loadMoreProgress = view.findViewById(R.id.load_more_progress);
-        recyclerView = view.findViewById(R.id.recylerview);
-        linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        adapter = new CommentsAdapter(context, dataList, new CommentsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int positon, CommentModel itemUpdate, View view) {
-                selectedCommentPosition = positon;
-                selectedComment = dataList.get(selectedCommentPosition);
-
-
-                switch (view.getId()) {
-
-                    case R.id.tabUserPic:
-                    case R.id.user_pic:
-                    case R.id.username: {
-                        openProfile(selectedComment);
-                    }
-                    break;
-
-                    case R.id.tabMessageReply: {
-                        if (Functions.checkLoginUser(getActivity())) {
-                            replyStatus = "reply";
-                            selectedReplyComment = null;
-                            hitComment();
-                        }
-
-                    }
-                    break;
-
-                    case R.id.like_layout: {
-                        if (Functions.checkLoginUser(getActivity())) {
-                            likeComment(selectedCommentPosition, selectedComment);
-                        }
-                    }
-                    break;
-
-                    case R.id.reply_count: {
-                        selectedComment.isExpand = !selectedComment.isExpand;
-                        dataList.set(selectedCommentPosition, selectedComment);
-                        adapter.notifyDataSetChanged();
-                    }
-                    break;
-
-                    case R.id.show_less_txt: {
-                        selectedComment.isExpand = false;
-                        dataList.set(selectedCommentPosition, selectedComment);
-                        adapter.notifyDataSetChanged();
-                    }
-                    break;
-                }
-            }
-
-            @Override
-            public void onItemLongPress(int positon, CommentModel itemUpdate, View view) {
-                selectedCommentPosition = positon;
-                selectedComment = dataList.get(selectedCommentPosition);
-
-                if (view.getId() == R.id.message_layout) {
-                    openCommentSetting(selectedComment, selectedCommentPosition);
-                }
-            }
-        }, new CommentsAdapter.onRelyItemCLickListener() {
-            @Override
-            public void onItemClick(ArrayList<CommentModel> arrayList, int postion, View view) {
-                selectedReplyCommentPosition = postion;
-                selectedReplyComment = arrayList.get(selectedReplyCommentPosition);
-
-                switch (view.getId()) {
-
-                    case R.id.user_pic:
-                    case R.id.username:
-                        openProfile(arrayList.get(selectedReplyCommentPosition));
-
-                        break;
-
-                    case R.id.tabMessageReply:
-                        replyStatus = "commentReply";
-                        hitComment();
-                        break;
-
-
-                    case R.id.like_layout:
-                        if (Functions.checkLoginUser(getActivity())) {
-                            likeCommentReply();
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onItemLongPress(ArrayList<CommentModel> arrayList, int postion, View view) {
-                selectedReplyCommentPosition = postion;
-                selectedReplyComment = arrayList.get(selectedReplyCommentPosition);
-                if (view.getId() == R.id.reply_layout) {
-                    Functions.copyCode(view.getContext(), selectedReplyComment.comment_reply);
-                }
-            }
-
-        }, (view, matchedText) -> openProfileByUsername(matchedText), bundle1 -> {
-            if (bundle1.getBoolean("isShow")) {
-                openTagUser(bundle1.getString("name"));
-            }
-        });
-
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            boolean userScrolled;
-            int scrollOutitems;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    userScrolled = true;
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                scrollOutitems = linearLayoutManager.findLastVisibleItemPosition();
-
-                if (userScrolled && (scrollOutitems == dataList.size() - 1)) {
-                    userScrolled = false;
-
-                    if (loadMoreProgress.getVisibility() != View.VISIBLE && !ispostFinsh) {
-                        loadMoreProgress.setVisibility(View.VISIBLE);
-                        pageCount = pageCount + 1;
-                        getAllComments();
-                    }
-                }
-
-
-            }
-        });
-
-        noDataLoader = view.findViewById(R.id.noDataLoader);
-
-
-        if (item.apply_privacy_model.getVideo_comment().equalsIgnoreCase("everyone") ||
-                (item.apply_privacy_model.getVideo_comment().equalsIgnoreCase("friend") &&
-                        item.follow_status_button.equalsIgnoreCase("friends"))) {
-            write_layout.setVisibility(View.VISIBLE);
-            getAllComments();
-
-        } else {
-            noDataLoader.setVisibility(View.GONE);
-            write_layout.setVisibility(View.GONE);
-            tvNoCommentData.setText(view.getContext().getString(R.string.comments_are_turned_off));
-            commentCountTxt.setText("0 " + getString(R.string.comments));
-            tvNoCommentData.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        }
-
-        return view;
+        return bind.root
     }
 
-    private void openTagUser(String tag) {
+    private fun openTagUser(tag: String?) {
         if (Functions.checkProfileOpenValidationByUserName(tag)) {
-            Intent intent = new Intent(view.getContext(), ProfileA.class);
-            intent.putExtra("user_name", tag);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
+            val intent = Intent(requireContext(), ProfileA::class.java)
+            intent.putExtra("user_name", tag)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
         }
     }
 
-    private void hitComment() {
-        String replyStr = "";
-
+    private fun hitComment() {
+        var replyStr = ""
         if (replyStatus == null) {
-            commentType = "OwnComment";
-        } else if (replyStatus.equals("commentReply")) {
-            replyStr = context.getString(R.string.reply_to) + " " + selectedReplyComment.replay_user_name;
-            commentType = "replyComment";
+            commentType = "OwnComment"
+
+        } else if (replyStatus == "commentReply") {
+            replyStr = "${getString(R.string.reply_to)} ${selectedReplyComment!!.replay_user_name}"
+            commentType = "replyComment"
+
         } else {
-            replyStr = context.getString(R.string.reply_to) + " " + selectedComment.user_name;
-            commentType = "replyComment";
+            replyStr = "${getString(R.string.reply_to)} ${selectedComment!!.user_name}"
+            commentType = "replyComment"
         }
 
-        EditTextSheetF fragment = new EditTextSheetF(commentType, taggedUserList, bundle -> {
+        val fragment = EditTextSheetF(commentType, taggedUserList) { bundle: Bundle ->
             if (bundle.getBoolean("isShow", false)) {
-                if (bundle.getString("action").equals("sendComment")) {
-                    taggedUserList = (ArrayList<UsersModel>) bundle.getSerializable("taggedUserList");
-                    String message = bundle.getString("message");
-                    tvComment.setText(message);
-                    sendComment("" + message);
+                if (bundle.getString("action") == "sendComment") {
+                    taggedUserList =
+                        bundle.getSerializable("taggedUserList") as ArrayList<UsersModel>?
+                    val message = bundle.getString("message")
+                    bind.tvComment.text = message
+                    sendComment("" + message)
                 }
             }
-        });
+        }
 
-        Bundle bundle = new Bundle();
-        bundle.putString("replyStr", replyStr);
-        fragment.setArguments(bundle);
-        fragment.show(getChildFragmentManager(), "EditTextSheetF");
+        val bundle = Bundle()
+        bundle.putString("replyStr", replyStr)
+        fragment.arguments = bundle
+        fragment.show(childFragmentManager, "EditTextSheetF")
     }
 
-    private void sendComment(String message) {
+    private fun sendComment(message: String) {
+        var message = message
         if (!TextUtils.isEmpty(message)) {
-
-            if (Functions.checkLoginUser(getActivity())) {
+            if (Functions.checkLoginUser(activity)) {
                 if (replyStatus == null) {
-                    sendComments(videoId, message);
+                    sendComments(videoId, message)
 
-                } else if (replyStatus.equals("commentReply")) {
-                    message = context.getString(R.string.replied_to) + " " + "@" + selectedReplyComment.replay_user_name + " " + message;
-                    sendCommentsReply(selectedReplyComment.parent_comment_id, message, videoId, selectedReplyComment.videoOwnerId);
+                } else if (replyStatus == "commentReply") {
+                    message = "${getString(R.string.replied_to)} @${selectedReplyComment!!.replay_user_name} $message"
+                    sendCommentsReply(
+                        selectedReplyComment!!.parent_comment_id,
+                        message, videoId, selectedReplyComment!!.videoOwnerId
+                    )
 
                 } else {
-                    Log.d(Constants.tag, "HitAPI here comment_id " + selectedComment.comment_id);
-                    sendCommentsReply(selectedComment.comment_id, message, videoId, selectedComment.videoOwnerId);
+                    Log.d(Constants.TAG_, "HitAPI here comment_id " + selectedComment!!.comment_id)
+                    sendCommentsReply(
+                        selectedComment!!.comment_id,
+                        message, videoId, selectedComment!!.videoOwnerId
+                    )
                 }
 
-                tvComment.setText(context.getString(R.string.leave_a_comment));
+                bind.tvComment.text = getString(R.string.leave_a_comment)
             }
         }
     }
 
-    private void openCommentSetting(CommentModel item, int positon) {
-        CommentSettingF fragment = new CommentSettingF(item, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
+    private fun openCommentSetting(commentModel: CommentModel?, position: Int) {
+        val fragment =
+            CommentSettingF(commentModel) { bundle ->
                 if (bundle.getBoolean("isShow", false)) {
-                    if (bundle.getString("action").equals("copyText")) {
-                        Functions.copyCode(view.getContext(), item.comments);
-                    } else if (bundle.getString("action").equals("pinComment")) {
+                    if (bundle.getString("action") == "copyText") {
+                        Functions.copyCode(requireContext(), commentModel?.comments)
 
-                        if (Integer.valueOf(item.pin_comment_id) > 0) {
-                            if (item.pin_comment_id.equals(item.comment_id)) {
-                                hitApiPinComment(item, "unpin");
+                    } else if (bundle.getString("action") == "pinComment") {
+                        if (Integer.valueOf(commentModel?.pin_comment_id) > 0) {
+                            if (commentModel?.pin_comment_id == commentModel?.comment_id) {
+                                hitApiPinComment(commentModel, "unpin")
+
                             } else {
-                                replacePreviousPinned(item, positon);
+                                replacePreviousPinned(commentModel)
                             }
-                        } else {
-                            hitApiPinComment(item, "pin");
-                        }
-                    } else if (bundle.getString("action").equals("deleteComment")) {
-                        hitApiCommentDelete(item, positon);
-                    }
 
+                        } else {
+                            hitApiPinComment(commentModel, "pin")
+                        }
+
+                    } else if (bundle.getString("action") == "deleteComment") {
+                        hitApiCommentDelete(commentModel, position)
+                    }
                 }
             }
-        });
-        fragment.show(getParentFragmentManager(), "CommentSettingF");
+        fragment.show(parentFragmentManager, "CommentSettingF")
     }
 
-    private void replacePreviousPinned(CommentModel item, int positon) {
-        Functions.showDoubleButtonAlert(view.getContext(), view.getContext().getString(R.string.pin_this_comment),
-                view.getContext().getString(R.string.pinning_description),
-                view.getContext().getString(R.string.cancel_), view.getContext().getString(R.string.pin_and_replace),
-                false, new FragmentCallBack() {
-                    @Override
-                    public void onResponce(Bundle bundle) {
-                        if (bundle.getBoolean("isShow", false)) {
-                            hitApiPinComment(item, "pin");
-                        }
-                    }
-                });
+    private fun replacePreviousPinned(commentModel: CommentModel?) {
+        Functions.showDoubleButtonAlert(
+           requireContext(),
+            getString(R.string.pin_this_comment),
+            getString(R.string.pinning_description),
+            getString(R.string.cancel_),
+            getString(R.string.pin_and_replace),
+            false) { bundle ->
+            if (bundle.getBoolean("isShow", false)) {
+                hitApiPinComment(commentModel, "pin")
+            }
+        }
     }
 
-    private void hitApiPinComment(CommentModel item, String pinHitStatus) {
-        JSONObject parameters = new JSONObject();
+    private fun hitApiPinComment(commentModel: CommentModel?, pinHitStatus: String) {
+        val parameters = JSONObject()
         try {
-            parameters.put("video_id", item.video_id);
-            String commentPin = "";
-            if (pinHitStatus.equals("unpin")) {
-                commentPin = "0";
+            parameters.put("video_id", commentModel!!.video_id)
+            var commentPin: String? = ""
+            commentPin = if (pinHitStatus == "unpin") {
+                "0"
             } else {
-                commentPin = item.comment_id;
+                commentModel.comment_id
             }
-            parameters.put("pin_comment_id", commentPin);
-        } catch (Exception e) {
-            e.printStackTrace();
+            parameters.put("pin_comment_id", commentPin)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        Functions.showLoader(getActivity(), false, false);
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.pinComment, parameters, Functions.getHeaders(getActivity()), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(), resp);
-                Functions.cancelLoader();
-                try {
-                    JSONObject response = new JSONObject(resp);
-                    String code = response.optString("code");
-                    if (code.equals("200")) {
 
-                        if (pinHitStatus.equals("pin")) {
-                            JSONObject msgObj = response.getJSONObject("msg");
-                            JSONObject videoObj = msgObj.getJSONObject("Video");
-                            String pinnedCommentId = videoObj.optString("pin_comment_id");
-                            for (CommentModel itemDataUpdate : dataList) {
-                                itemDataUpdate.pin_comment_id = pinnedCommentId;
-                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
-                            }
-                        } else {
-                            for (CommentModel itemDataUpdate : dataList) {
-                                itemDataUpdate.pin_comment_id = "0";
-                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
-                            }
+        Functions.showLoader(activity, false, false)
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.pinComment, parameters, Functions.getHeaders(activity)) { resp ->
+
+            Functions.checkStatus(activity, resp)
+            Functions.cancelLoader()
+            try {
+                val response = JSONObject(resp)
+                val code = response.optString("code")
+                if (code == "200") {
+                    if (pinHitStatus == "pin") {
+                        val msgObj = response.getJSONObject("msg")
+                        val videoObj = msgObj.getJSONObject("Video")
+                        val pinnedCommentId = videoObj.optString("pin_comment_id")
+                        for (itemDataUpdate in dataList) {
+                            itemDataUpdate.pin_comment_id = pinnedCommentId
+                            dataList[dataList.indexOf(itemDataUpdate)] = itemDataUpdate
                         }
-
-                        adapter.notifyDataSetChanged();
-
+                    } else {
+                        for (itemDataUpdate in dataList) {
+                            itemDataUpdate.pin_comment_id = "0"
+                            dataList[dataList.indexOf(itemDataUpdate)] = itemDataUpdate
+                        }
                     }
-
-                } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception: " + e);
+                    commentsAdapter?.notifyDataSetChanged()
                 }
-
+            } catch (e: Exception) {
+                Log.d(Constants.TAG_, "Exception: $e")
             }
-        });
+        }
     }
 
-
-    private void hitApiCommentDelete(CommentModel item, int position) {
-        JSONObject parameters = new JSONObject();
+    private fun hitApiCommentDelete(commentModel: CommentModel?, position: Int) {
+        val parameters = JSONObject()
         try {
-            parameters.put("id", item.comment_id);
-        } catch (Exception e) {
-            e.printStackTrace();
+            parameters.put("id", commentModel?.comment_id)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        Functions.showLoader(getActivity(), false, false);
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.deleteVideoComment, parameters, Functions.getHeaders(getActivity()), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(), resp);
-                Functions.cancelLoader();
-                try {
-                    JSONObject response = new JSONObject(resp);
-                    String code = response.optString("code");
-                    if (code.equals("200")) {
 
+        Functions.showLoader(activity, false, false)
+        VolleyRequest.JsonPostRequest(activity, ApiLinks.deleteVideoComment, parameters, Functions.getHeaders(activity)) { resp ->
+            Functions.checkStatus(activity, resp)
+            Functions.cancelLoader()
 
-                        if (item.comment_id.equals(item.pin_comment_id)) {
-                            for (CommentModel itemDataUpdate : dataList) {
-                                itemDataUpdate.pin_comment_id = "0";
-                                dataList.set(dataList.indexOf(itemDataUpdate), itemDataUpdate);
-                            }
-                            dataList.remove(position);
-                        } else {
-                            dataList.remove(position);
+            try {
+                val response = JSONObject(resp)
+                val code = response.optString("code")
+                if (code == "200") {
+                    if (commentModel!!.comment_id == commentModel.pin_comment_id) {
+                        for (itemDataUpdate in dataList) {
+                            itemDataUpdate.pin_comment_id = "0"
+                            dataList[dataList.indexOf(itemDataUpdate)] = itemDataUpdate
                         }
-                        adapter.notifyDataSetChanged();
-                        commentCount = dataList.size();
-                        commentCountTxt.setText(commentCount + " " + context.getString(R.string.comments));
-                        if (fragmentDataSend != null)
-                            fragmentDataSend.onDataSent("" + commentCount);
+                        dataList.removeAt(position)
+                    } else {
+                        dataList.removeAt(position)
                     }
 
-                } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception: " + e);
+                    commentsAdapter?.notifyDataSetChanged()
+                    commentsCount = dataList.size
+                    bind.commentCount.text = "$commentsCount ${getString(R.string.comments)}"
+                    if (fragmentDataSend != null) fragmentDataSend!!.onDataSent("" + commentsCount)
                 }
-
-            }
-        });
-    }
-
-    private void likeCommentReply() {
-
-
-        CommentModel itemUpdate = dataList.get(selectedCommentPosition);
-        ArrayList<CommentModel> replyList = itemUpdate.arrayList;
-
-        CommentModel itemReplyUpdate = replyList.get(selectedReplyCommentPosition);
-
-        String action = itemReplyUpdate.comment_reply_liked;
-        if (action != null) {
-            if (action.equals("1")) {
-                action = "0";
-                itemReplyUpdate.reply_liked_count = "" + (Functions.parseInterger(itemReplyUpdate.reply_liked_count) - 1);
-            } else {
-                action = "1";
-                itemReplyUpdate.reply_liked_count = "" + (Functions.parseInterger(itemReplyUpdate.reply_liked_count) + 1);
+            } catch (e: Exception) {
+                Log.d(Constants.TAG_, "Exception: $e")
             }
         }
-        itemReplyUpdate.comment_reply_liked = action;
-
-
-        Functions.callApiForLikeCommentReply(
-                getActivity(), itemReplyUpdate.comment_reply_id, videoId, new
-
-                        APICallBack() {
-                            @Override
-                            public void arrayData(ArrayList arrayList) {
-
-                            }
-
-                            @Override
-                            public void onSuccess(String responce) {
-
-                                try {
-                                    JSONObject jsonObject = new JSONObject(responce);
-                                    if (jsonObject.optString("code").equals("200")) {
-                                        if (jsonObject.optString("msg").equals("unfavourite")) {
-                                            itemReplyUpdate.isLikedByOwner = "0";
-
-                                            replyList.set(selectedReplyCommentPosition, itemReplyUpdate);
-                                            itemUpdate.arrayList = replyList;
-                                            dataList.set(selectedCommentPosition, itemUpdate);
-                                            adapter.notifyDataSetChanged();
-                                        } else {
-                                            JSONObject msgObj = jsonObject.getJSONObject("msg");
-                                            JSONObject videoLikeComment = msgObj.getJSONObject("VideoCommentReplyLike");
-                                            itemReplyUpdate.isLikedByOwner = videoLikeComment.optString("owner_like");
-
-                                            replyList.set(selectedReplyCommentPosition, itemReplyUpdate);
-                                            itemUpdate.arrayList = replyList;
-                                            dataList.set(selectedCommentPosition, itemUpdate);
-                                            adapter.notifyDataSetChanged();
-                                        }
-
-                                    }
-                                } catch (Exception e) {
-                                    Log.d(Constants.tag, "Exception: " + e);
-                                }
-                            }
-
-                            @Override
-                            public void onFail(String responce) {
-
-                            }
-                        });
     }
 
-
-    private void likeComment(int positon, CommentModel item) {
-
-        String action = item.liked;
+    private fun likeCommentReply() {
+        val itemUpdate = dataList[selectedCommentPosition]
+        val replyList = itemUpdate.arrayList
+        val itemReplyUpdate = replyList[selectedReplyCommentPosition]
+        var action = itemReplyUpdate.comment_reply_liked
 
         if (action != null) {
-            if (action.equals("1")) {
-                action = "0";
-                item.like_count = "" + (Functions.parseInterger(item.like_count) - 1);
+            if (action == "1") {
+                action = "0"
+                itemReplyUpdate.reply_liked_count =
+                    "" + (Functions.parseInterger(itemReplyUpdate.reply_liked_count) - 1)
             } else {
-                action = "1";
-                item.like_count = "" + (Functions.parseInterger(item.like_count) + 1);
+                action = "1"
+                itemReplyUpdate.reply_liked_count =
+                    "" + (Functions.parseInterger(itemReplyUpdate.reply_liked_count) + 1)
             }
-            Log.d(Constants.tag, "Check UserId and Owner Id" + item.userId + "      " + item.videoOwnerId);
+        }
 
-            if (userId.equals(item.videoOwnerId)) {
-                if (item.userId.equals(item.videoOwnerId)) {
-                    item.isLikedByOwner = "1";
+        itemReplyUpdate.comment_reply_liked = action
+        Functions.callApiForLikeCommentReply(activity, itemReplyUpdate.comment_reply_id, videoId, object : APICallBack {
+            override fun arrayData(arrayList: ArrayList<*>?) {}
+            override fun onSuccess(responce: String) {
+                try {
+                    val jsonObject = JSONObject(responce)
+                    if (jsonObject.optString("code") == "200") {
+                        if (jsonObject.optString("msg") == "unfavourite") {
+                            itemReplyUpdate.isLikedByOwner = "0"
+                            replyList[selectedReplyCommentPosition] = itemReplyUpdate
+                            itemUpdate.arrayList = replyList
+                            dataList[selectedCommentPosition] = itemUpdate
+                            commentsAdapter?.notifyDataSetChanged()
+
+                        } else {
+                            val msgObj = jsonObject.getJSONObject("msg")
+                            val videoLikeComment = msgObj.getJSONObject("VideoCommentReplyLike")
+                            itemReplyUpdate.isLikedByOwner =
+                                videoLikeComment.optString("owner_like")
+                            replyList[selectedReplyCommentPosition] = itemReplyUpdate
+                            itemUpdate.arrayList = replyList
+                            dataList[selectedCommentPosition] = itemUpdate
+                            commentsAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.d(Constants.TAG_, "Exception: $e")
+                }
+            }
+
+            override fun onFail(responce: String) {}
+        })
+    }
+
+    private fun likeComment(position: Int, commentModel: CommentModel?) {
+        var action = commentModel?.liked
+        if (action != null) {
+            if (action == "1") {
+                action = "0"
+                commentModel?.like_count = "" + (Functions.parseInterger(commentModel?.like_count) - 1)
+            } else {
+                action = "1"
+                commentModel?.like_count = "" + (Functions.parseInterger(commentModel?.like_count) + 1)
+            }
+
+            Log.d(
+                Constants.TAG_,
+                "Check UserId and Owner Id" + commentModel?.userId + "      " + commentModel?.videoOwnerId
+            )
+
+            if (userId == commentModel?.videoOwnerId) {
+                if (commentModel?.userId == commentModel?.videoOwnerId) {
+                    commentModel?.isLikedByOwner = "1"
                 } else {
-                    item.isLikedByOwner = "0";
+                    commentModel?.isLikedByOwner = "0"
                 }
             }
 
+            commentModel?.liked = action
 
-            item.liked = action;
-
-
-            Functions.callApiForLikeComment(getActivity(), item.comment_id, new APICallBack() {
-                @Override
-                public void arrayData(ArrayList arrayList) {
-                    Log.d(Constants.tag, "DataCheck: " + arrayList.size());
+            Functions.callApiForLikeComment(activity, commentModel?.comment_id, object : APICallBack {
+                override fun arrayData(arrayList: ArrayList<*>) {
+                    Log.d(Constants.TAG_, "DataCheck: " + arrayList.size)
                 }
 
-                @Override
-                public void onSuccess(String responce) {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onSuccess(responce: String) {
                     try {
-                        JSONObject jsonObject = new JSONObject(responce);
-                        if (jsonObject.optString("code").equals("200")) {
-                            if (jsonObject.optString("msg").equals("unfavourite")) {
-                                if (userId.equals(item.videoOwnerId)) {
-                                    item.isLikedByOwner = "0";
+                        val jsonObject = JSONObject(responce)
+                        if (jsonObject.optString("code") == "200") {
+                            if (jsonObject.optString("msg") == "unfavourite") {
+                                if (userId == commentModel?.videoOwnerId) {
+                                    commentModel?.isLikedByOwner = "0"
                                 }
+                                dataList[position] = commentModel as CommentModel
+                                commentsAdapter?.notifyDataSetChanged()
 
-
-                                dataList.set(positon, item);
-                                adapter.notifyDataSetChanged();
                             } else {
-                                JSONObject msgObj = jsonObject.getJSONObject("msg");
-                                JSONObject videoLikeComment = msgObj.getJSONObject("VideoCommentLike");
-                                if (userId.equals(item.videoOwnerId)) {
-                                    item.isLikedByOwner = videoLikeComment.optString("owner_like");
+                                val msgObj = jsonObject.getJSONObject("msg")
+                                val videoLikeComment = msgObj.getJSONObject("VideoCommentLike")
+                                if (userId == commentModel?.videoOwnerId) {
+                                    commentModel?.isLikedByOwner = videoLikeComment.optString("owner_like")
                                 }
 
-
-                                dataList.set(positon, item);
-                                adapter.notifyDataSetChanged();
+                                dataList[position] = commentModel as CommentModel
+                                commentsAdapter?.notifyDataSetChanged()
                             }
-
                         }
-                    } catch (Exception e) {
-                        Log.d(Constants.tag, "Exception: " + e);
+                    } catch (e: Exception) {
+                        Log.d(Constants.TAG_, "Exception: $e")
                     }
-
-
                 }
 
-                @Override
-                public void onFail(String responce) {
-                }
-            });
+                override fun onFail(responce: String) {}
+            })
         }
     }
 
-
-    // this funtion will get all the comments against post
-    public void getAllComments() {
-        if (dataList.isEmpty()) {
-            noDataLoader.setVisibility(View.VISIBLE);
-        }
-
-
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("video_id", videoId);
-            if (Functions.getSharedPreference(view.getContext()).getBoolean(Variables.IS_LOGIN, false)) {
-                parameters.put("user_id", Functions.getSharedPreference(view.getContext()).getString(Variables.U_ID, "0"));
+    @SuppressLint("NotifyDataSetChanged")
+    private fun getComments() {
+        bind.apply {
+            if (dataList.isEmpty()) {
+                noDataLoader.visibility = View.VISIBLE
             }
-            parameters.put("starting_point", "" + pageCount);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showVideoComments, parameters, Functions.getHeaders(getActivity()), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(), resp);
-                noDataLoader.setVisibility(View.GONE);
+            val parameters = JSONObject()
+            try {
+                parameters.put("video_id", videoId)
+                if (Functions.getSharedPreference(requireContext()).getBoolean(Variables.IS_LOGIN, false)) {
+                    parameters.put(
+                        "user_id", Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "0")
+                    )
+                }
+                parameters.put("starting_point", "$pageCount")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
-                CommentModel pinnedCommentModel = null;
 
-                ArrayList<CommentModel> temp_list = new ArrayList<>();
+            VolleyRequest.JsonPostRequest(activity, ApiLinks.showVideoComments, parameters, Functions.getHeaders(activity)) { resp ->
+                Functions.checkStatus(activity, resp)
+                noDataLoader.visibility = View.GONE
+                var pinnedCommentModel: CommentModel? = null
+                val tempList = ArrayList<CommentModel>()
+
+                    Log.d(Constants.TAG_,  "COMMENTS: \n$resp")
                 try {
-                    JSONObject response = new JSONObject(resp);
-                    String code = response.optString("code");
-                    if (code.equals("200")) {
+                    val response = JSONObject(resp)
+                    val code = response.optString("code")
+                    if (code == "200") {
+                        val msgArray = response.getJSONArray("msg")
 
-                        JSONArray msgArray = response.getJSONArray("msg");
-                        for (int i = 0; i < msgArray.length(); i++) {
-                            JSONObject itemdata = msgArray.optJSONObject(i);
+                        for (i in 0 until msgArray.length()) {
+                            val itemdata = msgArray.optJSONObject(i)
+                            val videoComment = itemdata.optJSONObject("VideoComment")
+                            val videoObj = itemdata.optJSONObject("Video")
+                            val userDetailModel = DataParsing.getUserDataModel(itemdata.optJSONObject("User"))
+                            val videoCommentReply = itemdata.optJSONArray("VideoCommentReply")
+                            val replyList = ArrayList<CommentModel>()
 
-                            JSONObject videoComment = itemdata.optJSONObject("VideoComment");
-                            JSONObject videoObj = itemdata.optJSONObject("Video");
-                            UserModel userDetailModel = DataParsing.getUserDataModel(itemdata.optJSONObject("User"));
-
-                            JSONArray videoCommentReply = itemdata.optJSONArray("VideoCommentReply");
-
-                            ArrayList<CommentModel> replyList = new ArrayList<>();
                             if (videoCommentReply.length() > 0) {
-                                for (int j = 0; j < videoCommentReply.length(); j++) {
-                                    JSONObject jsonObject = videoCommentReply.getJSONObject(j);
+                                for (j in 0 until videoCommentReply.length()) {
+                                    val jsonObject = videoCommentReply.getJSONObject(j)
+                                    val userDetailModelReply = DataParsing.getUserDataModel(jsonObject.optJSONObject("User"))
 
-                                    UserModel userDetailModelReply = DataParsing.getUserDataModel(jsonObject.optJSONObject("User"));
-                                    CommentModel comment_model = new CommentModel();
-
-                                    comment_model.comment_reply_id = jsonObject.optString("id");
-                                    comment_model.reply_liked_count = jsonObject.optString("like_count");
-                                    comment_model.comment_reply_liked = jsonObject.optString("like");
-                                    comment_model.comment_reply = jsonObject.optString("comment");
-                                    comment_model.created = jsonObject.optString("created");
-
-                                    comment_model.videoOwnerId = videoObj.optString("user_id");
-                                    comment_model.replay_user_name = userDetailModelReply.getUsername();
-                                    comment_model.setReplay_user_url(userDetailModelReply.getProfilePic());
-                                    comment_model.userId = userDetailModelReply.getId();
-                                    comment_model.isVerified = userDetailModelReply.getVerified();
-                                    comment_model.parent_comment_id = videoComment.optString("id");
-                                    comment_model.isLikedByOwner = jsonObject.optString("owner_like");
-
-
-                                    replyList.add(comment_model);
+                                    val commntModel = CommentModel()
+                                    commntModel.comment_reply_id = jsonObject.optString("id")
+                                    commntModel.reply_liked_count = jsonObject.optString("like_count")
+                                    commntModel.comment_reply_liked = jsonObject.optString("like")
+                                    commntModel.comment_reply = jsonObject.optString("comment")
+                                    commntModel.created = jsonObject.optString("created")
+                                    commntModel.videoOwnerId = videoObj.optString("user_id")
+                                    commntModel.replay_user_name = userDetailModelReply.username
+                                    commntModel.replay_user_url = userDetailModelReply.profilePic
+                                    commntModel.userId = userDetailModelReply.id
+                                    commntModel.isVerified = userDetailModelReply.verified
+                                    commntModel.parent_comment_id = videoComment.optString("id")
+                                    commntModel.isLikedByOwner = jsonObject.optString("owner_like")
+                                    replyList.add(commntModel)
                                 }
                             }
 
-                            CommentModel item = new CommentModel();
-                            item.isLikedByOwner = videoComment.optString("owner_like");
-                            item.videoOwnerId = videoObj.optString("user_id");
-                            item.pin_comment_id = videoObj.optString("pin_comment_id", "0");
-                            item.userId = userDetailModel.getId();
-                            item.isVerified = userDetailModel.getVerified();
-                            item.user_name = userDetailModel.getUsername();
-                            item.first_name = userDetailModel.getFirstName();
-                            item.last_name = userDetailModel.getLastName();
-                            item.arraylist_size = String.valueOf(videoCommentReply.length());
-                            item.setProfile_pic(userDetailModel.getProfilePic());
+                            val commsModel = CommentModel()
+                            commsModel.isLikedByOwner = videoComment.optString("owner_like")
+                            commsModel.videoOwnerId = videoObj.optString("user_id")
+                            commsModel.pin_comment_id = videoObj.optString("pin_comment_id", "0")
+                            commsModel.userId = userDetailModel.id
+                            commsModel.isVerified = userDetailModel.verified
+                            commsModel.user_name = userDetailModel.username
+                            commsModel.first_name = userDetailModel.firstName
+                            commsModel.last_name = userDetailModel.lastName
+                            commsModel.arraylist_size = videoCommentReply.length().toString()
+                            commsModel.profile_pic = userDetailModel.profilePic
+                            commsModel.arrayList = replyList
+                            commsModel.video_id = videoComment.optString("video_id")
+                            commsModel.comments = videoComment.optString("comment")
+                            commsModel.liked = videoComment.optString("like")
+                            commsModel.like_count = videoComment.optString("like_count")
+                            commsModel.comment_id = videoComment.optString("id")
+                            commsModel.created = videoComment.optString("created")
 
-                            item.arrayList = replyList;
-                            item.video_id = videoComment.optString("video_id");
-                            item.comments = videoComment.optString("comment");
-                            item.liked = videoComment.optString("like");
-                            item.like_count = videoComment.optString("like_count");
-                            item.comment_id = videoComment.optString("id");
-                            item.created = videoComment.optString("created");
-
-                            if (item.comment_id.equals(item.pin_comment_id)) {
-                                pinnedCommentModel = item;
+                            if (commsModel.comment_id == commsModel.pin_comment_id) {
+                                pinnedCommentModel = commsModel
                             } else {
-                                temp_list.add(item);
+                                tempList.add(commsModel)
                             }
-
-
                         }
-
 
                         if (pageCount == 0) {
-                            dataList.clear();
-                            dataList.addAll(temp_list);
+                            dataList.clear()
+                            dataList.addAll(tempList)
                         } else {
-                            dataList.addAll(temp_list);
+                            dataList.addAll(tempList)
                         }
-
 
                         if (pinnedCommentModel != null) {
-                            dataList.add(0, pinnedCommentModel);
+                            dataList.add(0, pinnedCommentModel)
                         }
 
-                        adapter.notifyDataSetChanged();
+                        commentsAdapter?.notifyDataSetChanged()
                     }
 
                     if (dataList.isEmpty()) {
-                        tvNoCommentData.setVisibility(View.VISIBLE);
+                        tvNoCommentData.visibility = View.VISIBLE
                     } else {
-                        tvNoCommentData.setVisibility(View.GONE);
+                        tvNoCommentData.visibility = View.GONE
                     }
 
-                } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception: comment" + e);
+                } catch (e: Exception) {
+                    Log.d(Constants.TAG_, "Comment Exception:\n$e")
                 } finally {
-                    loadMoreProgress.setVisibility(View.GONE);
+                    loadMoreProgress.visibility = View.GONE
                 }
             }
-        });
+        }
     }
 
 
     // this function will call an api to upload your comment reply
-    private void sendCommentsReply(String commentId, String message, String videoId, String videoOwnerId) {
-        Functions.callApiForSendCommentReply(getActivity(), commentId, message, videoId, videoOwnerId, taggedUserList, new APICallBack() {
-            @Override
-            public void arrayData(ArrayList arrayList) {
+    private fun sendCommentsReply(commentId: String, message: String, videoId: String?, videoOwnerId: String) {
+        Functions.callApiForSendCommentReply(activity, "text", commentId, message, videoId, videoOwnerId, taggedUserList, object : APICallBack {
+            override fun arrayData(arrayList: ArrayList<*>) {
+                bind.tvComment.text = context!!.getString(R.string.leave_a_comment)
+                val itemUpdate = dataList[selectedCommentPosition]
+                val replyList = itemUpdate!!.arrayList
 
-                tvComment.setText(context.getString(R.string.leave_a_comment));
-
-                CommentModel itemUpdate = dataList.get(selectedCommentPosition);
-                ArrayList<CommentModel> replyList = itemUpdate.arrayList;
-
-                for (CommentModel itemReply : (ArrayList<CommentModel>) arrayList) {
-                    replyList.add(0, itemReply);
+                for (itemReply in arrayList as ArrayList<CommentModel>) {
+                    replyList.add(0, itemReply)
                 }
-                itemUpdate.arrayList = replyList;
-                itemUpdate.item_count_replies = "" + itemUpdate.arrayList.size();
-                dataList.set(selectedCommentPosition, itemUpdate);
-                adapter.notifyDataSetChanged();
-                replyStatus = null;
-                selectedComment = null;
-                selectedReplyComment = null;
+
+                itemUpdate.arrayList = replyList
+                itemUpdate.item_count_replies = "" + itemUpdate.arrayList.size
+                dataList[selectedCommentPosition] = itemUpdate
+
+                commentsAdapter?.notifyDataSetChanged()
+                replyStatus = null
+                selectedComment = null
+                selectedReplyComment = null
             }
 
-            @Override
-            public void onSuccess(String responce) {
-                // this will return a string responce
-            }
+            override fun onSuccess(response: String) { }
 
-            @Override
-            public void onFail(String responce) {
-                // this will return the failed responce
-            }
-
-        });
-
+            override fun onFail(response: String) { }
+        })
     }
 
+
     // this function will call an api to upload your comment
-    public void sendComments(String video_id, final String comment) {
-        send_btn.setVisibility(View.GONE);
-        send_progress.setVisibility(View.VISIBLE);
+    private fun sendComments(video_id: String?, comment: String?) {
+        bind.apply {
+            btnSend.visibility = View.GONE
+            sendProgress.visibility = View.VISIBLE
 
-        Functions.callApiForSendComment(getActivity(), "text", video_id, comment, taggedUserList, new APICallBack() {
-            @Override
-            public void arrayData(ArrayList arrayList) {
-                send_btn.setVisibility(View.VISIBLE);
-                send_progress.setVisibility(View.GONE);
-                tvNoCommentData.setVisibility(View.GONE);
+            Functions.callApiForSendComment(activity, "text", video_id, comment, taggedUserList, object : APICallBack {
+                override fun arrayData(arrayList: ArrayList<*>) {
+                    btnSend.visibility = View.VISIBLE
+                    sendProgress.visibility = View.GONE
+                    tvNoCommentData!!.visibility = View.GONE
 
-                for (CommentModel item : (ArrayList<CommentModel>) arrayList) {
-                    dataList.add(0, item);
-                    commentCount++;
-                    commentCountTxt.setText(commentCount + " " + getString(R.string.comments));
+                    for (item in arrayList as ArrayList<CommentModel?>) {
+                        dataList.add(0, item!!)
+                        commentsCount++
+                        commentCount.text = commentsCount.toString() + " " + getString(R.string.comments)
+                        if (fragmentDataSend != null) fragmentDataSend!!.onDataSent("" + commentsCount)
+                    }
 
-                    if (fragmentDataSend != null)
-                        fragmentDataSend.onDataSent("" + commentCount);
+                    commentsAdapter?.notifyDataSetChanged()
+                    selectedComment = null
                 }
 
-                adapter.notifyDataSetChanged();
-                selectedComment = null;
-            }
+                override fun onSuccess(response: String) {
+                    btnSend.visibility = View.VISIBLE
+                    sendProgress.visibility = View.GONE
+                }
 
-            @Override
-            public void onSuccess(String response) {
-                // this will return a string response
-                send_btn.setVisibility(View.VISIBLE);
-                send_progress.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFail(String response) {
-                send_btn.setVisibility(View.VISIBLE);
-                send_progress.setVisibility(View.GONE);
-                // this will return the failed response
-            }
-        });
+                override fun onFail(response: String) {
+                    btnSend.visibility = View.VISIBLE
+                    sendProgress.visibility = View.GONE
+                }
+            })
+        }
     }
 
 
     // get the profile data by sending the username instead of id
-    private void openProfileByUsername(String username) {
-
+    private fun openProfileByUsername(username: String) {
         if (Functions.checkProfileOpenValidationByUserName(username)) {
-            Intent intent = new Intent(view.getContext(), ProfileA.class);
-            intent.putExtra("user_name", username);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-
+            val intent = Intent(requireContext(), ProfileA::class.java)
+            intent.putExtra("user_name", username)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
         }
-
-
     }
 
 
-    // this will open the profile of user which have uploaded the currenlty running video
-    private void openProfile(CommentModel commentModel) {
-
-        if (Functions.checkProfileOpenValidation(commentModel.userId)) {
-
-            Intent intent = new Intent(view.getContext(), ProfileA.class);
-            intent.putExtra("user_id", commentModel.userId);
-            intent.putExtra("user_name", commentModel.user_name);
-            intent.putExtra("user_pic", commentModel.getProfile_pic());
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
-
+    // this will open the profile of user which have uploaded the currently running video
+    private fun openProfile(commentModel: CommentModel?) {
+        if (Functions.checkProfileOpenValidation(commentModel!!.userId)) {
+            val intent = Intent(requireContext(), ProfileA::class.java)
+            intent.putExtra("user_id", commentModel.userId)
+            intent.putExtra("user_name", commentModel.user_name)
+            intent.putExtra("user_pic", commentModel.profile_pic)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
         }
-
-
     }
 
 
+
+    // ============================= Voice Comment Functions =============================
+    private fun audioPlaying(view: View?, commentModel: CommentModel?, position: Int) {
+        Log.d(Constants.TAG_, "audioPlaying: fired")
+        val mainLayout = view?.parent as LinearLayout
+        val fullPath = File(Functions.getAppFolder(activity) + commentModel?.comment_id + ".mp3")
+
+        downloadAudio(position, commentModel)
+//        if (fullPath.exists()) {
+//            Log.d(TAG, "audioPlaying: "+ fullPath);
+//            if (playingId.equals(item.getVideo_id())) {
+//                stopPlaying();
+//            } else {
+//                playAudio(postion, item);
+//            }
+//        } else {
+//            downloadAudio(mainLayout.findViewById(R.id.p_bar), item);
+//        }
+    }
+
+
+    fun playAudio(position: Int, commentModel: CommentModel?) {
+        audioPostion = position
+        mediaPlayerProgress = 0
+        stopPlaying()
+
+        val fullPath = File(Functions.getAppFolder(context) + commentModel?.comment_id + ".mp3")
+        if (fullPath.exists()) {
+            val uri = Uri.parse(fullPath.absolutePath)
+            mediaPlayer = MediaPlayer.create(context, uri)
+
+            if (mediaPlayer != null) {
+                mediaPlayer.start()
+                countdownTimer(true)
+                mediaPlayer.setOnCompletionListener(MediaPlayer.OnCompletionListener { stopPlaying() })
+                commentsAdapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun stopPlaying() {
+        playingId = "none"
+        countdownTimer(false)
+        commentsAdapter?.notifyDataSetChanged()
+        if (mediaPlayer != null) {
+            mediaPlayer.reset()
+            mediaPlayer.release()
+        }
+    }
+
+    private fun downloadAudio(position: Int, commentModel: CommentModel?) {
+        Log.d(Constants.TAG_, "downloadAudio: fired")
+        Log.d(Constants.TAG_, "downloadAudio: " + Functions.getAppFolder(context))
+
+        PRDownloader.download(commentModel?.comments, Functions.getAppFolder(context), commentModel?.comment_id + ".mp3")
+        .build().start(object : OnDownloadListener {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onDownloadComplete() {
+                playAudio(position, commentModel)
+                commentsAdapter?.notifyDataSetChanged()
+            }
+
+            override fun onError(error: Error) {
+                Log.d(Constants.TAG_, "onError: " + error.serverErrorMessage)
+            }
+        })
+    }
+
+    fun countdownTimer(startTimer: Boolean) {
+        if (countDownTimer != null) countDownTimer!!.cancel()
+        if (startTimer) {
+            countDownTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 300) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        mediaPlayerProgress = mediaPlayer.currentPosition * 100 / mediaPlayer.duration
+
+                        if (mediaPlayerProgress > 95) {
+                            countdownTimer(false)
+                            mediaPlayerProgress = 0
+                        }
+                        commentsAdapter?.notifyItemChanged(audioPostion)
+                    }
+
+                    override fun onFinish() {
+                        mediaPlayerProgress = 0
+                        countdownTimer(false)
+                        commentsAdapter?.notifyItemChanged(audioPostion)
+                    }
+                }
+            countDownTimer?.start()
+        }
+    }
+
+
+    private val permissionStorageRecordingResult = registerForActivityResult<Array<String>, Map<String, Boolean>>(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        var allPermissionClear = true
+        val blockPermissionCheck: MutableList<String> = java.util.ArrayList()
+
+        for (key in result.keys) {
+            if (java.lang.Boolean.FALSE == result[key]) {
+                allPermissionClear = false
+                blockPermissionCheck.add(Functions.getPermissionStatus(activity, key))
+            }
+        }
+
+        if (blockPermissionCheck.contains("blocked")) {
+            Functions.showPermissionSetting(
+                activity,
+                getString(R.string.we_need_recording_permission_for_upload_sound)
+            )
+
+        } else if (allPermissionClear) {
+            if (audioPermissionCheck.equals("playing", ignoreCase = true)) {
+                audioPlaying(selectedAudioView, selectedComment, selectedAudioPosition)
+
+            } else {
+                sendAudio?.stopRecording(requireActivity())
+            }
+        }
+    }
+
+    init {
+        commentsCount = count
+    }
 }

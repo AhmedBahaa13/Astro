@@ -337,7 +337,7 @@ public class SearchSoundF extends Fragment implements Player.Listener {
             }
             catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception audio focus : "+e);
+                Log.d(Constants.TAG_,"Exception audio focus : "+e);
             }
 
         }

@@ -259,7 +259,7 @@ public class ContentAnalyticF extends Fragment {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 

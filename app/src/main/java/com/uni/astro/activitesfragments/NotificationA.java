@@ -405,7 +405,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
                         }
                         catch (Exception e)
                         {
-                            Log.d(Constants.tag,"Exception: "+e);
+                            Log.d(Constants.TAG_,"Exception: "+e);
                         }
                     }
 
@@ -438,7 +438,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -482,7 +482,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -672,7 +672,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
                         startActivity(new Intent(context, MyWallet.class));
                     }
                 } catch (Exception e) {
-                    android.util.Log.d(Constants.tag,"Exception : "+e);
+                    android.util.Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -746,7 +746,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
                                     Functions.cancelLoader();
                                 }
                             });
-                            Log.d(Constants.tag,"DatabaseError: "+error);
+                            Log.d(Constants.TAG_,"DatabaseError: "+error);
                         }
                     });
 
@@ -1018,7 +1018,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
             parameters.put("starting_point", "0");
         }
         catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
         VolleyRequest.JsonPostRequest(NotificationA.this, ApiLinks.showFriendsStories, parameters, Functions.getHeaders(this),new Callback() {
@@ -1064,7 +1064,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
             }
 
         } catch (Exception v) {
-            Log.d(Constants.tag,"Exception story : "+v);
+            Log.d(Constants.TAG_,"Exception story : "+v);
         }
         finally {
             updateStoryCount();

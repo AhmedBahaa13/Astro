@@ -2,38 +2,33 @@ package com.uni.astro.models;
 
 import com.uni.astro.Constants;
 import com.uni.astro.simpleclasses.Variables;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 
 public class HomeModel implements Serializable {
-    public String user_id="", username="", first_name="", last_name="", verified="";
-    public String video_id="", video_description="", created_date="";
-    public String promote="";
-    public String sound_id="", sound_name="", video_user_id="";
-    private String sound_url_acc="", sound_url_mp3="",sound_pic="",video_url="",profile_pic="",gif="",thum="";
-
-    public String privacy_type="", allow_comments="", allow_duet="", liked="", like_count="", video_comment_count="", views="", duet_video_id="",
-            duet_username="",favourite_count="",share="",duration="0",pin="0";
-
+    public String user_id = "", username = "", first_name = "", last_name = "", verified = "";
+    public String video_id = "", video_description = "", created_date = "";
+    public String promote = "";
+    public String sound_id = "", sound_name = "", video_user_id = "";
+    public String privacy_type = "", allow_comments = "", allow_duet = "", liked = "", like_count = "", video_comment_count = "", views = "", duet_video_id = "",
+            duet_username = "", favourite_count = "", share = "", duration = "0", pin = "0";
     //for playlist
     public String playlistVideoId;
-    public String playlistId="", playlistName="";
+    public String playlistId = "", playlistName = "";
     //for video block
-    public String block="",aws_label="";
+    public String block = "", aws_label = "";
     //repost
-    public String repost_video_id="", repost_user_id="",repost="";
+    public String repost_video_id = "", repost_user_id = "", repost = "";
     // additional param
     public String favourite;
     public String follow_status_button;
-
     public PrivacyPolicySettingModel apply_privacy_model;
-
     public PushNotificationSettingModel apply_push_notification_model;
-
     //user story manage
     public ArrayList<StoryModel> storyDataList;
-
+    private String sound_url_acc = "", sound_url_mp3 = "", sound_pic = "", video_url = "", profile_pic = "", gif = "", thum = "";
     private PromotionModel promotionModel;
 
     public PromotionModel getPromotionModel() {

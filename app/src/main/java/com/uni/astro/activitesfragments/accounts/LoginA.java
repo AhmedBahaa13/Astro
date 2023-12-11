@@ -240,7 +240,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                Functions.printLog(Constants.tag, loginResult.getAccessToken() + "");
+                Functions.printLog(Constants.TAG_, loginResult.getAccessToken() + "");
             }
 
             @Override
@@ -251,7 +251,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
 
             @Override
             public void onError(FacebookException error) {
-                Functions.printLog(Constants.tag, "" + error.toString());
+                Functions.printLog(Constants.TAG_, "" + error.toString());
                 Functions.showToast(LoginA.this, getString(R.string.login_error) + error.toString());
             }
 
@@ -264,7 +264,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
         // if user is login then this method will call and
         // facebook will return us a token which will user for get the info of user
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        Functions.printLog(Constants.tag, token.getToken() + "");
+        Functions.printLog(Constants.TAG_, token.getToken() + "");
         Functions.showLoader(LoginA.this, false, false);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -284,7 +284,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
                                 public void onCompleted(JSONObject user, GraphResponse graphResponse) {
 
                                     Functions.cancelLoader();
-                                    Functions.printLog(Constants.tag, user.toString());
+                                    Functions.printLog(Constants.TAG_, user.toString());
                                     //after get the info of user we will pass to function which will store the info in our server
 
                                     String fname = "" + user.optString("first_name");
@@ -320,7 +320,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
                             request.setParameters(parameters);
                             request.executeAsync();
                         } else {
-                            Functions.printLog(Constants.tag, "Exception: " +task.getException());
+                            Functions.printLog(Constants.TAG_, "Exception: " +task.getException());
                             Functions.cancelLoader();
                             Functions.showToast(LoginA.this, getString(R.string.authentication_failed));
                         }
@@ -478,7 +478,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
             String auth_token = "" + account.getIdToken();
 
 
-            Functions.printLog(Constants.tag, "GoogleToken: " + auth_token);
+            Functions.printLog(Constants.TAG_, "GoogleToken: " + auth_token);
             callApiForLogin("" + id,
                     "google",
                     auth_token,email);
@@ -519,7 +519,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
                 String email = ""+account.getEmail();
                 String image=""+account.getPhotoUrl();
 
-                Functions.printLog(Constants.tag, "GoogleToken: " + auth_token);
+                Functions.printLog(Constants.TAG_, "GoogleToken: " + auth_token);
                 // if we do not get the picture of user then we will use default profile picture
 
 
@@ -544,7 +544,7 @@ public class LoginA extends AppCompatLocaleActivity implements View.OnClickListe
 
             }
         } catch (ApiException e) {
-            Functions.printLog(Constants.tag, "signInResult:failed code=" + e.getStatusCode());
+            Functions.printLog(Constants.TAG_, "signInResult:failed code=" + e.getStatusCode());
         }
     }
 

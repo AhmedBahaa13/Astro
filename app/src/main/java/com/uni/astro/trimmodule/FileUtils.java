@@ -397,7 +397,7 @@ public class FileUtils {
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                     id
             );
-            Log.d(Constants.tag,"Video "+displayName+"  contentUri "+contentUri);
+            Log.d(Constants.TAG_,"Video "+displayName+"  contentUri "+contentUri);
         }
     }
 

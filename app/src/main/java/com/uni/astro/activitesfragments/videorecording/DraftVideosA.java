@@ -81,10 +81,10 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
                         int videoHeight = bmp.getHeight();
                         int videoWidth = bmp.getWidth();
 
-                        Functions.printLog(Constants.tag, "" + videoWidth + "---" + videoHeight);
+                        Functions.printLog(Constants.TAG_, "" + videoWidth + "---" + videoHeight);
 
                     } catch (Exception e) {
-                        Log.d(Constants.tag,"Exception: "+e);
+                        Log.d(Constants.TAG_,"Exception: "+e);
                     }
 
                     if (item.video_duration_ms <= Constants.MAX_RECORDING_DURATION) {
@@ -101,7 +101,7 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
                         try {
                             changeVideoSize(item.video_path, Functions.getAppFolder(DraftVideosA.this)+Variables.gallery_resize_video);
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception: "+e);
+                            Log.d(Constants.TAG_,"Exception: "+e);
                         }
                     }
 
@@ -132,7 +132,7 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
                 item.video_path = file.getAbsolutePath();
                 item.video_duration_ms = getfileduration(Uri.parse(file.getAbsolutePath()));
 
-                Functions.printLog(Constants.tag, "" + item.video_duration_ms);
+                Functions.printLog(Constants.TAG_, "" + item.video_duration_ms);
 
                 if (item.video_duration_ms > 5000) {
                     item.video_time = changeSecToTime(item.video_duration_ms);
@@ -155,7 +155,7 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
 
             return file_duration;
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
         return 0;
     }
@@ -201,7 +201,7 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
     }
@@ -239,7 +239,7 @@ public class DraftVideosA extends AppCompatLocaleActivity implements View.OnClic
 
         } catch (Exception e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         }
     }
 

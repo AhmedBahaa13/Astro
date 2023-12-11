@@ -122,8 +122,8 @@ public class VideoSoundA extends AppCompatLocaleActivity implements View.OnClick
         soundImage.setController(Functions.frescoImageLoad(item.getSound_pic(),R.drawable.ractengle_solid_primary,soundImage,false));
 
 
-        Functions.printLog(Constants.tag, item.getSound_pic());
-        Functions.printLog(Constants.tag, item.getSound_url_acc());
+        Functions.printLog(Constants.TAG_, item.getSound_pic());
+        Functions.printLog(Constants.TAG_, item.getSound_url_acc());
 
         saveAudio();
 
@@ -473,7 +473,7 @@ public class VideoSoundA extends AppCompatLocaleActivity implements View.OnClick
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception audio focus : "+e);
+            Log.d(Constants.TAG_,"Exception audio focus : "+e);
         }
 
         showPlayingState();
@@ -498,7 +498,7 @@ public class VideoSoundA extends AppCompatLocaleActivity implements View.OnClick
     protected void onStop() {
         super.onStop();
         stopPlaying();
-        Functions.printLog(Constants.tag, "onStop");
+        Functions.printLog(Constants.TAG_, "onStop");
 
     }
 

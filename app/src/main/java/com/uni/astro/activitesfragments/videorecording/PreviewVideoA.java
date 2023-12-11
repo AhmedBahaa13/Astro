@@ -80,7 +80,7 @@ public class PreviewVideoA extends AppCompatLocaleActivity implements Player.Lis
                     gotopostScreen();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Functions.printLog(Constants.tag, e.toString());
+                    Functions.printLog(Constants.TAG_, e.toString());
                     saveVideo(Functions.getAppFolder(this)+Variables.outputfile2, Functions.getAppFolder(this)+Variables.output_filter_file);
                 }
 
@@ -161,7 +161,7 @@ public class PreviewVideoA extends AppCompatLocaleActivity implements Player.Lis
 
         }catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception: getExoPlayerInit "+e);
+            Log.d(Constants.TAG_,"Exception: getExoPlayerInit "+e);
         }
 
 

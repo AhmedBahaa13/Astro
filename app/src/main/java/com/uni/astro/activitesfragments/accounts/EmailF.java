@@ -231,11 +231,11 @@ public class EmailF extends Fragment implements View.OnClickListener {
             }
             break;
             case R.id.btn_next:
-                Functions.printLog(Constants.tag,"next button click");
+                Functions.printLog(Constants.TAG_,"next button click");
                 // check the email validation and then call the api for login or open the password screen depend of login or signup
                 if (checkValidation()) {
                     if (fromWhere.equals("login")) {
-                        Functions.printLog(Constants.tag,"next button Login");
+                        Functions.printLog(Constants.TAG_,"next button Login");
                         callApiForLogin();
                     } else {
                         if (chBox.isChecked())
@@ -375,7 +375,7 @@ public class EmailF extends Fragment implements View.OnClickListener {
         final String st_email = ""+emailEdit.getText().toString();
         final String password = ""+passwordEdt.getText().toString();
 
-        Functions.printLog(Constants.tag,"next button st_email");
+        Functions.printLog(Constants.TAG_,"next button st_email");
 
         if (TextUtils.isEmpty(st_email)) {
             emailEdit.setError(view.getContext().getString(R.string.please_enter_email));

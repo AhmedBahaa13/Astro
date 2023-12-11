@@ -345,15 +345,15 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
         String online="0";
         for (int i=0;i<firebaseRoomManager.getSpeakersUserList().size();i++){
 
-            Functions.printLog(Constants.tag,"ID:"+firebaseRoomManager.getSpeakersUserList().get(i).getUserModel().getId());
+            Functions.printLog(Constants.TAG_,"ID:"+firebaseRoomManager.getSpeakersUserList().get(i).getUserModel().getId());
             if(firebaseRoomManager.getSpeakersUserList().get(i).getOnline()!=null &&
                     firebaseRoomManager.getSpeakersUserList().get(i).getOnline().equals("1")){
                 online="1";
-                Functions.printLog(Constants.tag,"Online:"+firebaseRoomManager.getSpeakersUserList().get(i).getOnline());
+                Functions.printLog(Constants.TAG_,"Online:"+firebaseRoomManager.getSpeakersUserList().get(i).getOnline());
             }
         }
 
-        Functions.printLog(Constants.tag,"Online2:"+online);
+        Functions.printLog(Constants.TAG_,"Online2:"+online);
         if(online.equals("0")){
             roomManager.deleteRoom(mainStreamingModel.getModel().getId());
         }
@@ -361,8 +361,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
     private void openUserProfile(HomeUserModel itemUpdate) {
-        Log.d(Constants.tag,"AdminUser: "+itemUpdate.userModel.getId()+"    "+mainStreamingModel.getModel().getId());
-        Log.d(Constants.tag,"AdminUserName: "+itemUpdate.userModel.getUsername()+"    "+mainStreamingModel.getModel().getTitle());
+        Log.d(Constants.TAG_,"AdminUser: "+itemUpdate.userModel.getId()+"    "+mainStreamingModel.getModel().getId());
+        Log.d(Constants.TAG_,"AdminUserName: "+itemUpdate.userModel.getUsername()+"    "+mainStreamingModel.getModel().getTitle());
 
         final OtherUserProfileF fragment =OtherUserProfileF.newInstance(itemUpdate.userModel,mainStreamingModel.getModel().getId(),itemUpdate.getUserRoleType(), firebaseRoomManager.getSpeakersUserList(), new FragmentCallBack() {
             @Override
@@ -691,7 +691,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
     private void removeRoom() {
         Bundle bundle = roomManager.checkRoomCanDeleteOrLeave(firebaseRoomManager.getSpeakersUserList());
-        Functions.printLog(Constants.tag,bundle.getString("action"));
+        Functions.printLog(Constants.TAG_,bundle.getString("action"));
         if (bundle.getString("action").equals("removeRoom")) {
             roomManager.deleteRoom(mainStreamingModel.getModel().getId());
         }
@@ -843,7 +843,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                             binding.ivMessageCount.setVisibility(View.GONE);
                         }
 
-                        Log.d(Constants.tag,"Chat message Count: "+dataSnapshot.getChildrenCount());
+                        Log.d(Constants.TAG_,"Chat message Count: "+dataSnapshot.getChildrenCount());
                     }
                     else
                     {

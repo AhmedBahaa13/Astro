@@ -68,7 +68,7 @@ public class InterestPreferenceA extends AppCompatLocaleActivity implements View
         try {
             parameters.put("user_id",Functions.getSharedPreference(this).getString(Variables.U_ID,""));
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
         VolleyRequest.JsonPostRequest(this, ApiLinks.showTopics, parameters, Functions.getHeaders(this), new Callback() {
@@ -100,7 +100,7 @@ public class InterestPreferenceA extends AppCompatLocaleActivity implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : parseResponseData "+e);
+            Log.d(Constants.TAG_,"Exception : parseResponseData "+e);
         }
         finally {
             binding.progressBar.setVisibility(View.GONE);

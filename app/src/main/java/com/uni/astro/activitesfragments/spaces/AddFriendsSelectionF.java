@@ -130,7 +130,7 @@ public class AddFriendsSelectionF extends BottomSheetDialogFragment implements V
             parameters.put("user_id", Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""));
             parameters.put("starting_point", "" + pageCount);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -158,7 +158,7 @@ public class AddFriendsSelectionF extends BottomSheetDialogFragment implements V
             parameters.put("club_id", clubId);
             parameters.put("starting_point", "" + pageCount);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
 
 
@@ -230,7 +230,7 @@ public class AddFriendsSelectionF extends BottomSheetDialogFragment implements V
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
         finally {
             binding.loadMoreProgress.setVisibility(View.GONE);
@@ -275,7 +275,7 @@ public class AddFriendsSelectionF extends BottomSheetDialogFragment implements V
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         } finally {
             binding.loadMoreProgress.setVisibility(View.GONE);
         }

@@ -97,7 +97,7 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                 {
                     if (model!=null) {
 
-                        Log.d(Constants.tag,"MainStreamingModel: "+model.getModel().getId());
+                        Log.d(Constants.TAG_,"MainStreamingModel: "+model.getModel().getId());
 
                         for (HomeUserModel userModel:model.getUserList())
                         {
@@ -184,15 +184,15 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
     private void registerJoinListener() {
         if(myjoinListener == null) {
 
-            Functions.printLog(Constants.tag,"registerJoinListener call");
+            Functions.printLog(Constants.TAG_,"registerJoinListener call");
             myjoinListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
                     {
-                        Functions.printLog(Constants.tag,"myjoinListener"+dataSnapshot.toString());
+                        Functions.printLog(Constants.TAG_,"myjoinListener"+dataSnapshot.toString());
                         String roomId =dataSnapshot.child("roomId").getValue(String.class);
-                        Functions.printLog(Constants.tag,"joined User roomId"+roomId);
+                        Functions.printLog(Constants.TAG_,"joined User roomId"+roomId);
 
 
                             Bundle bundle=new Bundle();
@@ -267,7 +267,7 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
 
         }
         else {
-            Log.d(Constants.tag,"myRoomListener not null");
+            Log.d(Constants.TAG_,"myRoomListener not null");
         }
     }
 
@@ -278,7 +278,7 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     try {
-                        Log.d(Constants.tag,"onChildAdded ::");
+                        Log.d(Constants.TAG_,"onChildAdded ::");
 
                         if (!(TextUtils.isEmpty(snapshot.getValue().toString())))
                         {
@@ -294,15 +294,15 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                                 myUserModel=dataItem;
                             }
 
-                            Log.d(Constants.tag,"speakersUserList size onChildAdded"+speakersUserList.size());
-                            Log.d(Constants.tag,"audienceUserList size onChildAdded"+audienceUserList.size());
+                            Log.d(Constants.TAG_,"speakersUserList size onChildAdded"+speakersUserList.size());
+                            Log.d(Constants.TAG_,"audienceUserList size onChildAdded"+audienceUserList.size());
 
                             onRoomUsersUpdate(null);
                         }
 
                     }catch (Exception e)
                     {
-                        Log.d(Constants.tag,"onChildAdded: checkPoint:  "+e.getMessage());
+                        Log.d(Constants.TAG_,"onChildAdded: checkPoint:  "+e.getMessage());
                     }
                 }
 
@@ -310,7 +310,7 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     try {
 
-                        Log.d(Constants.tag,"onChildChanged ::");
+                        Log.d(Constants.TAG_,"onChildChanged ::");
 
                         if (!(TextUtils.isEmpty(snapshot.getValue().toString())))
                         {
@@ -350,19 +350,19 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                                 }
                             }
 
-                            Log.d(Constants.tag,"speakersUserList size onChildChanged"+speakersUserList.size());
-                            Log.d(Constants.tag,"audienceUserList size onChildChanged"+audienceUserList.size());
+                            Log.d(Constants.TAG_,"speakersUserList size onChildChanged"+speakersUserList.size());
+                            Log.d(Constants.TAG_,"audienceUserList size onChildChanged"+audienceUserList.size());
 
                         }
                     }
                     catch (Exception e)
-                    {Log.d(Constants.tag,"onChildChanged: "+e);}
+                    {Log.d(Constants.TAG_,"onChildChanged: "+e);}
                 }
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                     try {
-                        Log.d(Constants.tag,"onChildRemoved ::");
+                        Log.d(Constants.TAG_,"onChildRemoved ::");
 
                         HomeUserModel dataItem=snapshot.getValue(HomeUserModel.class);
                         int speakerPostion=getlistPostion(speakersUserList,dataItem);
@@ -375,24 +375,24 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
                             audienceUserList.remove(audiencePosition);
                         }
 
-                        Log.d(Constants.tag,"speakersUserList size onChildRemoved"+speakersUserList.size());
-                        Log.d(Constants.tag,"audienceUserList size onChildRemoved"+audienceUserList.size());
+                        Log.d(Constants.TAG_,"speakersUserList size onChildRemoved"+speakersUserList.size());
+                        Log.d(Constants.TAG_,"audienceUserList size onChildRemoved"+audienceUserList.size());
 
                         onRoomUsersUpdate(null);
 
                     }
                     catch (Exception e)
-                    {Log.d(Constants.tag,"onChildRemoved: "+e);}
+                    {Log.d(Constants.TAG_,"onChildRemoved: "+e);}
                 }
 
                 @Override
                 public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    Log.d(Constants.tag,"onChildMoved ::");
+                    Log.d(Constants.TAG_,"onChildMoved ::");
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d(Constants.tag,"onCancelled ::");
+                    Log.d(Constants.TAG_,"onCancelled ::");
 
                 }
             };
@@ -478,7 +478,7 @@ public class RoomFirebaseManager implements RoomFirebaseListener{
             speakInvitationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(Constants.tag,"roomUpdateListener : "+dataSnapshot);
+                    Log.d(Constants.TAG_,"roomUpdateListener : "+dataSnapshot);
                     if (dataSnapshot.exists())
                     {
                         InviteForSpeakModel invitation=dataSnapshot.getValue(InviteForSpeakModel.class);

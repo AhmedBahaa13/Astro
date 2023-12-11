@@ -125,7 +125,7 @@ public class CreateUsernameF extends Fragment {
             }
         }catch (Exception e)
         {
-            Log.d(Constants.tag,"referal: "+e);
+            Log.d(Constants.TAG_,"referal: "+e);
         }
 
         return view;

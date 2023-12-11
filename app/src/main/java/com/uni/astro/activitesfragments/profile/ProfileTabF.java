@@ -203,7 +203,7 @@ public class ProfileTabF extends Fragment {
                         goLive();
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -793,7 +793,7 @@ public class ProfileTabF extends Fragment {
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
 

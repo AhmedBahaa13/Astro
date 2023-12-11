@@ -244,7 +244,7 @@ public class SearchMainA extends AppCompatLocaleActivity implements View.OnClick
             }
         }
         catch (Exception e){
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -267,7 +267,7 @@ public class SearchMainA extends AppCompatLocaleActivity implements View.OnClick
         }
         catch (Exception e)
         {
-            Functions.printLog(Constants.tag,"Error : "+e);
+            Functions.printLog(Constants.TAG_,"Error : "+e);
         }
     }
 

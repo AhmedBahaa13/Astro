@@ -36,7 +36,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
     public void onBindViewHolder(final CustomViewHolder holder, final int i) {
 
         String item = list.get(i);
-        Log.d(Constants.tag,"item: "+item);
+        Log.d(Constants.TAG_,"item: "+item);
         holder.binding.ivUploadPhoto.setController(Functions.frescoImageLoad(Uri.fromFile(new File(item)),R.drawable.ic_upload_photo,holder.binding.ivUploadPhoto));
 
         holder.bind(i, item, adapterClickListener);

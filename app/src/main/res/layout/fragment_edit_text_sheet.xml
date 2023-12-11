@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
         android:background="@color/transparent"
-        tools:context=".activitesfragments.EditTextSheetF">
+        tools:context=".activitesfragments.comments.EditTextSheetF">
 
         <LinearLayout
             android:background="@drawable/d_round_top_corners_white"
@@ -18,7 +19,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_38sdp"
                 android:background="@drawable/d_bottom_gray_line"
@@ -27,10 +28,11 @@
 
                 <com.hendraanggrian.appcompat.widget.SocialEditText
                     android:id="@+id/message_edit"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_2sdp"
                     android:layout_toStartOf="@+id/send_btn_layout"
                     android:background="@color/transparent"
                     android:focusable="true"
@@ -39,15 +41,22 @@
                     android:imeOptions="actionDone"
                     android:textColor="@color/black"
                     android:textColorHint="@color/darkgray"
-                    android:textSize="@dimen/_11sdp" />
+                    android:textSize="@dimen/_11sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tabTagFriends"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <RelativeLayout
-                    android:layout_marginEnd="@dimen/_8sdp"
                     android:id="@+id/tabTagFriends"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_2sdp"
                     android:layout_toStartOf="@+id/send_btn_layout"
-                    android:layout_centerVertical="true">
+                    app:layout_constraintBottom_toBottomOf="@+id/send_btn_layout"
+                    app:layout_constraintEnd_toStartOf="@+id/send_btn_layout"
+                    app:layout_constraintTop_toTopOf="@+id/send_btn_layout">
 
                     <ImageView
                         android:id="@+id/ivTagFriends"
@@ -57,7 +66,6 @@
                         android:padding="@dimen/_2sdp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_at" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -65,7 +73,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true">
+                    android:layout_centerVertical="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:id="@+id/send_btn"
@@ -76,16 +87,14 @@
                         android:rotation="-45"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_send" />
-
                 </RelativeLayout>
 
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <RelativeLayout
                 android:id="@+id/write_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
         </LinearLayout>
-
     </RelativeLayout>
 </layout>

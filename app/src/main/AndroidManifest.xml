@@ -44,6 +44,8 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+
 
     <application
         android:name=".simpleclasses.Astro"
@@ -66,13 +68,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/whiteStatus"
             android:windowSoftInputMode="adjustPan"/>
-
-        <activity
-            android:name="com.banuba.sdk.ve.flow.VideoCreationActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CustomIntegrationAppTheme"
-            android:windowSoftInputMode="adjustResize"
-            tools:replace="android:theme" />
 
         <activity
             android:name=".activitesfragments.spaces.InterestPreferenceA"
@@ -457,35 +452,35 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/website/profile/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/website/profile/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/ref/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/astro/ref/"
                     android:scheme="http" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/stream/"
                     android:scheme="https" />
                 <data
-                    android:host="http://197.52.142.136:80/new_astro"
+                    android:host="http://www.astrowolf.me/new_astro"
                     android:pathPrefix="/stream/"
                     android:scheme="http" />
             </intent-filter>
@@ -655,7 +650,8 @@
             android:name=".activitesfragments.spaces.services.RoomStreamService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="microphone" />
+            android:foregroundServiceType="microphone"
+            android:permission="android.permission.FOREGROUND_SERVICE_MICROPHONE">
+        </service>
     </application>
-
 </manifest>

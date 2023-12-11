@@ -52,7 +52,7 @@ import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 import com.uni.astro.R;
-import com.uni.astro.activitesfragments.EditTextSheetF;
+import com.uni.astro.activitesfragments.comments.EditTextSheetF;
 import com.uni.astro.activitesfragments.livestreaming.adapter.LiveCommentsAdapter;
 import com.uni.astro.activitesfragments.livestreaming.fragments.InviteContactsToStreamF;
 import com.uni.astro.activitesfragments.livestreaming.model.CameraRequestModel;
@@ -226,7 +226,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
 
                 viewflliper.setInAnimation(inPrevAnim);
                 viewflliper.setOutAnimation(outPrevAnim);
-                Log.d(com.uni.astro.Constants.tag,"start");
+                Log.d(com.uni.astro.Constants.TAG_,"start");
 
                 if (viewTwo==viewflliper.getCurrentView())
                 {
@@ -243,7 +243,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
                 viewflliper.setInAnimation(inAnim);
                 viewflliper.setOutAnimation(outAnim);
 
-                Log.d(com.uni.astro.Constants.tag,"end");
+                Log.d(com.uni.astro.Constants.TAG_,"end");
                 if (viewTwo!=viewflliper.getCurrentView())
                 {
                     viewflliper.showNext();
@@ -427,10 +427,10 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     boolean connected = snapshot.getValue(Boolean.class);
                     if (connected) {
-                        Log.d(com.uni.astro.Constants.tag, "connected");
+                        Log.d(com.uni.astro.Constants.TAG_, "connected");
                         timer.cancel();
                     } else {
-                        Log.d(com.uni.astro.Constants.tag, "not connected");
+                        Log.d(com.uni.astro.Constants.TAG_, "not connected");
                         timer.cancel();
                         timer = new Timer();
                         timer.schedule(
@@ -453,7 +453,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w(com.uni.astro.Constants.tag, "Listener was cancelled");
+                    Log.w(com.uni.astro.Constants.TAG_, "Listener was cancelled");
                 }
             };
             connectedRef.addValueEventListener(connectCheckListener);
@@ -555,7 +555,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
 
 
     private void initData() {
-        Functions.printLog(com.uni.astro.Constants.tag, "initData");
+        Functions.printLog(com.uni.astro.Constants.TAG_, "initData");
         mVideoDimension = com.uni.astro.activitesfragments.livestreaming.Constants.VIDEO_DIMENSIONS[
                 config().getVideoDimenIndex()];
     }
@@ -602,14 +602,14 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Functions.printLog(com.uni.astro.Constants.tag, "onFirstRemoteVideoDecoded");
+                Functions.printLog(com.uni.astro.Constants.TAG_, "onFirstRemoteVideoDecoded");
                 renderRemoteUser(uid);
             }
         });
     }
 
     private void renderRemoteUser(int uid) {
-        Functions.printLog(com.uni.astro.Constants.tag, "renderRemoteUser");
+        Functions.printLog(com.uni.astro.Constants.TAG_, "renderRemoteUser");
         SurfaceView surface = prepareRtcVideo(uid);
         mVideoGridContainer.addUserVideoSurface(uid, surface);
     }
@@ -677,7 +677,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
 
     @Override
     public void onRemoteAudioStats(IRtcEngineEventHandler.RemoteAudioStats stats) {
-        Functions.printLog(com.uni.astro.Constants.tag, "onRemoteAudioStats");
+        Functions.printLog(com.uni.astro.Constants.TAG_, "onRemoteAudioStats");
         if (!statsManager().isEnabled()) return;
 
         RemoteStatsData data = (RemoteStatsData) statsManager().getStatsData(stats.uid);
@@ -768,7 +768,7 @@ public class SingleCastStreamer extends RtcBaseActivity implements View.OnClickL
                            liveUserCount.setText(Functions.getSuffix(""+dataSnapshot.child("JoinStream").getChildrenCount()));
 
 
-                           Log.d(com.uni.astro.Constants.tag,"streamerUserCoin: "+streamerLiveModel.getUserCoins());
+                           Log.d(com.uni.astro.Constants.TAG_,"streamerUserCoin: "+streamerLiveModel.getUserCoins());
 
                            Functions.getSharedPreference(context).edit()
                                    .putString(Variables.U_total_coins_all_time, ""+streamerLiveModel.getUserCoins()).commit();

@@ -107,7 +107,7 @@ class SplashA : AppCompatLocaleActivity() {
                 )
             }
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception : $e")
+            Log.d(Constants.TAG_, "Exception : $e")
         }
         VolleyRequest.JsonPostRequest(
             this@SplashA,

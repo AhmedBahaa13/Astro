@@ -1,4 +1,4 @@
-package com.uni.astro.activitesfragments;
+package com.uni.astro.activitesfragments.comments;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -249,7 +249,7 @@ public class EditTextSheetF extends BottomSheetDialogFragment implements View.On
         keyboardHeightProvider.setKeyboardHeightObserver(new KeyboardHeightObserver() {
             @Override
             public void onKeyboardHeightChanged(int height, int orientation) {
-                Functions.printLog(Constants.tag, "" + height);
+                Functions.printLog(Constants.TAG_, "" + height);
                 if (height < 0) {
                     privious_height = Math.abs(height);
                 }
@@ -295,7 +295,7 @@ public class EditTextSheetF extends BottomSheetDialogFragment implements View.On
             {
                 view.clearFocus();
                 view.requestFocus();
-                Log.d(Constants.tag,"Focus True");
+                Log.d(Constants.TAG_,"Focus True");
             }
             break;
         }

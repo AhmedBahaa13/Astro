@@ -136,7 +136,7 @@ public class PrivacyVideoSettingA extends AppCompatLocaleActivity implements Vie
             e.printStackTrace();
         }
 
-        Functions.printLog(Constants.tag, "params at video_setting: " + params);
+        Functions.printLog(Constants.TAG_, "params at video_setting: " + params);
 
         VolleyRequest.JsonPostRequest(PrivacyVideoSettingA.this, ApiLinks.updateVideoDetail, params,Functions.getHeaders(this), new Callback() {
             @Override

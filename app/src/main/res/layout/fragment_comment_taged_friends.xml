@@ -10,7 +10,7 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="bottom"
-        tools:context=".activitesfragments.CommentTagedFriendsF">
+        tools:context=".activitesfragments.comments.CommentTagedFriendsF">
 
 
         <RelativeLayout

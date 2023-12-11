@@ -36,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/error_detail"
+                android:textColor="@color/black"
                 android:layout_marginTop="@dimen/_30sdp"/>
 
             <Button
@@ -43,6 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/close_app"
+                android:textColor="@color/black"
                 android:visibility="visible"
                 android:layout_marginTop="@dimen/_5sdp"/>
 
@@ -51,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/send_report"
+                android:textColor="@color/black"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/_5sdp"/>
 

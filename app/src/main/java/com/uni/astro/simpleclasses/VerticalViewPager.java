@@ -1542,7 +1542,7 @@ public class VerticalViewPager extends ViewGroup {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception Pager: "+e);
+            Log.d(Constants.TAG_,"Exception Pager: "+e);
         }
 
         return true;
@@ -1766,7 +1766,7 @@ public class VerticalViewPager extends ViewGroup {
                         }
 
                     }catch (Exception e){
-                        Log.d(Constants.tag,"Exception: "+e);
+                        Log.d(Constants.TAG_,"Exception: "+e);
                     }
                 }
                 break;
@@ -1897,7 +1897,7 @@ public class VerticalViewPager extends ViewGroup {
                         needsInvalidate |= performDrag(y);
 
                     }catch (Exception e){
-                        Log.d(Constants.tag,"Exception: "+e);
+                        Log.d(Constants.TAG_,"Exception: "+e);
                     }
                 }
                 break;
@@ -1929,7 +1929,7 @@ public class VerticalViewPager extends ViewGroup {
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception Pager: "+e);
+                    Log.d(Constants.TAG_,"Exception Pager: "+e);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -2234,7 +2234,7 @@ public class VerticalViewPager extends ViewGroup {
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception Pager: "+e);
+            Log.d(Constants.TAG_,"Exception Pager: "+e);
         }
 
     }

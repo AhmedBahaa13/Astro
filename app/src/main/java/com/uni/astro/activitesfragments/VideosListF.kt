@@ -49,6 +49,7 @@ import com.like.LikeButton
 import com.like.OnLikeListener
 import com.uni.astro.Constants
 import com.uni.astro.R
+import com.uni.astro.activitesfragments.comments.CommentF
 import com.uni.astro.activitesfragments.profile.ProfileA
 import com.uni.astro.activitesfragments.profile.ReportTypeA
 import com.uni.astro.activitesfragments.profile.videopromotion.VideoPromoteStepsA
@@ -333,7 +334,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
         try {
             parameters.put("promotion_id", item!!.promotionModel.id)
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception: $e")
+            Log.d(Constants.TAG_, "Exception: $e")
         }
 
         Functions.showLoader(activity, false, false)
@@ -350,7 +351,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                     )
                 }
             } catch (e: Exception) {
-                Log.d(Constants.tag, "Exception: $e")
+                Log.d(Constants.TAG_, "Exception: $e")
             }
         }
     }
@@ -413,7 +414,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                             setFollowBtnStatus(receiverDetailModel.id, followStatus)
                         }
                     } catch (e: Exception) {
-                        Functions.printLog(Constants.tag, "Exception : $e")
+                        Functions.printLog(Constants.TAG_, "Exception : $e")
                     }
                 }
 
@@ -680,7 +681,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
             }
 
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception: $e")
+            Log.d(Constants.TAG_, "Exception: $e")
         }
 
         bind.likeTxt.text = Functions.getSuffix(item!!.like_count)
@@ -699,7 +700,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 bind.tabFavourite.animate().cancel()
             }
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception: $e")
+            Log.d(Constants.TAG_, "Exception: $e")
         }
 
        bind.tvFavourite.text = Functions.getSuffix(item!!.favourite_count)
@@ -725,7 +726,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
             parameters.put("pin", currentPinStatus)
 
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception: $e")
+            Log.d(Constants.TAG_, "Exception: $e")
         }
 
         Functions.showLoader(activity, false, false)
@@ -754,7 +755,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                     pagerAdapter.refreshStateSet(false)
                 }
             } catch (e: Exception) {
-                Log.d(Constants.tag, "Exception: $e")
+                Log.d(Constants.TAG_, "Exception: $e")
             }
         }
     }
@@ -835,7 +836,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                     }
                 }
             } catch (e: Exception) {
-                Log.d(Constants.tag, "Exception : $e")
+                Log.d(Constants.TAG_, "Exception : $e")
             }
         }
     }
@@ -924,7 +925,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                         setData()
                     }
                 } catch (e: Exception) {
-                    Log.d(Constants.tag, "Exception: $e")
+                    Log.d(Constants.TAG_, "Exception: $e")
                 }
             }
         }
@@ -1018,7 +1019,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                                     bind.circleStatusBar.visibility = View.GONE
                                 }
                             } catch (e: Exception) {
-                                Log.d(Constants.tag, "Exception: $e")
+                                Log.d(Constants.TAG_, "Exception: $e")
                             }
                         }
                     }
@@ -1098,7 +1099,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
-        Log.d(Constants.tag, "Exception player: " + error.message)
+        Log.d(Constants.TAG_, "Exception player: " + error.message)
     }
 
     override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -1172,7 +1173,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                     }).start()
             }
         } catch (excep: Exception) {
-            Functions.printLog(Constants.tag, "Exception : $excep")
+            Functions.printLog(Constants.TAG_, "Exception : $excep")
         }
         return true
     }
@@ -1432,7 +1433,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
                             override fun onError(error: Error) {
                                 Functions.printLog(
-                                    Constants.tag,
+                                    Constants.TAG_,
                                     "Error : " + error.connectionException
                                 )
                                 Functions.cancelDeterminentLoader()
@@ -1507,7 +1508,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
     // download the video for duet with
     fun duetVideo(item: HomeModel) {
-        Functions.printLog(Constants.tag, item.video_url)
+        Functions.printLog(Constants.TAG_, item.video_url)
         if (item.video_url != null) {
             var downloadedFile = item.video_url
             if (downloadedFile.contains("file://")) {
@@ -1550,7 +1551,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 }
 
                 override fun onError(error: Error) {
-                    Functions.printLog(Constants.tag, "Error : " + error.connectionException)
+                    Functions.printLog(Constants.TAG_, "Error : " + error.connectionException)
                     Functions.cancelDeterminentLoader()
                 }
             })
@@ -1579,7 +1580,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 val response = JSONObject(resp)
                 val code = response.optString("code")
                 if ((code == "200")) {
-                    Functions.showToast(getContext(), "Successfully repost video!")
+                    Functions.showToast(context, "Successfully repost video!")
                     if (item.repost != null && (item.repost == "0")) {
                         item.repost = "1"
                         try {
@@ -1588,7 +1589,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                             item.repost_video_id = video.optString("repost_video_id", "0")
                             item.repost_user_id = video.optString("repost_user_id", "0")
                         } catch (e: Exception) {
-                            Log.d(Constants.tag, "Exception: $e")
+                            Log.d(Constants.TAG_, "Exception: $e")
                         }
                     } else {
                         item.repost = "0"
@@ -1596,7 +1597,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                     setData()
                 }
             } catch (e: Exception) {
-                Log.d(Constants.tag, "Exception: $e")
+                Log.d(Constants.TAG_, "Exception: $e")
             }
         }
     }
@@ -1629,7 +1630,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 out.close()
             }
         } catch (e: Exception) {
-            Log.d(Constants.tag, "Exception: $e")
+            Log.d(Constants.TAG_, "Exception: $e")
         }
     }
 

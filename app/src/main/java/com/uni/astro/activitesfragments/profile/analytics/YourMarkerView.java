@@ -35,7 +35,7 @@ public class YourMarkerView extends MarkerView {
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
 
-        Functions.printLog(Constants.tag,"x value:"+e.getX());
+        Functions.printLog(Constants.TAG_,"x value:"+e.getX());
 
         title.setText(DateOperations.INSTANCE.changeDateFormat("yyyy-MM-dd","MMM dd",list.get((int)e.getX()).date));
         text.setText("" + e.getY());

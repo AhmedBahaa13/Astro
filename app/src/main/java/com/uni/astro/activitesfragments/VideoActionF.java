@@ -489,7 +489,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 sendIntent.setPackage("com.whatsapp");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -503,7 +503,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 sendIntent.setPackage("com.facebook.katana");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -517,7 +517,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 sendIntent.setPackage("com.facebook.orca");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -529,7 +529,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 smsIntent.putExtra("sms_body",""+videoLink);
                 startActivity(smsIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -542,7 +542,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
 
                 Toast.makeText(context, context.getString(R.string.link_copy_in_clipboard), Toast.LENGTH_SHORT).show();
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -556,7 +556,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 sendIntent.setPackage("com.google.android.gm");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -569,7 +569,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                 sendIntent.putExtra(Intent.EXTRA_TEXT, videoLink);
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
 
@@ -630,7 +630,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
                     if(code!=null && code.equals("200")){
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }

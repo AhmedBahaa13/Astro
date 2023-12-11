@@ -102,7 +102,7 @@ public class EditProfileViewRuleSheetF extends BottomSheetDialogFragment{
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });

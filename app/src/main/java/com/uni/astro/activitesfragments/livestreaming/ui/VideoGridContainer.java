@@ -68,7 +68,7 @@ public class VideoGridContainer extends RelativeLayout implements Runnable {
     }
 
     public void addUserVideoSurface(int uid, SurfaceView surface) {
-        Functions.printLog(Constants.tag,"addUserVideoSurface"+uid);
+        Functions.printLog(Constants.TAG_,"addUserVideoSurface"+uid);
         if (surface == null) {
             return;
         }
@@ -97,7 +97,7 @@ public class VideoGridContainer extends RelativeLayout implements Runnable {
 
             mUidList.add(uid);
 
-            Functions.printLog(Constants.tag,"addUserVideoSurface"+mUidList.size());
+            Functions.printLog(Constants.TAG_,"addUserVideoSurface"+mUidList.size());
 
             if (mUidList.size() <= MAX_USER) {
                 id = uid;
@@ -113,7 +113,7 @@ public class VideoGridContainer extends RelativeLayout implements Runnable {
                     mStatsManager.addUserStats(uid, true);
                 }
                 else {
-                    Functions.printLog(Constants.tag,"addUserStats"+uid+" false");
+                    Functions.printLog(Constants.TAG_,"addUserStats"+uid+" false");
                     mStatsManager.addUserStats(uid, false);
                 }
 

@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -10,7 +10,6 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
-
 
 
     <style name="AppBottomSheetDialogTheme"
@@ -33,7 +32,7 @@
     </style>
 
 
-    <style name="whiteStatus" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="whiteStatus" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
@@ -44,14 +43,14 @@
     </style>
 
 
-    <style name="CustomAppTheme" parent="Theme.AppCompat">
+    <style name="CustomAppTheme" parent="Theme.Material3.Light">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
 
 
-    <style name="blackStatus" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="blackStatus" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blackColor</item>
         <item name="colorPrimaryDark">@color/blackColor</item>
@@ -65,7 +64,7 @@
 
 
 
-    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="AlertDialogCustom" parent="Theme.Material3.Light.Dialog.Alert">
     </style>
 
 
@@ -86,13 +85,13 @@
     </style>
 
 
-    <style name="RadioButton" parent="Theme.AppCompat.Light">
+    <style name="RadioButton" parent="Theme.Material3.Light">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/graycolor</item>
         <item name="colorControlNormal">@color/graycolor</item>
     </style>
 
-    <style name="ProgressbarStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="ProgressbarStyle" parent="Theme.Material3.Light.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 

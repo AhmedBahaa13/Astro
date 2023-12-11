@@ -119,7 +119,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
 
 
     private void compressionApplyOnVideo(String videoPath) {
-        Log.d(Constants.tag,"InputPath: "+videoPath);
+        Log.d(Constants.TAG_,"InputPath: "+videoPath);
         int frameRate=Integer.valueOf(Functions.getTrimVideoFrameRate(new File(""+videoPath).getAbsolutePath()));
         updateCommpressionProgress(true);
         FFMPEGFunctions.INSTANCE.compressVideoHighToLowProcess(ActVideoTrimmer.this,
@@ -133,8 +133,8 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                             updateCommpressionProgress(false);
                             uriRealPath=""+bundle.getString("path");
                             uri = Uri.parse(uriRealPath);
-                            Log.d(Constants.tag,"OutputPath: "+uriRealPath);
-                            Functions.printLog(Constants.tag,"Compressing Done");
+                            Log.d(Constants.TAG_,"OutputPath: "+uriRealPath);
+                            Functions.printLog(Constants.TAG_,"Compressing Done");
                             setDataInView();
                         }
                         else
@@ -207,7 +207,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
            uri = Uri.parse(uriRealPath);
        }catch (Exception e)
        {
-           Log.d(Constants.tag,"Exception: "+e);
+           Log.d(Constants.TAG_,"Exception: "+e);
        }
         setDataInView();
     }
@@ -218,7 +218,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
             Runnable fileUriRunnable = () -> {
 
                 runOnUiThread(() -> {
-                    Log.d(Constants.tag,"Real uri : "+uri);
+                    Log.d(Constants.TAG_,"Real uri : "+uri);
                     progressBar.setVisibility(View.GONE);
                     totalDuration = TrimmerUtils.getDuration(ActVideoTrimmer.this, uri);
                     imagePlayPause.setOnClickListener(v ->
@@ -233,7 +233,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
             };
             Executors.newSingleThreadExecutor().execute(fileUriRunnable);
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -253,7 +253,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                 maxToGap = maxToGap != 0 ? maxToGap : totalDuration;
             }
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -268,7 +268,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                 seekTo(lastMinValue);
             videoPlayer.setPlayWhenReady(!videoPlayer.getPlayWhenReady());
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
 
             }catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception: getExoPlayerInit "+e);
+                Log.d(Constants.TAG_,"Exception: getExoPlayerInit "+e);
             }
 
 
@@ -328,22 +328,22 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                 public void onPlaybackStateChanged(int state) {
                     switch (state) {
                         case Player.STATE_ENDED:
-                            Log.d(Constants.tag,"onPlayerStateChanged: Video ended.");
+                            Log.d(Constants.TAG_,"onPlayerStateChanged: Video ended.");
                             imagePlayPause.setVisibility(View.VISIBLE);
                             isVideoEnded = true;
                             break;
                         case Player.STATE_READY:
                             isVideoEnded = false;
                             startProgress();
-                            Log.d(Constants.tag,"onPlayerStateChanged: Ready to play.");
+                            Log.d(Constants.TAG_,"onPlayerStateChanged: Ready to play.");
                             break;
                         default:
                             break;
                         case Player.STATE_BUFFERING:
-                            Log.d(Constants.tag,"onPlayerStateChanged: STATE_BUFFERING.");
+                            Log.d(Constants.TAG_,"onPlayerStateChanged: STATE_BUFFERING.");
                             break;
                         case Player.STATE_IDLE:
-                            Log.d(Constants.tag,"onPlayerStateChanged: STATE_IDLE.");
+                            Log.d(Constants.TAG_,"onPlayerStateChanged: STATE_IDLE.");
                             break;
                     }
                 }
@@ -360,7 +360,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                         }
                     }catch (Exception e)
                     {
-                        Log.d(Constants.tag,"Exception: "+e);
+                        Log.d(Constants.TAG_,"Exception: "+e);
                     }
                     finally {
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -370,12 +370,12 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                             }
                         },5000);
                     }
-                    Log.d(Constants.tag,"Player Error: "+error.getMessage());
+                    Log.d(Constants.TAG_,"Player Error: "+error.getMessage());
                 }
             });
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
         ActVideoTrimmer.this.runOnUiThread(new Runnable() {
@@ -401,7 +401,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                     sec++;
             }
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -495,7 +495,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                 isValidVideo = false;
             }
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -536,11 +536,11 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
             outputPath = Functions.getAppFolder(ActVideoTrimmer.this)+Variables.gallery_trimed_video;
             videoPlayer.setPlayWhenReady(false);
 
-            Log.d(Constants.tag,"startTimeString: "+Functions.getTimeWithAdditionalSecond("HH:mm:ss", (int) lastMinValue)+
+            Log.d(Constants.TAG_,"startTimeString: "+Functions.getTimeWithAdditionalSecond("HH:mm:ss", (int) lastMinValue)+
                     " endTimeString: "+Functions.getTimeWithAdditionalSecond("HH:mm:ss", (int) lastMaxValue));
 
-            Log.d(Constants.tag,"recordingDuration: "+recordingDuration);
-            Log.d(Constants.tag,"Max:Second Allow: "+(lastMaxValue-lastMinValue));
+            Log.d(Constants.TAG_,"recordingDuration: "+recordingDuration);
+            Log.d(Constants.TAG_,"Max:Second Allow: "+(lastMaxValue-lastMinValue));
             int allowRecordingDuration= (int) (lastMaxValue-lastMinValue);
             int allowDuration=recordingDuration/1000;
             if (allowRecordingDuration<=allowDuration)
@@ -582,7 +582,7 @@ public class ActVideoTrimmer  extends AppCompatLocaleActivity implements View.On
                                         Functions.showLoadingProgress(progressPercentage);
                                     }
                                     catch (Exception e){
-                                        Log.d(Constants.tag,"Exception: "+e);
+                                        Log.d(Constants.TAG_,"Exception: "+e);
                                     }
 
                                 }

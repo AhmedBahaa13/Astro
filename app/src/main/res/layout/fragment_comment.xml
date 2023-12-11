@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
     android:background="@color/transparent"
     android:clickable="true"
-    android:focusable="true"
-    android:layout_gravity="bottom">
+    android:focusable="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,7 +29,8 @@
                 android:layout_margin="@dimen/_6sdp"
                 android:padding="@dimen/_3sdp"
                 android:src="@drawable/ic_white_cross"
-                app:tint="@color/black" />
+                app:tint="@color/black"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:id="@+id/comment_count"
@@ -37,20 +38,21 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_11sdp" />
+                android:textSize="@dimen/_11sdp"
+                tools:ignore="RelativeOverlap" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_below="@+id/top_layout"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/write_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_above="@+id/writeLayout"
+            android:layout_below="@+id/top_layout"
+            android:layout_centerHorizontal="true">
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recylerview"
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/load_more_progress"
@@ -64,81 +66,117 @@
                 android:layout_width="@dimen/_22sdp"
                 android:layout_height="@dimen/_22sdp"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"
                 android:theme="@style/ProgressbarStyle"
                 android:visibility="visible" />
 
 
-
             <TextView
-                android:visibility="gone"
                 android:id="@+id/tvNoCommentData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:layout_marginStart="@dimen/_1sdp"
                 android:gravity="center"
-                android:layout_centerInParent="true"
                 android:paddingStart="@dimen/_22sdp"
                 android:paddingEnd="@dimen/_22sdp"
                 android:text=""
                 android:textColor="@color/black"
-                android:textSize="@dimen/_11sdp" />
+                android:textSize="@dimen/_11sdp"
+                android:visibility="gone" />
 
             <ProgressBar
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
                 android:id="@+id/load_more_progress"
                 style="?android:attr/progressBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:theme="@style/ProgressbarStyle"
                 android:visibility="gone" />
 
         </RelativeLayout>
 
 
-
-        <RelativeLayout
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/write_layout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/writeLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_38sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/d_top_gray_line"
             android:paddingStart="@dimen/_6sdp"
             android:paddingEnd="@dimen/_6sdp">
 
             <TextView
                 android:id="@+id/tvComment"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_toStartOf="@+id/send_btn_layout"
+                android:layout_toStartOf="@+id/btnSend"
                 android:background="@color/transparent"
                 android:gravity="start|center_vertical"
                 android:text="@string/leave_a_comment"
                 android:textColor="@color/darkgray"
-                android:textSize="@dimen/_11sdp" />
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-            <RelativeLayout
-                android:id="@+id/send_btn_layout"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/lnVoiceComment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnSend"
+                app:layout_constraintStart_toEndOf="@+id/tvComment"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.devlomi.record_view.RecordView
+                    android:id="@+id/recordView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:counter_time_color="@color/appColor"
+                    app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+                    app:slide_to_cancel_arrow_color="#000000"
+                    app:slide_to_cancel_bounds="0dp"
+                    app:slide_to_cancel_margin_right="@dimen/_6sdp" />
+
+                <com.devlomi.record_view.RecordButton
+                    android:id="@+id/btnMic"
+                    android:layout_width="35dp"
+                    android:layout_height="29dp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:background="@drawable/d_round_mic_background"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"
+                    app:mic_icon="@drawable/recv_ic_mic_white" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/btnSend"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true">
+                android:layout_centerVertical="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/send_btn"
                     android:layout_width="@dimen/_24sdp"
                     android:layout_height="@dimen/_24sdp"
                     android:background="@color/transparent"
                     android:padding="@dimen/_2sdp"
                     android:rotation="-45"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_send" />
+                    android:src="@drawable/ic_send"
+                    android:importantForAccessibility="no" />
 
                 <ProgressBar
                     android:id="@+id/send_progress"
@@ -146,11 +184,8 @@
                     android:layout_height="@dimen/_24sdp"
                     android:padding="@dimen/_3sdp"
                     android:visibility="gone" />
+            </LinearLayout>
 
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 </FrameLayout>

@@ -293,7 +293,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                 }
             }catch (Exception e)
             {
-                Log.d(Constants.tag,"Exception: "+e);
+                Log.d(Constants.TAG_,"Exception: "+e);
             }
         }
 
@@ -743,7 +743,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                 }
             }
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: showRelatedVideos "+e);
+            Log.d(Constants.TAG_,"Exception: showRelatedVideos "+e);
 
             if(page_count>0)
                 page_count--;
@@ -804,19 +804,19 @@ public class HomeF extends Fragment implements FragmentCallBack {
                         // The mInterstitialAd reference will be null until
                         // an ad is loaded.
                         mInterstitialAd = interstitialAd;
-                        Log.d(Constants.tag, "onAdLoaded");
+                        Log.d(Constants.TAG_, "onAdLoaded");
                         mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
                             @Override
                             public void onAdClicked() {
                                 // Called when a click is recorded for an ad.
-                                Log.d(Constants.tag, "Ad was clicked.");
+                                Log.d(Constants.TAG_, "Ad was clicked.");
                             }
 
                             @Override
                             public void onAdDismissedFullScreenContent() {
                                 // Called when ad is dismissed.
                                 // Set the ad reference to null so you don't show the ad a second time.
-                                Log.d(Constants.tag, "Ad dismissed fullscreen content.");
+                                Log.d(Constants.TAG_, "Ad dismissed fullscreen content.");
                                 mInterstitialAd = null;
                                 if (getActivity()!=null)
                                 {
@@ -833,20 +833,20 @@ public class HomeF extends Fragment implements FragmentCallBack {
                             @Override
                             public void onAdFailedToShowFullScreenContent(AdError adError) {
                                 // Called when ad fails to show.
-                                Log.e(Constants.tag, "Ad failed to show fullscreen content.");
+                                Log.e(Constants.TAG_, "Ad failed to show fullscreen content.");
                                 mInterstitialAd = null;
                             }
 
                             @Override
                             public void onAdImpression() {
                                 // Called when an impression is recorded for an ad.
-                                Log.d(Constants.tag, "Ad recorded an impression.");
+                                Log.d(Constants.TAG_, "Ad recorded an impression.");
                             }
 
                             @Override
                             public void onAdShowedFullScreenContent() {
                                 // Called when ad is shown.
-                                Log.d(Constants.tag, "Ad showed fullscreen content.");
+                                Log.d(Constants.TAG_, "Ad showed fullscreen content.");
                                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -860,7 +860,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                                                         fragment.exoplayer.setPlayWhenReady(false);
                                                     }
                                                     catch (Exception e)
-                                                    {Log.d(Constants.tag,"Exception: "+e);}
+                                                    {Log.d(Constants.TAG_,"Exception: "+e);}
                                                 }
                                             });
                                         }
@@ -879,7 +879,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         // Handle the error
-                        Log.d(Constants.tag, loadAdError.toString());
+                        Log.d(Constants.TAG_, loadAdError.toString());
                         mInterstitialAd = null;
                     }
 

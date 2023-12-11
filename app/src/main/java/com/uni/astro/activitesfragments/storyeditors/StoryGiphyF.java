@@ -142,7 +142,7 @@ public class StoryGiphyF extends Fragment {
             public void onComplete(ListMediaResponse result, Throwable e) {
                 binding.progressBar.setVisibility(View.GONE);
                 if (result == null) {
-                    Log.d(Constants.tag,"Result: null");
+                    Log.d(Constants.TAG_,"Result: null");
                 } else {
                     if (result.getData() != null) {
                         for (Media gif : result.getData()) {
@@ -151,7 +151,7 @@ public class StoryGiphyF extends Fragment {
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Log.d(Constants.tag,"Result: No results found");
+                        Log.d(Constants.TAG_,"Result: No results found");
                     }
                 }
             }
@@ -166,7 +166,7 @@ public class StoryGiphyF extends Fragment {
             public void onComplete(ListMediaResponse result, Throwable e) {
                 binding.progressBar.setVisibility(View.GONE);
                 if (result == null) {
-                    Log.d(Constants.tag,"Result: null");
+                    Log.d(Constants.TAG_,"Result: null");
                 } else {
                     if (result.getData() != null) {
                         dataList.clear();
@@ -177,7 +177,7 @@ public class StoryGiphyF extends Fragment {
                         binding.recylerview.smoothScrollToPosition(0);
 
                     } else {
-                        Log.d(Constants.tag,"Result: No results found");
+                        Log.d(Constants.TAG_,"Result: No results found");
                     }
                 }
             }

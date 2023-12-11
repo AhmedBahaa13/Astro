@@ -53,7 +53,7 @@ public class DateOfBirthF extends Fragment implements View.OnClickListener {
         fromWhere = bundle.getString("fromWhere");
         if (userRegisterModel.referalCode!=null)
         {
-            Log.d(Constants.tag,"referalCode : "+userRegisterModel.referalCode);
+            Log.d(Constants.TAG_,"referalCode : "+userRegisterModel.referalCode);
         }
         datePicker.setOnDateSelectedListener(new DatePicker.OnDateSelectedListener() {
             @Override

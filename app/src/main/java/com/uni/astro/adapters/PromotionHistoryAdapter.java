@@ -63,7 +63,7 @@ public class PromotionHistoryAdapter extends RecyclerView.Adapter<PromotionHisto
 
     private boolean checkIsPromotionCompleted(String durationInDays) {
         try {
-            Log.d(Constants.tag,"durationInDays: "+durationInDays);
+            Log.d(Constants.TAG_,"durationInDays: "+durationInDays);
             double number=Double.parseDouble(durationInDays);
             if (number<=0)
             {

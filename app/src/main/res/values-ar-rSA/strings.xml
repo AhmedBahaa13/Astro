@@ -906,7 +906,6 @@
     <string name="_1_coins">1 عملة</string>
     <string name="earn_coins">كسب عملات</string>
     <string name="daily_checkin">التسجيل اليومي</string>
-    <string name="post_with_argear">نشر مع ARGear</string>
-    <string name="post_with_banuba">نشر مع Banuba</string>
+    <string name="post_new_video">نشر فيديو جديد</string>
 
 </resources>

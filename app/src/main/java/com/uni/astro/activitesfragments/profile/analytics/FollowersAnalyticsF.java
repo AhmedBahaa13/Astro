@@ -202,7 +202,7 @@ public class FollowersAnalyticsF extends Fragment implements View.OnClickListene
 
     private void setData() {
 
-        Functions.printLog(Constants.tag,"setData method call");
+        Functions.printLog(Constants.TAG_,"setData method call");
 
         if (binding.follwersChart.getData() != null &&
                 binding.follwersChart.getData().getDataSetCount() > 0) {
@@ -351,7 +351,7 @@ public class FollowersAnalyticsF extends Fragment implements View.OnClickListene
                         graphData.date = data.optString("date");
                         graphData.count = Integer.parseInt(data.optString("count"));
                         graphDataArrayList.add(graphData);
-                        Functions.printLog(Constants.tag, "followers_graph" + graphDataArrayList.get(i).count);
+                        Functions.printLog(Constants.TAG_, "followers_graph" + graphDataArrayList.get(i).count);
                     }
                 }
 
@@ -420,7 +420,7 @@ public class FollowersAnalyticsF extends Fragment implements View.OnClickListene
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 

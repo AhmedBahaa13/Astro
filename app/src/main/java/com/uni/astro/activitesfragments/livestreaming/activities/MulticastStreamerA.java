@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.uni.astro.R;
-import com.uni.astro.activitesfragments.EditTextSheetF;
+import com.uni.astro.activitesfragments.comments.EditTextSheetF;
 import com.uni.astro.activitesfragments.livestreaming.adapter.LiveCommentsAdapter;
 import com.uni.astro.activitesfragments.livestreaming.fragments.InviteContactsToStreamF;
 import com.uni.astro.activitesfragments.livestreaming.fragments.ViewersListF;
@@ -244,7 +244,7 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
                 viewflliper.setInAnimation(inPrevAnim);
                 viewflliper.setOutAnimation(outPrevAnim);
 
-                Log.d(com.uni.astro.Constants.tag,"start");
+                Log.d(com.uni.astro.Constants.TAG_,"start");
 
                 if (viewTwo==viewflliper.getCurrentView())
                 {
@@ -261,7 +261,7 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
             public void onSwipeLeft() {
                 viewflliper.setInAnimation(inAnim);
                 viewflliper.setOutAnimation(outAnim);
-                Log.d(com.uni.astro.Constants.tag,"end");
+                Log.d(com.uni.astro.Constants.TAG_,"end");
 
 
                     viewflliper.showNext();
@@ -670,7 +670,7 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
 
 
     private void startBroadcast() {
-        Functions.printLog(com.uni.astro.Constants.tag,"userId"+Functions.parseInterger(userId));
+        Functions.printLog(com.uni.astro.Constants.TAG_,"userId"+Functions.parseInterger(userId));
         rtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
         SurfaceView surface = prepareRtcVideo(Functions.parseInterger(userId));
         mVideoGridContainer.addUserVideoSurface(Functions.parseInterger(userId), surface);
@@ -690,13 +690,13 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
         // Do nothing at the moment
-        Functions.printLog(com.uni.astro.Constants.tag,"onJoinChannelSuccess");
+        Functions.printLog(com.uni.astro.Constants.TAG_,"onJoinChannelSuccess");
     }
 
     @Override
     public void onUserJoined(int uid, int elapsed) {
         // Do nothing at the moment
-        Functions.printLog(com.uni.astro.Constants.tag,"onUserJoined");
+        Functions.printLog(com.uni.astro.Constants.TAG_,"onUserJoined");
     }
 
     @Override
@@ -704,7 +704,7 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Functions.printLog(com.uni.astro.Constants.tag,"onUserOffline");
+                Functions.printLog(com.uni.astro.Constants.TAG_,"onUserOffline");
                 removeRemoteUser(uid);
             }
         });
@@ -715,20 +715,20 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Functions.printLog(com.uni.astro.Constants.tag,"onFirstRemoteVideoDecoded");
+                Functions.printLog(com.uni.astro.Constants.TAG_,"onFirstRemoteVideoDecoded");
                 renderRemoteUser(uid);
             }
         });
     }
 
     private void renderRemoteUser(int uid) {
-        Functions.printLog(com.uni.astro.Constants.tag,"renderRemoteUser"+uid);
+        Functions.printLog(com.uni.astro.Constants.TAG_,"renderRemoteUser"+uid);
         SurfaceView surface = prepareRtcVideo(uid);
         mVideoGridContainer.addUserVideoSurface(uid, surface);
     }
 
     private void removeRemoteUser(int uid) {
-        Functions.printLog(com.uni.astro.Constants.tag,"removeRemoteUser"+uid);
+        Functions.printLog(com.uni.astro.Constants.TAG_,"removeRemoteUser"+uid);
         removeRtcVideo(uid);
         mVideoGridContainer.removeUserVideo(uid);
     }
@@ -1214,10 +1214,10 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     boolean connected = snapshot.getValue(Boolean.class);
                     if (connected) {
-                        Log.d(com.uni.astro.Constants.tag, "connected");
+                        Log.d(com.uni.astro.Constants.TAG_, "connected");
                         timer.cancel();
                     } else {
-                        Log.d(com.uni.astro.Constants.tag, "not connected");
+                        Log.d(com.uni.astro.Constants.TAG_, "not connected");
                         timer.cancel();
                         timer = new Timer();
                         timer.schedule(
@@ -1240,7 +1240,7 @@ public class MulticastStreamerA extends RtcBaseActivity implements View.OnClickL
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w(com.uni.astro.Constants.tag, "Listener was cancelled");
+                    Log.w(com.uni.astro.Constants.TAG_, "Listener was cancelled");
                 }
             };
             connectedRef.addValueEventListener(connectCheckListener);

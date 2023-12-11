@@ -95,7 +95,7 @@ public class AppLanguageChangeA extends AppCompatLocaleActivity implements View.
             model.setKey(localeKey[i]);
             languageList.add(model);
         }
-        Log.d(Constants.tag,"Size: "+languageList.size());
+        Log.d(Constants.TAG_,"Size: "+languageList.size());
         progressBar.setVisibility(View.GONE);
 
 
@@ -158,7 +158,7 @@ public class AppLanguageChangeA extends AppCompatLocaleActivity implements View.
         }
         catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 

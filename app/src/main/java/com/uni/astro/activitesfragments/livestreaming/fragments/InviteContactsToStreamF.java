@@ -210,7 +210,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 sendIntent.setPackage("com.whatsapp");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -224,7 +224,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 sendIntent.setPackage("com.facebook.katana");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -238,7 +238,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 sendIntent.setPackage("com.facebook.orca");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -250,7 +250,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 smsIntent.putExtra("sms_body",""+streamingLink);
                 startActivity(smsIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -263,7 +263,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
 
                 Toast.makeText(context, context.getString(R.string.link_copy_in_clipboard), Toast.LENGTH_SHORT).show();
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -277,7 +277,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 sendIntent.setPackage("com.google.android.gm");
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
         else
@@ -290,7 +290,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, streamingLink);
                 startActivity(sendIntent);
             } catch(Exception e) {
-                Log.d(Constants.tag,"Exception : "+e);
+                Log.d(Constants.TAG_,"Exception : "+e);
             }
         }
 
@@ -373,7 +373,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
         String url="";
@@ -614,7 +614,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         } finally {
             contactsAdapter.notifyDataSetChanged();
             loadMoreProgress.setVisibility(View.GONE);
@@ -730,7 +730,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                         Add_member(positon);
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });
@@ -769,7 +769,7 @@ public class InviteContactsToStreamF extends BottomSheetDialogFragment {
                         dismiss();
                     }
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
             }
         });

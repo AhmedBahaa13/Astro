@@ -4,6 +4,7 @@ package com.uni.astro.simpleclasses;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -225,7 +226,7 @@ public class Functions {
         try {
             phoneNumber = phoneUtil.parse(number, region);
         } catch (Exception e) {
-            Log.e(Constants.tag, "error during parsing a number");
+            Log.e(Constants.TAG_, "error during parsing a number");
         }
 
         if (phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)) {
@@ -260,7 +261,7 @@ public class Functions {
         try {
             phoneNumber = phoneUtil.parse(number, null);
         } catch (Exception e) {
-            Log.e(Constants.tag, "error during parsing a number");
+            Log.e(Constants.TAG_, "error during parsing a number");
         }
 
         if (phoneNumber != null && phoneUtil.isValidNumber(phoneNumber)) {
@@ -357,10 +358,10 @@ public class Functions {
                 final MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 final String hashKey = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-                Log.d(Constants.tag, "KeyHash : " + hashKey);
+                Log.d(Constants.TAG_, "KeyHash : " + hashKey);
             }
         } catch (Exception e) {
-            Log.e(Constants.tag, "error:", e);
+            Log.e(Constants.TAG_, "error:", e);
         }
     }
 
@@ -442,7 +443,7 @@ public class Functions {
 
             return file_duration;
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
         }
         return 0;
     }
@@ -549,21 +550,15 @@ public class Functions {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(Message)
-                .setNegativeButton(negitivebtn, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        callback.onResponce("no");
-                    }
+                .setNegativeButton(negitivebtn, (dialog, which) -> {
+                    dialog.dismiss();
+                    callback.onResponce("no");
                 })
-                .setPositiveButton(postivebtn, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setPositiveButton(postivebtn, (dialog, which) -> {
 
-                        dialog.dismiss();
-                        callback.onResponce("yes");
+                    dialog.dismiss();
+                    callback.onResponce("yes");
 
-                    }
                 }).show();
     }
 
@@ -1035,7 +1030,7 @@ public class Functions {
             public void onResponce(String resp) {
                 Functions.checkStatus(activity, resp);
 
-                Functions.printLog(Constants.tag, "resp at like comment reply : " + resp);
+                Functions.printLog(Constants.TAG_, "resp at like comment reply : " + resp);
 
                 if (api_callBack != null)
                     api_callBack.onSuccess(resp);
@@ -1123,16 +1118,21 @@ public class Functions {
         });
     }
 
+
     // this method will send the reply to the comment of the video
-    // this method will send the reply to the comment of the video
-    public static void callApiForSendCommentReply(final Activity activity, String commentId, String comment, String videoId, String videoOwnerId, ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
+    public static void callApiForSendCommentReply(final Activity activity, String type, String commentId, String comment, String videoId, String videoOwnerId, ArrayList<UsersModel> taggedUserList, final APICallBack api_callBack) {
+        if (type == null || type.equals("")) {
+            type = "text";
+        }
 
         JSONObject parameters = new JSONObject();
         try {
-            parameters.put("comment_id", "" + commentId);
-            parameters.put("user_id", "" + Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
-            parameters.put("comment", "" + comment);
-            parameters.put("video_id", "" + videoId);
+            parameters.put("comment_id", commentId);
+            parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"));
+            parameters.put("comment", comment);
+            parameters.put("video_id", videoId);
+            parameters.put("type", type);
+
             JSONArray tagUserArray = new JSONArray();
             for (UsersModel item : taggedUserList) {
                 if (comment.contains("@" + item.username)) {
@@ -1143,7 +1143,7 @@ public class Functions {
             }
             parameters.put("users_json", tagUserArray);
 
-            Functions.printLog(Constants.tag, "parameters at reply : " + parameters);
+            Functions.printLog(Constants.TAG_, "parameters at reply : " + parameters);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1407,7 +1407,7 @@ public class Functions {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: story: " + e);
+            Log.d(Constants.TAG_, "Exception: story: " + e);
         }
 
 
@@ -1579,7 +1579,7 @@ public class Functions {
                 });
             }
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception : " + e);
+            Log.d(Constants.TAG_, "Exception : " + e);
         }
     }
 
@@ -1589,7 +1589,7 @@ public class Functions {
                 dialog.cancel();
             }
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception : " + e);
+            Log.d(Constants.TAG_, "Exception : " + e);
         }
     }
 
@@ -1626,7 +1626,7 @@ public class Functions {
             }
 
         } catch (Exception e) {
-            printLog(Constants.tag, "Exception: " + e);
+            printLog(Constants.TAG_, "Exception: " + e);
         }
     }
 
@@ -1636,7 +1636,7 @@ public class Functions {
                 indeterminantDialog.cancel();
             }
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception : " + e);
+            Log.d(Constants.TAG_, "Exception : " + e);
         }
     }
 
@@ -1691,7 +1691,7 @@ public class Functions {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
         }
     }
 
@@ -1707,7 +1707,7 @@ public class Functions {
                 determinantDialog.cancel();
             }
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception : " + e);
+            Log.d(Constants.TAG_, "Exception : " + e);
         }
     }
 
@@ -2152,7 +2152,7 @@ public class Functions {
             headers.put("ip", getSharedPreference(context).getString(Variables.DEVICE_IP, null));
             headers.put("device_token", getSharedPreference(context).getString(Variables.DEVICE_TOKEN, null));
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
         }
         VolleyRequest.JsonPostRequest(context, ApiLinks.addDeviceData, headers, Functions.getHeaders(context), new Callback() {
             @Override
@@ -2292,7 +2292,7 @@ public class Functions {
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             return networkInfo != null && networkInfo.isConnected();
         } catch (Exception e) {
-            Log.e(Constants.tag, "Exception : " + e.getMessage());
+            Log.e(Constants.TAG_, "Exception : " + e.getMessage());
             return false;
         }
     }
@@ -2437,7 +2437,7 @@ public class Functions {
             }
 
         } catch (Exception e) {
-            Log.e(Constants.tag, "" + e);
+            Log.e(Constants.TAG_, "" + e);
         }
 
     }
@@ -2457,7 +2457,7 @@ public class Functions {
                     });
 
         } catch (Exception e) {
-            Log.e(Constants.tag, "" + e);
+            Log.e(Constants.TAG_, "" + e);
         }
 
     }
@@ -2478,7 +2478,7 @@ public class Functions {
 
         Snackbar snackbar = Snackbar.make(containerView, "", Snackbar.LENGTH_LONG);
 
-        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
         TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
         textView.setVisibility(View.INVISIBLE);
 
@@ -2550,7 +2550,7 @@ public class Functions {
                 startDate = f.parse(start);
                 startDateCal.setTime(startDate);
             } catch (Exception e) {
-                Log.d(Constants.tag, "Exception startDate: " + e);
+                Log.d(Constants.TAG_, "Exception startDate: " + e);
             }
 
             Date endDate = null;
@@ -2558,7 +2558,7 @@ public class Functions {
                 endDate = f.parse(end);
                 endDateCal.setTime(endDate);
             } catch (Exception e) {
-                Log.d(Constants.tag, "Exception endDate: " + e);
+                Log.d(Constants.TAG_, "Exception endDate: " + e);
             }
 
             long difference = (endDateCal.getTimeInMillis() - startDateCal.getTimeInMillis()) / 1000;
@@ -2568,7 +2568,7 @@ public class Functions {
             return "" + days;
 
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception days: " + e);
+            Log.d(Constants.TAG_, "Exception days: " + e);
             return "0";
         }
 
@@ -2589,7 +2589,7 @@ public class Functions {
                 startDate = f.parse(start);
                 startDateCal.setTime(startDate);
             } catch (Exception e) {
-                Log.d(Constants.tag, "Exception startDate: " + e);
+                Log.d(Constants.TAG_, "Exception startDate: " + e);
             }
 
             Date endDate = null;
@@ -2597,7 +2597,7 @@ public class Functions {
                 endDate = f.parse(end);
                 endDateCal.setTime(endDate);
             } catch (Exception e) {
-                Log.d(Constants.tag, "Exception endDate: " + e);
+                Log.d(Constants.TAG_, "Exception endDate: " + e);
             }
 
             long difference = (endDateCal.getTimeInMillis() - startDateCal.getTimeInMillis()) / 1000;
@@ -2607,7 +2607,7 @@ public class Functions {
             return "" + days;
 
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception days: " + e);
+            Log.d(Constants.TAG_, "Exception days: " + e);
             return "0";
         }
 
@@ -2682,7 +2682,7 @@ public class Functions {
                     executor.shutdownNow();
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag, "Exception: " + e);
+                    Log.d(Constants.TAG_, "Exception: " + e);
                     executor.shutdownNow();
                 }
 
@@ -2794,7 +2794,7 @@ public class Functions {
             return message;
 
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
         }
         return "";
     }
@@ -2817,7 +2817,7 @@ public class Functions {
                 }
             }
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
         } finally {
             extractor.release();
             return "" + frameRate;
@@ -2836,7 +2836,7 @@ public class Functions {
             int second = Integer.valueOf(duration) / 1000;
             return second;
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception: " + e);
+            Log.d(Constants.TAG_, "Exception: " + e);
             return 10;
         }
     }
@@ -2895,7 +2895,7 @@ public class Functions {
         tvMessage.setText(message);
         Snackbar snackbar = Snackbar.make(mainView, "", Snackbar.LENGTH_LONG);
 
-        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
         TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
         textView.setVisibility(View.INVISIBLE);
 
@@ -3049,7 +3049,7 @@ public class Functions {
             sendIntent.putExtra(Intent.EXTRA_TEXT, data);
             activity.startActivity(sendIntent);
         } catch (Exception e) {
-            Log.d(Constants.tag, "Exception : " + e);
+            Log.d(Constants.TAG_, "Exception : " + e);
         }
     }
 
@@ -3148,7 +3148,7 @@ public class Functions {
         // Remove extra forward slashes
         String correctedURL = url.replaceAll("(?<!http:|https:|ftp:)\\/\\/+", "/");
 
-        Log.d(Constants.tag, "correctedURL: " + correctedURL);
+        Log.d(Constants.TAG_, "correctedURL: " + correctedURL);
         return correctedURL;
     }
 

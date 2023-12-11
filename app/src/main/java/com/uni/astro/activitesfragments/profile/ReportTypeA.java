@@ -66,7 +66,7 @@ public class ReportTypeA extends AppCompatLocaleActivity implements View.OnClick
             public void onResponce(String resp) {
                 Functions.checkStatus(ReportTypeA.this,resp);
 
-                Functions.printLog(Constants.tag, "resp at report : " + resp);
+                Functions.printLog(Constants.TAG_, "resp at report : " + resp);
                 Functions.cancelLoader();
                 parseData(resp);
             }
@@ -114,7 +114,7 @@ public class ReportTypeA extends AppCompatLocaleActivity implements View.OnClick
                 switch (view.getId()) {
                     case R.id.rlt_report:
                         if (isFromRegister) {
-                            Functions.printLog(Constants.tag, item.title);
+                            Functions.printLog(Constants.TAG_, item.title);
                             sendDataBack(item.title);
                         } else {
                             Intent intent=new Intent(ReportTypeA.this,SubmitReportA.class);

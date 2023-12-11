@@ -90,7 +90,7 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
         if (bundle.getString("action").equalsIgnoreCase("deleteVideo"))
         {
             dataList.remove(bundle.getInt("position"));
-            Log.d(Constants.tag,"notify data : "+dataList.size());
+            Log.d(Constants.TAG_,"notify data : "+dataList.size());
             if (dataList.size()==0)
             {
                 onBackPressed();
@@ -335,8 +335,8 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
                 }
                 currentPositon=menuPager.getCurrentItem();
                 setupPlaylist();
-                Log.d(Constants.tag,"Check : check "+(position+1)+"    "+(dataList.size()-1)+"      "+(dataList.size() > 2 && (dataList.size() - 1) == position));
-                Log.d(Constants.tag,"Test : Test "+(position+1)+"    "+(dataList.size()-5)+"      "+(dataList.size() > 5 && (dataList.size() - 5) == (position+1)));
+                Log.d(Constants.TAG_,"Check : check "+(position+1)+"    "+(dataList.size()-1)+"      "+(dataList.size() > 2 && (dataList.size() - 1) == position));
+                Log.d(Constants.TAG_,"Test : Test "+(position+1)+"    "+(dataList.size()-5)+"      "+(dataList.size() > 5 && (dataList.size() - 5) == (position+1)));
                 if (dataList.size() > 5 && (dataList.size() -5) == (position+1)) {
                     if(!isApiRuning) {
                         pageCount++;
@@ -403,7 +403,7 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
             });
 
         }catch (Exception e) {
-            Functions.printLog(Constants.tag, e.toString());
+            Functions.printLog(Constants.TAG_, e.toString());
         }
     }
 
@@ -571,7 +571,7 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
                 if (!(bundle.getBoolean("isShow")))
                 {
                     currentPositon=0;
-                    Log.d(Constants.tag,"Update List");
+                    Log.d(Constants.TAG_,"Update List");
                     pageCount = 0;
                     dataList.clear();
                     callVideoApi();
@@ -611,7 +611,7 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }
@@ -1094,7 +1094,7 @@ public class WatchVideosA extends AppCompatLocaleActivity implements FragmentCal
             }
 
         } catch (JSONException e) {
-            Log.d(Constants.tag,"Error: Exception: "+e);
+            Log.d(Constants.TAG_,"Error: Exception: "+e);
 
             if(pageCount >0)
                 pageCount--;

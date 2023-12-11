@@ -174,7 +174,7 @@ public class DiscoverAdapter extends RecyclerView.Adapter<DiscoverAdapter.Custom
 
                     }
                 } catch (Exception e) {
-                    Functions.printLog(Constants.tag, e.toString());
+                    Functions.printLog(Constants.TAG_, e.toString());
                 }
 
             } else {

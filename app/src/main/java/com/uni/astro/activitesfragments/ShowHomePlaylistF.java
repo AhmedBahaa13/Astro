@@ -139,7 +139,7 @@ public class ShowHomePlaylistF extends BottomSheetDialogFragment implements View
             }
 
         } catch (JSONException e) {
-            Log.d(Constants.tag,"Error: Exception: "+e);
+            Log.d(Constants.TAG_,"Error: Exception: "+e);
 
         } finally {
             setupAdapter();
@@ -325,7 +325,7 @@ public class ShowHomePlaylistF extends BottomSheetDialogFragment implements View
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }
@@ -364,7 +364,7 @@ public class ShowHomePlaylistF extends BottomSheetDialogFragment implements View
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }

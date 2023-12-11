@@ -110,7 +110,7 @@ public class BlockUserListA extends AppCompatLocaleActivity implements View.OnCl
             parameters.put("user_id", userId);
         } catch (Exception e) {
             e.printStackTrace();
-            Functions.printLog(Constants.tag, "e : " + e.toString());
+            Functions.printLog(Constants.TAG_, "e : " + e.toString());
         }
         VolleyRequest.JsonPostRequest(BlockUserListA.this, ApiLinks.showBlockedUsers, parameters,Functions.getHeaders(this), new Callback() {
             @Override
@@ -159,7 +159,7 @@ public class BlockUserListA extends AppCompatLocaleActivity implements View.OnCl
             }
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
     }
 
@@ -200,7 +200,7 @@ public class BlockUserListA extends AppCompatLocaleActivity implements View.OnCl
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });

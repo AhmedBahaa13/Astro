@@ -178,7 +178,7 @@ public class StoryStickersF extends Fragment {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: comment"+e);
+                    Log.d(Constants.TAG_,"Exception: comment"+e);
                 } finally {
                     binding.loadMoreProgress.setVisibility(View.GONE);
                     getUpdateStatus();

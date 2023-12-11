@@ -353,7 +353,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
                         String filepath = String.valueOf(uri);
                         uploadProfileVideo(filepath);
                     } else
-                        Log.d(Constants.tag,"videoTrimResultLauncher data is null");
+                        Log.d(Constants.TAG_,"videoTrimResultLauncher data is null");
                 }
             });
 
@@ -372,7 +372,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
             @Override
             public void onFinish(String responses) {
                 Functions.cancelLoader();
-                Functions.printLog(Constants.tag, responses);
+                Functions.printLog(Constants.TAG_, responses);
                 try {
                     JSONObject jsonObject = new JSONObject(responses);
                     int code = jsonObject.optInt("code",0);
@@ -387,7 +387,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
                     }
 
                 } catch (Exception e) {
-                    Functions.printLog(Constants.tag, "Exception: "+e);
+                    Functions.printLog(Constants.TAG_, "Exception: "+e);
                 }
             }
 
@@ -413,7 +413,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
         keyboardHeightProvider.setKeyboardHeightObserver(new KeyboardHeightObserver() {
             @Override
             public void onKeyboardHeightChanged(int height, int orientation) {
-                Functions.printLog(Constants.tag, "" + height);
+                Functions.printLog(Constants.TAG_, "" + height);
                 if (height < 0) {
                     priviousHeight = Math.abs(height);
                 }
@@ -700,7 +700,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
             @Override
             public void onFinish(String responses) {
                 Functions.cancelLoader();
-                Functions.printLog(Constants.tag, responses);
+                Functions.printLog(Constants.TAG_, responses);
                 try {
                     JSONObject jsonObject = new JSONObject(responses);
                     int code = jsonObject.optInt("code",0);
@@ -726,7 +726,7 @@ public class EditProfileA extends AppCompatLocaleActivity {
                     }
 
                 } catch (Exception e) {
-                    Functions.printLog(Constants.tag, "Exception: "+e);
+                    Functions.printLog(Constants.TAG_, "Exception: "+e);
                 }
             }
 

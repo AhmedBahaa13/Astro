@@ -38,7 +38,7 @@ public abstract class RtcBaseActivity extends BaseActivity implements EventHandl
     }
 
     private void joinChannel() {
-        Log.d(com.uni.astro.Constants.tag,"Check channel name : "+config().getChannelName());
+        Log.d(com.uni.astro.Constants.TAG_,"Check channel name : "+config().getChannelName());
         rtcEngine().joinChannel(null, config().getChannelName(), "", userID);
 
     }

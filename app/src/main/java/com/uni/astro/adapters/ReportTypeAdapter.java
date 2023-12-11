@@ -58,7 +58,7 @@ public class ReportTypeAdapter extends RecyclerView.Adapter<ReportTypeAdapter.Cu
         holder.bind(i, item, listener);
         holder.reportName.setText(item.title);
 
-        Functions.printLog(Constants.tag, item.title);
+        Functions.printLog(Constants.TAG_, item.title);
     }
 
 

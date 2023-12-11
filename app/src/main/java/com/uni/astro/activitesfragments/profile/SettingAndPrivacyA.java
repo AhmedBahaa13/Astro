@@ -272,7 +272,7 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
 
             Toast.makeText(SettingAndPrivacyA.this, SettingAndPrivacyA.this.getString(R.string.link_copy_in_clipboard), Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -285,7 +285,7 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
             sendIntent.putExtra(Intent.EXTRA_TEXT, refferallink);
             startActivity(sendIntent);
         } catch(Exception e) {
-            Log.d(Constants.tag,"Exception : "+e);
+            Log.d(Constants.TAG_,"Exception : "+e);
         }
     }
 
@@ -487,7 +487,7 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception : "+e);
+                    Log.d(Constants.TAG_,"Exception : "+e);
                 }
 
 

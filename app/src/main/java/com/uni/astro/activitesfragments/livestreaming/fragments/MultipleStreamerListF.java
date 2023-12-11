@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.uni.astro.Constants;
 import com.uni.astro.R;
-import com.uni.astro.activitesfragments.EditTextSheetF;
+import com.uni.astro.activitesfragments.comments.EditTextSheetF;
 import com.uni.astro.activitesfragments.livestreaming.activities.LiveUsersA;
 import com.uni.astro.activitesfragments.livestreaming.activities.MultiViewLiveA;
 import com.uni.astro.activitesfragments.livestreaming.adapter.LiveCommentsAdapter;
@@ -161,7 +161,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
 
                 viewflliper.setInAnimation(inPrevAnim);
                 viewflliper.setOutAnimation(outPrevAnim);
-                Log.d(Constants.tag,"start");
+                Log.d(Constants.TAG_,"start");
 
                 if (viewTwo==viewflliper.getCurrentView())
                 {
@@ -177,7 +177,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
             public void onSwipeLeft() {
                 viewflliper.setInAnimation(inAnim);
                 viewflliper.setOutAnimation(outAnim);
-                Log.d(Constants.tag,"end");
+                Log.d(Constants.TAG_,"end");
 
                     viewflliper.showNext();
 
@@ -569,7 +569,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
             tabStreamView.setVisibility(View.VISIBLE);
             tabLockStream.setVisibility(View.GONE);
 //            connectStream
-            Log.d(Constants.tag,"Stream: emptySecure");
+            Log.d(Constants.TAG_,"Stream: emptySecure");
             activity.refreshStreamingConnection(item.getStreamingId());
         }
         else
@@ -579,7 +579,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                 tabStreamView.setVisibility(View.VISIBLE);
                 tabLockStream.setVisibility(View.GONE);
 //                connectStream
-                Log.d(Constants.tag,"Stream: secure");
+                Log.d(Constants.TAG_,"Stream: secure");
                 activity.refreshStreamingConnection(item.getStreamingId());
             }
             else
@@ -619,7 +619,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
         }
 
 
-         Functions.printLog(Constants.tag,"item.isVideoEnable():"+item.isVideoEnable() + " previousIsVideoEnable:"+previousIsVideoEnable);
+         Functions.printLog(Constants.TAG_,"item.isVideoEnable():"+item.isVideoEnable() + " previousIsVideoEnable:"+previousIsVideoEnable);
         if(activity.mVideoGridContainer!=null) {
 
             if (item.isVideoEnable() && !previousIsVideoEnable) {
@@ -743,9 +743,9 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
 
 
     private void startBroadcast(int role) {
-        Log.d(Constants.tag,"Stream: startBroadcast as "+role);
-        Log.d(Constants.tag,"Stream: startBroadcast with compare "+activity.userRole);
-        Functions.printLog(Constants.tag,"userId"+userId);
+        Log.d(Constants.TAG_,"Stream: startBroadcast as "+role);
+        Log.d(Constants.TAG_,"Stream: startBroadcast with compare "+activity.userRole);
+        Functions.printLog(Constants.TAG_,"userId"+userId);
 
         SurfaceView surface = activity.startBroadcast(item.getStreamingId(),role);
         activity.mVideoGridContainer.addUserVideoSurface(userId, surface);
@@ -754,9 +754,9 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
 
 
     private void stopBroadcast(int role) {
-        Log.d(Constants.tag,"Stream: stopBroadcast as "+role);
-        Log.d(Constants.tag,"Stream: stopBroadcast with compare "+activity.userRole);
-        Functions.printLog(Constants.tag,"userId"+userId);
+        Log.d(Constants.TAG_,"Stream: stopBroadcast as "+role);
+        Log.d(Constants.TAG_,"Stream: stopBroadcast with compare "+activity.userRole);
+        Functions.printLog(Constants.TAG_,"userId"+userId);
         activity.stopBroadcast(role);
         activity.mVideoGridContainer.removeUserVideo(userId);
     }
@@ -843,7 +843,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                     tabStreamView.setVisibility(View.VISIBLE);
                     tabLockStream.setVisibility(View.GONE);
 //                    connectStream
-                    Log.d(Constants.tag,"Stream: breakeSecure");
+                    Log.d(Constants.TAG_,"Stream: breakeSecure");
                     activity.refreshStreamingConnection(item.getStreamingId());
                 }
 
@@ -934,7 +934,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         }
 
 
@@ -977,7 +977,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
             }
         });
@@ -1107,7 +1107,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                     activity.userRole=io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE;
                     stopBroadcast(io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE);
                 }
-                Log.d(Constants.tag,"activity.userRole: "+activity.userRole);
+                Log.d(Constants.TAG_,"activity.userRole: "+activity.userRole);
             }
         });
         alertDialog.show();
@@ -1125,7 +1125,7 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                     StickerModel model= (StickerModel) bundle.getSerializable("Data");
                     String counter=bundle.getString("count");
                     addGiftComment("gift",counter,model);
-                    Log.d(Constants.tag,"Test : "+item.getUserCoins());
+                    Log.d(Constants.TAG_,"Test : "+item.getUserCoins());
 
                     if(item!=null)
                     {
@@ -1369,17 +1369,17 @@ public class MultipleStreamerListF extends Fragment implements View.OnClickListe
                                 liveUserCount.setText(Functions.getSuffix(""+jointUserList.size()));
 
 
-                                Functions.printLog(Constants.tag,snapshot.toString());
+                                Functions.printLog(Constants.TAG_,snapshot.toString());
                                 item = snapshot.getValue(LiveUserModel.class);
 
                                 tabStreamView.setVisibility(View.VISIBLE);
                                 tabOfflineView.setVisibility(View.GONE);
 
-                                Log.d(Constants.tag,"Stream: userChange");
+                                Log.d(Constants.TAG_,"Stream: userChange");
 
 
                                 item.setVideoEnable((boolean) snapshot.child("isVideoEnable").getValue());
-                                Functions.printLog(Constants.tag,"item.setVideoEnable"+item.isVideoEnable());
+                                Functions.printLog(Constants.TAG_,"item.setVideoEnable"+item.isVideoEnable());
 
                                 setUpScreenData();
 

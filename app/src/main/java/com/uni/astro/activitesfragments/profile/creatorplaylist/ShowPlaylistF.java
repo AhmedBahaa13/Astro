@@ -246,7 +246,7 @@ public class ShowPlaylistF extends BottomSheetDialogFragment implements View.OnC
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }
@@ -285,7 +285,7 @@ public class ShowPlaylistF extends BottomSheetDialogFragment implements View.OnC
                 }
                 catch (Exception e)
                 {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
             }

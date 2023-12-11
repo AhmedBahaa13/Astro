@@ -112,7 +112,7 @@ public class NotificationActionHandler extends BroadcastReceiver {
             
         }catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception: Notification Handler: "+e);
+            Log.d(Constants.TAG_,"Exception: Notification Handler: "+e);
         }
     }
 

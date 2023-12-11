@@ -271,7 +271,7 @@ public class PostVideoA extends AppCompatLocaleActivity implements View.OnClickL
                         if (bundle.getString("action").equals("success")) {
                             updateCommpressionProgress(false);
                             videoPath = bundle.getString("path");
-                            Functions.printLog(Constants.tag, "Compressing Done");
+                            Functions.printLog(Constants.TAG_, "Compressing Done");
                             makeThumbnailOfVideo();
                         } else if (bundle.getString("action").equals("failed")) {
                             updateCommpressionProgress(false);
@@ -636,8 +636,8 @@ public class PostVideoA extends AppCompatLocaleActivity implements View.OnClickL
             }
         }
 
-        Functions.printLog(Constants.tag, hashTag.toString());
-        Functions.printLog(Constants.tag, friendsTag.toString());
+        Functions.printLog(Constants.TAG_, hashTag.toString());
+        Functions.printLog(Constants.TAG_, friendsTag.toString());
     }
 
     // this will start the service for uploading the video into database
@@ -667,7 +667,7 @@ public class PostVideoA extends AppCompatLocaleActivity implements View.OnClickL
             else
                 mServiceIntent.putExtra("allow_duet", "0");
 
-            Log.d(Constants.tag, "startService: " + mServiceIntent.getExtras().toString());
+            Log.d(Constants.TAG_, "startService: " + mServiceIntent.getExtras().toString());
 
 
             startService(mServiceIntent);

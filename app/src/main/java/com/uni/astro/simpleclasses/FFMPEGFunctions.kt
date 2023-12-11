@@ -41,7 +41,7 @@ object FFMPEGFunctions {
             }
 
             override fun success() {
-                Log.d(Constants.tag,"success: ")
+                Log.d(Constants.TAG_,"success: ")
                 val bundle=Bundle()
                 bundle.putString("action","success")
                 bundle.putString("path",output)
@@ -49,14 +49,14 @@ object FFMPEGFunctions {
             }
 
             override fun cancel() {
-                Log.d(Constants.tag,"cancel: ")
+                Log.d(Constants.TAG_,"cancel: ")
                 val bundle=Bundle()
                 bundle.putString("action","cancel")
                 callback.onResponce(bundle)
             }
 
             override fun failed() {
-                Log.d(Constants.tag,"failed: ")
+                Log.d(Constants.TAG_,"failed: ")
                 val bundle=Bundle()
                 bundle.putString("action","failed")
                 callback.onResponce(bundle)
@@ -86,7 +86,7 @@ object FFMPEGFunctions {
             }
 
             override fun success() {
-                Log.d(Constants.tag,"success: ")
+                Log.d(Constants.TAG_,"success: ")
                 val bundle=Bundle()
                 bundle.putString("action","success")
                 bundle.putString("path",outputPath)
@@ -94,14 +94,14 @@ object FFMPEGFunctions {
             }
 
             override fun cancel() {
-                Log.d(Constants.tag,"cancel: ")
+                Log.d(Constants.TAG_,"cancel: ")
                 val bundle=Bundle()
                 bundle.putString("action","cancel")
                 callback.onResponce(bundle)
             }
 
             override fun failed() {
-                Log.d(Constants.tag,"failed: ")
+                Log.d(Constants.TAG_,"failed: ")
                 val bundle=Bundle()
                 bundle.putString("action","failed")
                 callback.onResponce(bundle)
@@ -207,7 +207,7 @@ object FFMPEGFunctions {
         val outputPath = Common.getFilePath(context, Common.VIDEO)
         var setpts:Double=1.0
         var atempo:Double=1.0
-        Log.d(Constants.tag,"speedTabPosition: $speedTabPosition")
+        Log.d(Constants.TAG_,"speedTabPosition: $speedTabPosition")
         when(speedTabPosition)
         {
             0->{
@@ -260,7 +260,7 @@ object FFMPEGFunctions {
                     Functions.copyFile(File(outputPath), File(inputPath))
                     Functions.clearFilesCacheBeforeOperation(File(outputPath))
                 } catch (e: Exception) {
-                    Functions.printLog(Constants.tag, "" + e)
+                    Functions.printLog(Constants.TAG_, "" + e)
                 }
                 bundle.putString("path",inputPath)
                 callback.onResponce(bundle)
@@ -312,7 +312,7 @@ object FFMPEGFunctions {
         return getCombineImagesToVideo(inputs, query, queryAudio, photoPaths, output)
     }
     private fun getCombineImagesToVideo(inputs:ArrayList<String>, query: String, queryAudio: String, paths: ArrayList<String>, output: String): Array<String> {
-        Log.d(Constants.tag,"inputsquery: ${inputs}")
+        Log.d(Constants.TAG_,"inputsquery: ${inputs}")
         val width = 620
         val height = 1102
         inputs.apply {
@@ -346,7 +346,7 @@ object FFMPEGFunctions {
             add("ultrafast")
             add(output)
         }
-        Log.d(Constants.tag,"inputsfinal: ${inputs}")
+        Log.d(Constants.TAG_,"inputsfinal: ${inputs}")
         return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 
@@ -374,7 +374,7 @@ object FFMPEGFunctions {
             add("9999")
             add(output)
         }
-        Log.d(Constants.tag,"inputs AddImage: ${inputs}")
+        Log.d(Constants.TAG_,"inputs AddImage: ${inputs}")
         return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 
@@ -403,7 +403,7 @@ object FFMPEGFunctions {
             add("ultrafast")
             add(outputVideo)
         }
-        Log.d(Constants.tag,"inputs Compression: ${inputs}")
+        Log.d(Constants.TAG_,"inputs Compression: ${inputs}")
         return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 
@@ -477,7 +477,7 @@ object FFMPEGFunctions {
             add("ultrafast")
             add(outputVideo)
         }
-        Log.d(Constants.tag,"inputs Compression: ${inputs}")
+        Log.d(Constants.TAG_,"inputs Compression: ${inputs}")
         return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 

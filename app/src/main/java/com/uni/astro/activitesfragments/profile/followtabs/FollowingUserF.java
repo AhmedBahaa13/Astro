@@ -243,7 +243,7 @@ public class FollowingUserF extends Fragment {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                    Log.d(Constants.tag,"recyclerView : "+i);
+                    Log.d(Constants.TAG_,"recyclerView : "+i);
                 }
             });
         }
@@ -374,7 +374,7 @@ public class FollowingUserF extends Fragment {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.tag,"Exception : "+e);
+                            Log.d(Constants.TAG_,"Exception : "+e);
                         }
                     }
 

@@ -206,7 +206,7 @@ public class TrimmerUtils {
                 time=minutes+" Mins "+(seconds!=0 ? seconds+" Secs ":"");
             else
                 time=seconds+" Secs ";
-        Log.d(Constants.tag,"Trim secs : "+time);
+        Log.d(Constants.TAG_,"Trim secs : "+time);
             return time;
     }
 

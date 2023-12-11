@@ -268,7 +268,7 @@ public class PromotionHistoryA extends AppCompatLocaleActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.d(Constants.tag,"params: "+params);
+        Log.d(Constants.TAG_,"params: "+params);
         Functions.showLoader(PromotionHistoryA.this,false,false);
         VolleyRequest.JsonPostRequest(PromotionHistoryA.this, ApiLinks.addPromotion, params,Functions.getHeaders(PromotionHistoryA.this), new Callback() {
             @Override
@@ -290,7 +290,7 @@ public class PromotionHistoryA extends AppCompatLocaleActivity {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.tag,"Exception: "+e);
+                    Log.d(Constants.TAG_,"Exception: "+e);
                 }
 
 
@@ -386,7 +386,7 @@ public class PromotionHistoryA extends AppCompatLocaleActivity {
             }
 
         } catch (Exception e) {
-            Log.d(Constants.tag,"Exception: "+e);
+            Log.d(Constants.TAG_,"Exception: "+e);
         } finally {
             binding.loadMoreProgress.setVisibility(View.GONE);
         }

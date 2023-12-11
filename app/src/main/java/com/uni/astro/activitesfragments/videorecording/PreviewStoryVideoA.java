@@ -115,7 +115,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
         videoFile = new File(Functions.getAppFolder(this) + Variables.outputfile2);
 
 
-        Log.d(Constants.tag,"videoFile: "+videoFile);
+        Log.d(Constants.TAG_,"videoFile: "+videoFile);
         startPlayerConfiguration();
 
         tabUndo.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
@@ -200,7 +200,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
                                 }
                                 catch (Exception e)
                                 {
-                                    Log.d(Constants.tag,"Exception scaledBitmap: "+e);
+                                    Log.d(Constants.TAG_,"Exception scaledBitmap: "+e);
                                 }
                                 finally {
                                     merageEditing(filePath.getAbsolutePath(),isPublish);
@@ -211,7 +211,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
 
                     @Override
                     public void onFailure(@Nullable Exception e) {
-                        Log.d(Constants.tag,"Exception BitmapEditor: "+e);
+                        Log.d(Constants.TAG_,"Exception BitmapEditor: "+e);
                     }
                 });
             }
@@ -490,7 +490,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
                                     Functions.copyFile(videoFile, new File(Functions.getAppFolder(PreviewStoryVideoA.this)+Variables.output_filter_file));
 
                                 } catch (Exception e) {
-                                    Functions.printLog(Constants.tag, ""+e);
+                                    Functions.printLog(Constants.TAG_, ""+e);
                                 }
                                 moveToPublish();
                             }
@@ -500,7 +500,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
                                     Functions.copyFile(videoFile, new File(Functions.getAppFolder(PreviewStoryVideoA.this)+Variables.outputfile2));
 
                                 } catch (Exception e) {
-                                    Functions.printLog(Constants.tag, ""+e);
+                                    Functions.printLog(Constants.TAG_, ""+e);
                                 }
                                 moveToNext();
                             }
@@ -558,7 +558,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
             videoPlayer.setAudioAttributes(audioAttributes, true);
         }catch (Exception e)
         {
-            Log.d(Constants.tag,"Exception: getExoPlayerInit "+e);
+            Log.d(Constants.TAG_,"Exception: getExoPlayerInit "+e);
         }
 
         PreviewStoryVideoA.this.runOnUiThread(new Runnable() {
@@ -720,7 +720,7 @@ public class PreviewStoryVideoA extends AppCompatLocaleActivity implements Playe
         if (playbackState == Player.STATE_READY)
         {
             videoDuration= getVideoDurationSeconds(videoPlayer);
-            Log.d(Constants.tag,"videoDuration: "+videoDuration);
+            Log.d(Constants.TAG_,"videoDuration: "+videoDuration);
         }
 
     }

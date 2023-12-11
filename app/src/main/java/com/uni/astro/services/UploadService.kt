@@ -68,7 +68,7 @@ class UploadService : Service() {
             hashtags_json = intent.getStringExtra("hashtags_json")
             users_json = intent.getStringExtra("mention_users_json")
             Log.d(
-                Constants.tag, """
+                Constants.TAG_, """
                  VideoInfo: \n
                  videoPath: $videopath
                  draft_file: $draft_file
@@ -114,7 +114,7 @@ class UploadService : Service() {
                         uploadModel.videoType = "0"
                     }
                 } catch (e: Exception) {
-                    Log.d(Constants.tag, "Exception!: $e")
+                    Log.d(Constants.TAG_, "Exception!: $e")
                     uploadModel.videoType = "0"
                 }
 
@@ -122,7 +122,7 @@ class UploadService : Service() {
                 fileUploader.SetCallBack(object : FileUploaderCallback {
                     override fun onError() {
                         //send error broadcast
-                        Functions.printLog(Constants.tag, "Error...!")
+                        Functions.printLog(Constants.TAG_, "Error...!")
                         stopForeground(true)
                         stopSelf()
                         sendBroadByName("uploadVideo")
@@ -130,7 +130,7 @@ class UploadService : Service() {
                     }
 
                     override fun onFinish(responses: String) {
-                        Functions.printLog(Constants.tag, "videoUploadRes: $responses")
+                        Functions.printLog(Constants.TAG_, "videoUploadRes: $responses")
                         try {
                             val jsonObject = JSONObject(responses)
                             val code = jsonObject.optInt("code", 0)
@@ -144,7 +144,7 @@ class UploadService : Service() {
                                 )
                             }
                         } catch (e: Exception) {
-                            Functions.printLog(Constants.tag, "Exception!: $e")
+                            Functions.printLog(Constants.TAG_, "Exception!: $e")
                         }
                         stopForeground(true)
                         stopSelf()
@@ -194,7 +194,7 @@ class UploadService : Service() {
                     map["video_id"] = "0"
                 }
 
-                Functions.printLog(Constants.tag, "VideoDataMap: $map")
+                Functions.printLog(Constants.TAG_, "VideoDataMap: $map")
             }.start()
 
         } else if (intent != null && intent.action == "stopservice") {
@@ -263,7 +263,7 @@ class UploadService : Service() {
                 file.delete()
             }
         } catch (e: Exception) {
-            Functions.printLog(Constants.tag, e.toString())
+            Functions.printLog(Constants.TAG_, e.toString())
         }
     }
 
