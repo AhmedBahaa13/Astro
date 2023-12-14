@@ -27,10 +27,10 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/_6sdp"
+                android:importantForAccessibility="no"
                 android:padding="@dimen/_3sdp"
                 android:src="@drawable/ic_white_cross"
-                app:tint="@color/black"
-                android:importantForAccessibility="no" />
+                app:tint="@color/black" />
 
             <TextView
                 android:id="@+id/comment_count"
@@ -100,92 +100,181 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/writeLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_38sdp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/d_top_gray_line"
+            android:padding="10dp"
             android:paddingStart="@dimen/_6sdp"
             android:paddingEnd="@dimen/_6sdp">
 
-            <TextView
-                android:id="@+id/tvComment"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_toStartOf="@+id/btnSend"
-                android:background="@color/transparent"
-                android:gravity="start|center_vertical"
-                android:text="@string/leave_a_comment"
-                android:textColor="@color/darkgray"
-                android:textSize="@dimen/_11sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
             <LinearLayout
-                android:id="@+id/lnVoiceComment"
+                android:id="@+id/recordPanel"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnSend"
-                app:layout_constraintStart_toEndOf="@+id/tvComment"
-                app:layout_constraintTop_toTopOf="parent">
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/btnMic"
+                app:layout_constraintEnd_toStartOf="@+id/btnMic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
 
                 <com.devlomi.record_view.RecordView
                     android:id="@+id/recordView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:padding="@dimen/_6sdp"
                     app:counter_time_color="@color/appColor"
                     app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
                     app:slide_to_cancel_arrow_color="#000000"
                     app:slide_to_cancel_bounds="0dp"
                     app:slide_to_cancel_margin_right="@dimen/_6sdp" />
 
-                <com.devlomi.record_view.RecordButton
-                    android:id="@+id/btnMic"
-                    android:layout_width="35dp"
-                    android:layout_height="29dp"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:background="@drawable/d_round_mic_background"
-                    android:scaleType="centerInside"
-                    android:visibility="visible"
-                    app:mic_icon="@drawable/recv_ic_mic_white" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/playRecordPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:padding="@dimen/_6sdp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/btnDeleteRecord"
+                        android:layout_width="@dimen/_26sdp"
+                        android:layout_height="@dimen/_26sdp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:background="@color/transparent"
+                        android:padding="@dimen/_2sdp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_delete_rec"
+                        app:layout_constraintBottom_toBottomOf="@+id/sendLayout"
+                        app:layout_constraintEnd_toStartOf="@+id/recLayout"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/sendLayout"
+                        tools:ignore="ContentDescription" />
+
+                    <LinearLayout
+                        android:id="@+id/recLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/d_other_msg_background"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/_5sdp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingEnd="@dimen/_11sdp"
+                        android:paddingBottom="@dimen/_4sdp"
+                        app:layout_constraintBottom_toBottomOf="@+id/sendLayout"
+                        app:layout_constraintEnd_toStartOf="@+id/sendLayout"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/btnDeleteRecord"
+                        app:layout_constraintTop_toTopOf="@+id/sendLayout">
+
+                        <ImageView
+                            android:id="@+id/btnPlay"
+                            android:layout_width="@dimen/_26sdp"
+                            android:layout_height="@dimen/_26sdp"
+                            android:background="@color/transparent"
+                            android:clickable="false"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_play_icon"
+                            app:tint="@color/blackColor"
+                            tools:ignore="ContentDescription" />
+
+                        <SeekBar
+                            android:id="@+id/seekBar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:theme="@style/MySeekBar2" />
+
+                        <TextView
+                            android:id="@+id/recordTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|center_vertical"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/colorblackfix_50"
+                            android:textSize="@dimen/_10sdp"
+                            tools:text="00:00" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/sendLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <ProgressBar
+                            android:id="@+id/voiceProgress"
+                            android:layout_width="@dimen/_24sdp"
+                            android:layout_height="@dimen/_24sdp"
+                            android:padding="@dimen/_3sdp"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/btnSendVoice"
+                            android:layout_width="@dimen/_26sdp"
+                            android:layout_height="@dimen/_26sdp"
+                            android:background="@color/transparent"
+                            android:padding="@dimen/_2sdp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_send"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
 
-            <LinearLayout
-                android:id="@+id/btnSend"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+            <com.devlomi.record_view.RecordButton
+                android:id="@+id/btnMic"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:padding="@dimen/_1sdp"
+                android:scaleType="fitCenter"
+                app:mic_icon="@drawable/ic_voice"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <ImageView
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:background="@color/transparent"
-                    android:padding="@dimen/_2sdp"
-                    android:rotation="-45"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_send"
-                    android:importantForAccessibility="no" />
+            <ProgressBar
+                android:id="@+id/sendProgress"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:padding="@dimen/_3sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/btnMic"
+                app:layout_constraintEnd_toStartOf="@+id/btnMic"
+                app:layout_constraintTop_toTopOf="@+id/btnMic" />
 
-                <ProgressBar
-                    android:id="@+id/send_progress"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:padding="@dimen/_3sdp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/tvComment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/transparent"
+                android:gravity="start|center_vertical"
+                android:text="@string/leave_a_comment"
+                android:textColor="@color/darkgray"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/btnMic"
+                app:layout_constraintEnd_toStartOf="@+id/btnMic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btnMic" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 </FrameLayout>

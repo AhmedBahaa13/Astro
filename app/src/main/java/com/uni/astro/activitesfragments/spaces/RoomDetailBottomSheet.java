@@ -1,8 +1,10 @@
 package com.uni.astro.activitesfragments.spaces;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.realpacific.clickshrinkeffect.ClickShrinkUtils;
 import com.uni.astro.Constants;
 import com.uni.astro.R;
 import com.uni.astro.activitesfragments.chat.ChatA;
@@ -42,57 +47,84 @@ import com.uni.astro.models.InviteForSpeakModel;
 import com.uni.astro.models.UserModel;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
-import com.realpacific.clickshrinkeffect.ClickShrinkUtils;
 
 import java.util.HashMap;
 
-public class RoomDetailBottomSheet extends Fragment implements View.OnClickListener {
+public class RoomDetailBottomSheet extends BottomSheetDialogFragment implements View.OnClickListener {
 
     CurrentRoomLayoutSheetBinding binding;
     MainStreamingModel mainStreamingModel;
     DatabaseReference reference;
-    HomeUserModel myUserModel=null;
+    HomeUserModel myUserModel = null;
+    BottomSheetDialog dialog;
+    RoomManager roomManager;
+    RoomFirebaseManager firebaseRoomManager;
+    CurrentSpeakerRoomAdapter speakerAdapter;
+    CurrentSpeakerRoomAdapter audienceAdapter;
+    private BottomSheetBehavior mBehavior;
 
-    long messageCount=0;
-
-    public RoomDetailBottomSheet(MainStreamingModel mainStreamingModel) {
-        this.mainStreamingModel=mainStreamingModel;
-    }
 
     public RoomDetailBottomSheet() {
 
     }
 
     public static RoomDetailBottomSheet newInstance(MainStreamingModel mainStreamingModel, FragmentCallBack fragmentCallBack) {
-        RoomDetailBottomSheet fragment = new RoomDetailBottomSheet(mainStreamingModel);
+        RoomDetailBottomSheet fragment = new RoomDetailBottomSheet();
         Bundle args = new Bundle();
+        args.putSerializable("data", mainStreamingModel);
         fragment.setArguments(args);
         return fragment;
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+
+        View view = View.inflate(getContext(), R.layout.current_room_layout_sheet, null);
+        dialog.setContentView(view);
+
+        mBehavior = BottomSheetBehavior.from((View) view.getParent());
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        mBehavior.setPeekHeight(metrics.heightPixels);
+        mBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState != BottomSheetBehavior.STATE_EXPANDED) {
+                    mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        return dialog;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding= DataBindingUtil.inflate(inflater, R.layout.current_room_layout_sheet, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.current_room_layout_sheet, container, false);
 
-        reference= FirebaseDatabase.getInstance().getReference();
+
+        mainStreamingModel = (MainStreamingModel) getArguments().getSerializable("data");
+
+        reference = FirebaseDatabase.getInstance().getReference();
 
 
         initRoomSheet();
         connectWithRoom();
+
         return binding.getRoot();
     }
 
+    public void addManagerListeners() {
 
 
-
-    RoomManager roomManager;
-    RoomFirebaseManager firebaseRoomManager;
-    public void addManagerListeners(){
-
-
-        firebaseRoomManager= RoomFirebaseManager.getInstance(getActivity());
+        firebaseRoomManager = RoomFirebaseManager.getInstance(getActivity());
         firebaseRoomManager.setMainStreamingModel(mainStreamingModel);
         firebaseRoomManager.setListerner3(new RoomFirebaseListener() {
             @Override
@@ -144,12 +176,10 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
         });
 
-        roomManager=RoomManager.getInstance(getActivity());
+        roomManager = RoomManager.getInstance(getActivity());
 
 
     }
-
-
 
     private void connectWithRoom() {
 
@@ -195,23 +225,16 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
     }
 
-
-    CurrentSpeakerRoomAdapter speakerAdapter;
     private void setupSpeakerRoomAdapter() {
-        GridLayoutManager layoutManager=new GridLayoutManager(binding.getRoot().getContext(),3);
+        GridLayoutManager layoutManager = new GridLayoutManager(binding.getRoot().getContext(), 3);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         binding.recylerviewSpeaker.setLayoutManager(layoutManager);
-        speakerAdapter=new CurrentSpeakerRoomAdapter(firebaseRoomManager.getSpeakersUserList(), new AdapterClickListener() {
+        speakerAdapter = new CurrentSpeakerRoomAdapter(firebaseRoomManager.getSpeakersUserList(), new AdapterClickListener() {
             @Override
             public void onItemClick(View view, int pos, Object object) {
-                HomeUserModel itemUpdate= firebaseRoomManager.getSpeakersUserList().get(pos);
-                switch (view.getId())
-                {
-                    case R.id.tabMain:
-                    {
-                        openUserProfile(itemUpdate);
-                    }
-                    break;
+                HomeUserModel itemUpdate = firebaseRoomManager.getSpeakersUserList().get(pos);
+                if (view.getId() == R.id.tabMain) {
+                    openUserProfile(itemUpdate);
                 }
 
             }
@@ -219,21 +242,16 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
         binding.recylerviewSpeaker.setAdapter(speakerAdapter);
     }
 
-    CurrentSpeakerRoomAdapter audienceAdapter;
     private void setupAudienceRoomAdapter() {
-        GridLayoutManager layoutManager=new GridLayoutManager(binding.getRoot().getContext(),3);
+        GridLayoutManager layoutManager = new GridLayoutManager(binding.getRoot().getContext(), 3);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         binding.recylerviewOtherUser.setLayoutManager(layoutManager);
-        audienceAdapter=new CurrentSpeakerRoomAdapter(firebaseRoomManager.getAudienceUserList(), new AdapterClickListener() {
+        audienceAdapter = new CurrentSpeakerRoomAdapter(firebaseRoomManager.getAudienceUserList(), new AdapterClickListener() {
             @Override
             public void onItemClick(View view, int pos, Object object) {
-                HomeUserModel itemUpdate= firebaseRoomManager.getAudienceUserList().get(pos);
-                switch (view.getId())
-                {
-                    case R.id.tabMain: {
-                        openUserProfile(itemUpdate);
-                    }
-                    break;
+                HomeUserModel itemUpdate = firebaseRoomManager.getAudienceUserList().get(pos);
+                if (view.getId() == R.id.tabMain) {
+                    openUserProfile(itemUpdate);
                 }
 
             }
@@ -242,21 +260,18 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
 
-
-    public void setRoomData(){
-        mainStreamingModel= firebaseRoomManager.getMainStreamingModel();
+    public void setRoomData() {
+        mainStreamingModel = firebaseRoomManager.getMainStreamingModel();
         myUserModel = firebaseRoomManager.getMyUserModel();
 
-        if(!(TextUtils.isEmpty(mainStreamingModel.getModel().getTitle())))
-        {
-            binding.roomTitle.setText(""+mainStreamingModel.getModel().getTitle());
+        if (!(TextUtils.isEmpty(mainStreamingModel.getModel().getTitle()))) {
+            binding.roomTitle.setText(mainStreamingModel.getModel().getTitle());
         }
 
-        if (myUserModel!=null && myUserModel.getUserRoleType().equals("0")) {
-            if(mainStreamingModel.getModel().getRiseHandRule().equals("1")) {
+        if (myUserModel != null && myUserModel.getUserRoleType().equals("0")) {
+            if (mainStreamingModel.getModel().getRiseHandRule().equals("1")) {
                 binding.tabRaiseHand.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 binding.tabRaiseHand.setVisibility(View.GONE);
             }
         }
@@ -265,7 +280,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     public void setMyUserModelData() {
         mainStreamingModel = firebaseRoomManager.getMainStreamingModel();
         myUserModel = firebaseRoomManager.getMyUserModel();
-        ListenerChatCountNode();
+
 
         if (myUserModel != null) {
 
@@ -291,9 +306,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                 binding.tabMice.setVisibility(View.VISIBLE);
                 binding.tabRaiseHand.setVisibility(View.GONE);
                 binding.tabRiseHandUser.setVisibility(View.VISIBLE);
-            }
-
-            else {
+            } else {
                 if (myUserModel.getRiseHand().equals("1")) {
                     binding.ivRaiseHand.setImageDrawable(ContextCompat.getDrawable(
                             binding.getRoot().getContext(), R.drawable.ic_hand
@@ -318,98 +331,85 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
         }
     }
 
-    public void setRoomUserData(){
-        mainStreamingModel= firebaseRoomManager.getMainStreamingModel();
+    public void setRoomUserData() {
+        mainStreamingModel = firebaseRoomManager.getMainStreamingModel();
         myUserModel = firebaseRoomManager.getMyUserModel();
 
         speakerAdapter.notifyDataSetChanged();
         audienceAdapter.notifyDataSetChanged();
 
-        if (Integer.parseInt(mainStreamingModel.getModel().getRiseHandCount())>0)
-        {
-            binding.tvRiseHandCount.setText(""+Functions.getSuffix(""+mainStreamingModel.getModel().getRiseHandCount()));
+        if (Integer.parseInt(mainStreamingModel.getModel().getRiseHandCount()) > 0) {
+            binding.tvRiseHandCount.setText(Functions.getSuffix(mainStreamingModel.getModel().getRiseHandCount()));
             binding.tvRiseHandCount.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             binding.tvRiseHandCount.setText("0");
             binding.tvRiseHandCount.setVisibility(View.GONE);
         }
 
-        if(firebaseRoomManager.getSpeakersUserList().size()>0) {
+        if (firebaseRoomManager.getSpeakersUserList().size() > 0) {
             checkRoomOwnerOnline();
         }
     }
 
 
-    public void checkRoomOwnerOnline(){
-        String online="0";
-        for (int i=0;i<firebaseRoomManager.getSpeakersUserList().size();i++){
+    public void checkRoomOwnerOnline() {
+        String online = "0";
+        for (int i = 0; i < firebaseRoomManager.getSpeakersUserList().size(); i++) {
 
-            Functions.printLog(Constants.TAG_,"ID:"+firebaseRoomManager.getSpeakersUserList().get(i).getUserModel().getId());
-            if(firebaseRoomManager.getSpeakersUserList().get(i).getOnline()!=null &&
-                    firebaseRoomManager.getSpeakersUserList().get(i).getOnline().equals("1")){
-                online="1";
-                Functions.printLog(Constants.TAG_,"Online:"+firebaseRoomManager.getSpeakersUserList().get(i).getOnline());
+            Functions.printLog(Constants.TAG_, "ID:" + firebaseRoomManager.getSpeakersUserList().get(i).getUserModel().getId());
+            if (firebaseRoomManager.getSpeakersUserList().get(i).getOnline() != null &&
+                    firebaseRoomManager.getSpeakersUserList().get(i).getOnline().equals("1")) {
+                online = "1";
+                Functions.printLog(Constants.TAG_, "Online:" + firebaseRoomManager.getSpeakersUserList().get(i).getOnline());
             }
         }
 
-        Functions.printLog(Constants.TAG_,"Online2:"+online);
-        if(online.equals("0")){
+        Functions.printLog(Constants.TAG_, "Online2:" + online);
+        if (online.equals("0")) {
             roomManager.deleteRoom(mainStreamingModel.getModel().getId());
         }
 
     }
 
     private void openUserProfile(HomeUserModel itemUpdate) {
-        Log.d(Constants.TAG_,"AdminUser: "+itemUpdate.userModel.getId()+"    "+mainStreamingModel.getModel().getId());
-        Log.d(Constants.TAG_,"AdminUserName: "+itemUpdate.userModel.getUsername()+"    "+mainStreamingModel.getModel().getTitle());
+        Log.d(Constants.TAG_, "AdminUser: " + itemUpdate.userModel.getId() + "    " + mainStreamingModel.getModel().getId());
+        Log.d(Constants.TAG_, "AdminUserName: " + itemUpdate.userModel.getUsername() + "    " + mainStreamingModel.getModel().getTitle());
 
-        final OtherUserProfileF fragment =OtherUserProfileF.newInstance(itemUpdate.userModel,mainStreamingModel.getModel().getId(),itemUpdate.getUserRoleType(), firebaseRoomManager.getSpeakersUserList(), new FragmentCallBack() {
+        final OtherUserProfileF fragment = OtherUserProfileF.newInstance(itemUpdate.userModel, mainStreamingModel.getModel().getId(), itemUpdate.getUserRoleType(), firebaseRoomManager.getSpeakersUserList(), new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow"))
-                {
-                    handleProfileClick(bundle,itemUpdate.userModel);
+                if (bundle.getBoolean("isShow")) {
+                    handleProfileClick(bundle, itemUpdate.userModel);
                 }
             }
         });
         fragment.show(getActivity().getSupportFragmentManager(), "UserProfileF");
     }
 
-    private void handleProfileClick(Bundle bundle,UserModel userModel){
+    private void handleProfileClick(Bundle bundle, UserModel userModel) {
 
         if (bundle.getString("action").equals("openChat")) {
             openChat(userModel);
-        }
-
-        else if (bundle.getString("action").equals("moveToAudience")) {
+        } else if (bundle.getString("action").equals("moveToAudience")) {
             moveToRoomAudiance(userModel);
-        }
-
-        else if (bundle.getString("action").equals("inviteToSpeaker")) {
+        } else if (bundle.getString("action").equals("inviteToSpeaker")) {
             sendInvitationForSpeak(userModel);
-        }
+        } else if (bundle.getString("action").equals("acceptInviteToSpeaker")) {
 
-        else if (bundle.getString("action").equals("acceptInviteToSpeaker")) {
-
-            roomManager.speakerJoinRoomHitApi(Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""),mainStreamingModel.getModel().getId(),"2");
-        }
-
-        else if (bundle.getString("action").equals("makeToModerator")) {
+            roomManager.speakerJoinRoomHitApi(Functions.getSharedPreference(getContext()).getString(Variables.U_ID, ""), mainStreamingModel.getModel().getId(), "2");
+        } else if (bundle.getString("action").equals("makeToModerator")) {
             makeRoomModerator(userModel);
-        }
-
-        else if (bundle.getString("action").equals("makeModeratorToSpeakerAndLeave")) {
-            makeModeratorToSpeakerAndLeave(userModel,(HomeUserModel)bundle.getSerializable("speakerModel"));
+        } else if (bundle.getString("action").equals("makeModeratorToSpeakerAndLeave")) {
+            makeModeratorToSpeakerAndLeave(userModel, (HomeUserModel) bundle.getSerializable("speakerModel"));
         }
 
     }
 
-    public void openChat(UserModel userModel){
-        Intent intent1=new Intent(getActivity(), ChatA.class);
-        intent1.putExtra("user_id",userModel.getId());
+    public void openChat(UserModel userModel) {
+        Intent intent1 = new Intent(getActivity(), ChatA.class);
+        intent1.putExtra("user_id", userModel.getId());
         intent1.putExtra("user_name", userModel.getUsername());
-        intent1.putExtra("user_pic",userModel.getProfilePic());
+        intent1.putExtra("user_pic", userModel.getProfilePic());
         startActivity(intent1);
     }
 
@@ -423,17 +423,15 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
 
     private void moveToRoomAudiance(UserModel userModel) {
-        if (mainStreamingModel!=null)
-        {
+        if (mainStreamingModel != null) {
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                     child(Variables.roomUsers)
                     .child(userModel.getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists())
-                            {
-                                HomeUserModel dataItem=snapshot.getValue(HomeUserModel.class);
+                            if (snapshot.exists()) {
+                                HomeUserModel dataItem = snapshot.getValue(HomeUserModel.class);
                                 dataItem.setUserRoleType("0");
 
                                 reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
@@ -442,8 +440,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                                         .setValue(dataItem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                                                             child(Variables.roomInvitation)
                                                             .child(userModel.getId())
@@ -466,7 +463,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
 
     private void makeRoomModerator(UserModel userModel) {
-        if (mainStreamingModel!=null) {
+        if (mainStreamingModel != null) {
 
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                     child(Variables.roomUsers)
@@ -474,9 +471,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists())
-                            {
-                                HomeUserModel dataItem=snapshot.getValue(HomeUserModel.class);
+                            if (snapshot.exists()) {
+                                HomeUserModel dataItem = snapshot.getValue(HomeUserModel.class);
                                 dataItem.setUserRoleType("1");
 
                                 reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
@@ -485,9 +481,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                                         .setValue(dataItem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful())
-                                                {
-                                                    Functions.showSuccess(getActivity(),binding.getRoot().getContext().getString(R.string.great_they_are_now_moderator));
+                                                if (task.isSuccessful()) {
+                                                    Functions.showSuccess(getActivity(), binding.getRoot().getContext().getString(R.string.great_they_are_now_moderator));
                                                 }
                                             }
                                         });
@@ -505,11 +500,11 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
     private void makeModeratorToSpeakerAndLeave(UserModel userModel, HomeUserModel speakerModel) {
 
-        makeRoomModerator(userModel,speakerModel);
+        makeRoomModerator(userModel, speakerModel);
     }
 
-    private void makeRoomModerator(UserModel userModel,HomeUserModel speakerModel) {
-        if (mainStreamingModel!=null) {
+    private void makeRoomModerator(UserModel userModel, HomeUserModel speakerModel) {
+        if (mainStreamingModel != null) {
 
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                     child(Variables.roomUsers)
@@ -517,9 +512,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists())
-                            {
-                                HomeUserModel dataItem=snapshot.getValue(HomeUserModel.class);
+                            if (snapshot.exists()) {
+                                HomeUserModel dataItem = snapshot.getValue(HomeUserModel.class);
                                 dataItem.setUserRoleType("1");
 
                                 reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
@@ -528,9 +522,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                                         .setValue(dataItem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful())
-                                                {
-                                                    roomManager.speakerJoinRoomHitApi(userModel.getId(),mainStreamingModel.getModel().getId(),"0");
+                                                if (task.isSuccessful()) {
+                                                    roomManager.speakerJoinRoomHitApi(userModel.getId(), mainStreamingModel.getModel().getId(), "0");
                                                 }
                                             }
                                         });
@@ -547,21 +540,15 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
 
-
-
     private void closeRoomScreen() {
-        getActivity().onBackPressed();
+        dismiss();
     }
-
-
-
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.ivOption:
-            {
+        switch (v.getId()) {
+            case R.id.ivOption: {
                 openRoomSettingOption();
             }
             break;
@@ -570,36 +557,30 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                 openRoomChat();
             }
             break;
-            case R.id.ivRoomClose:
-            {
+            case R.id.ivRoomClose: {
                 closeRoomScreen();
             }
             break;
-            case R.id.ivRoomShare:
-            {
-                Functions.shareData(getActivity(),Functions.getShareRoomLink(getContext(),mainStreamingModel.getModel().getId()));
+            case R.id.ivRoomShare: {
+                Functions.shareData(getActivity(), Functions.getShareRoomLink(getContext(), mainStreamingModel.getModel().getId()));
             }
             break;
 
-            case R.id.tabRiseHandUser:
-            {
+            case R.id.tabRiseHandUser: {
                 openRiseHandList();
             }
             break;
 
-            case R.id.tabRaiseHand:
-            {
+            case R.id.tabRaiseHand: {
                 openRiseHandToSpeak();
             }
             break;
 
-            case R.id.tabLeaveQueitly:
-            {
+            case R.id.tabLeaveQueitly: {
                 removeRoom();
             }
 
-            case R.id.tabMice:
-            {
+            case R.id.tabMice: {
                 updateMyMiceStatus();
             }
             break;
@@ -608,24 +589,20 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
 
     private void updateMyMiceStatus() {
-        if(RoomStreamService.streamingInstance!=null)
-        {
-            HashMap<String,Object> updateMice=new HashMap<>();
-            if(RoomStreamService.streamingInstance.ismAudioMuted())
-            {
-                updateMice.put("mice","1");
-            }
-            else
-            {
-                updateMice.put("mice","0");
+        if (RoomStreamService.streamingInstance != null) {
+            HashMap<String, Object> updateMice = new HashMap<>();
+            if (RoomStreamService.streamingInstance.ismAudioMuted()) {
+                updateMice.put("mice", "1");
+            } else {
+                updateMice.put("mice", "0");
             }
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId())
-                    .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""))
+                    .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID, ""))
                     .updateChildren(updateMice).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful())
-                            {  }
+                            if (task.isSuccessful()) {
+                            }
                         }
                     });
         }
@@ -636,27 +613,16 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
         final RoomStreamingSettingF fragment = new RoomStreamingSettingF(firebaseRoomManager.getSpeakersUserList(), new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow"))
-                {
-                    String actionType=bundle.getString("action");
-                    if (actionType.equals("ShareRoom"))
-                    {
-                        Functions.shareData(getActivity(),Functions.getShareRoomLink(getContext(),mainStreamingModel.getModel().getId()));
+                if (bundle.getBoolean("isShow")) {
+                    String actionType = bundle.getString("action");
+                    if (actionType.equals("ShareRoom")) {
+                        Functions.shareData(getActivity(), Functions.getShareRoomLink(getContext(), mainStreamingModel.getModel().getId()));
 
-                    }
-                    else
-                    if (actionType.equals("EndRoom"))
-                    {
+                    } else if (actionType.equals("EndRoom")) {
                         roomManager.deleteRoom(mainStreamingModel.getModel().getId());
-                    }
-                    else
-                    if (actionType.equals("UserShareRoom"))
-                    {
+                    } else if (actionType.equals("UserShareRoom")) {
 
-                    }
-                    else
-                    if (actionType.equals("UserReportRoomTitle"))
-                    {
+                    } else if (actionType.equals("UserReportRoomTitle")) {
                         openRoomReport();
                     }
                 }
@@ -666,72 +632,53 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
 
-
-
     private void openRoomChat() {
-        binding.ivMessageCount.setVisibility(View.GONE);
-
         RoomChatF roomChatF = RoomChatF.newInstance(mainStreamingModel, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow"))
-                {
-                    binding.ivMessageCount.setVisibility(View.GONE);
-                }
             }
         });
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_top,
                 R.anim.in_from_top, R.anim.out_from_bottom);
-        ft.replace(R.id.mainRoomContainer, roomChatF,"RoomChatF")
+        ft.replace(R.id.mainRoomContainer, roomChatF, "RoomChatF")
                 .addToBackStack("RoomChatF").commit();
     }
 
 
-
     private void removeRoom() {
         Bundle bundle = roomManager.checkRoomCanDeleteOrLeave(firebaseRoomManager.getSpeakersUserList());
-        Functions.printLog(Constants.TAG_,bundle.getString("action"));
+        Functions.printLog(Constants.TAG_, bundle.getString("action"));
         if (bundle.getString("action").equals("removeRoom")) {
             roomManager.deleteRoom(mainStreamingModel.getModel().getId());
-        }
-
-        else if (bundle.getString("action").equals("leaveRoom")) {
+        } else if (bundle.getString("action").equals("leaveRoom")) {
             roomManager.leaveRoom(mainStreamingModel.getModel().getId());
-        }
-
-        else {
-            HomeUserModel speakerAsModeratorModel = (HomeUserModel)bundle.getSerializable("model");
+        } else {
+            HomeUserModel speakerAsModeratorModel = (HomeUserModel) bundle.getSerializable("model");
             makeRoomModeratorAndLeave(speakerAsModeratorModel);
         }
     }
-
 
 
     private void openRiseHandToSpeak() {
         RiseHandForSpeakF riseHandForSpeakF = new RiseHandForSpeakF(new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if(bundle.getBoolean("isShow"))
-                {
-                    if (bundle.getString("action").equals("riseHandForSpeak"))
-                    {
+                if (bundle.getBoolean("isShow")) {
+                    if (bundle.getString("action").equals("riseHandForSpeak")) {
 
-                        HashMap<String,Object> riseHandMap=new HashMap<>();
-                        riseHandMap.put("riseHand","1");
+                        HashMap<String, Object> riseHandMap = new HashMap<>();
+                        riseHandMap.put("riseHand", "1");
 
                         reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId())
-                                .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""))
+                                .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID, ""))
                                 .updateChildren(riseHandMap);
-                    }
-                    else
-                    if (bundle.getString("action").equals("neverMind"))
-                    {
-                        HashMap<String,Object> riseHandMap=new HashMap<>();
-                        riseHandMap.put("riseHand","0");
+                    } else if (bundle.getString("action").equals("neverMind")) {
+                        HashMap<String, Object> riseHandMap = new HashMap<>();
+                        riseHandMap.put("riseHand", "0");
 
                         reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId())
-                                .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""))
+                                .child(Variables.roomUsers).child(Functions.getSharedPreference(getContext()).getString(Variables.U_ID, ""))
                                 .updateChildren(riseHandMap);
                     }
                 }
@@ -741,14 +688,12 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
     private void openRiseHandList() {
-        RiseHandUsersF fragment = new RiseHandUsersF(mainStreamingModel.getModel().getId(),mainStreamingModel.getModel().getRiseHandRule(),new FragmentCallBack() {
+        RiseHandUsersF fragment = new RiseHandUsersF(mainStreamingModel.getModel().getId(), mainStreamingModel.getModel().getRiseHandRule(), new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if(bundle.getBoolean("isShow"))
-                {
-                    if(bundle.getString("action").equals("invite"))
-                    {
-                        HomeUserModel itemUpdate= (HomeUserModel) bundle.getSerializable("itemModel");
+                if (bundle.getBoolean("isShow")) {
+                    if (bundle.getString("action").equals("invite")) {
+                        HomeUserModel itemUpdate = (HomeUserModel) bundle.getSerializable("itemModel");
                         sendInvitationForSpeak(itemUpdate.userModel);
                     }
 
@@ -760,12 +705,11 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
 
     private void sendInvitationForSpeak(UserModel userModel) {
-        if (mainStreamingModel!=null)
-        {
-            InviteForSpeakModel invitation=new InviteForSpeakModel();
+        if (mainStreamingModel != null) {
+            InviteForSpeakModel invitation = new InviteForSpeakModel();
             invitation.setInvite("1");
-            invitation.setUserId(Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""));
-            invitation.setUserName(Functions.getSharedPreference(getContext()).getString(Variables.U_NAME,""));
+            invitation.setUserId(Functions.getSharedPreference(getContext()).getString(Variables.U_ID, ""));
+            invitation.setUserName(Functions.getSharedPreference(getContext()).getString(Variables.U_NAME, ""));
 
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                     child(Variables.roomInvitation)
@@ -773,9 +717,8 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                     .setValue(invitation).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful())
-                            {
-                                Functions.showSuccess(getActivity(),binding.getRoot().getContext().getString(R.string.great_we_are_sent_them_an_invite));
+                            if (task.isSuccessful()) {
+                                Functions.showSuccess(getActivity(), binding.getRoot().getContext().getString(R.string.great_we_are_sent_them_an_invite));
                             }
                         }
                     });
@@ -785,17 +728,15 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
 
 
     private void makeRoomModeratorAndLeave(HomeUserModel itemUpdate) {
-        if (mainStreamingModel.getModel()!=null)
-        {
+        if (mainStreamingModel.getModel() != null) {
             reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
                     child(Variables.roomUsers)
                     .child(itemUpdate.getUserModel().getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists())
-                            {
-                                HomeUserModel dataItem=snapshot.getValue(HomeUserModel.class);
+                            if (snapshot.exists()) {
+                                HomeUserModel dataItem = snapshot.getValue(HomeUserModel.class);
                                 dataItem.setUserRoleType("1");
 
                                 reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).
@@ -804,8 +745,7 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
                                         .setValue(dataItem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     roomManager.leaveRoom(mainStreamingModel.getModel().getId());
                                                 }
                                             }
@@ -824,55 +764,11 @@ public class RoomDetailBottomSheet extends Fragment implements View.OnClickListe
     }
 
 
-    ValueEventListener chatCountEventListener;
-    private void ListenerChatCountNode() {
-        if (chatCountEventListener ==null && mainStreamingModel!=null)
-        {
-            chatCountEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists())
-                    {
-                        if (messageCount!=dataSnapshot.getChildrenCount())
-                        {
-                            messageCount=dataSnapshot.getChildrenCount();
-                            binding.ivMessageCount.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
-                            binding.ivMessageCount.setVisibility(View.GONE);
-                        }
-
-                        Log.d(Constants.TAG_,"Chat message Count: "+dataSnapshot.getChildrenCount());
-                    }
-                    else
-                    {
-                        binding.ivMessageCount.setVisibility(View.GONE);
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    binding.ivMessageCount.setVisibility(View.GONE);
-                }
-            };
-            reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).child(Variables.roomchat)
-                    .addValueEventListener(chatCountEventListener);
-        }
-    }
-
-    public void removeChatCountListener() {
-        if (reference!=null && chatCountEventListener != null && mainStreamingModel!=null) {
-            reference.child(Variables.roomKey).child(mainStreamingModel.getModel().getId()).child(Variables.roomchat).removeEventListener(chatCountEventListener);
-            chatCountEventListener =null;
-        }
-    }
-
-
     @Override
     public void onDetach() {
-        if(firebaseRoomManager!=null)
+        if (firebaseRoomManager != null)
             firebaseRoomManager.setListerner3(null);
-        removeChatCountListener();
+
         super.onDetach();
     }
 }

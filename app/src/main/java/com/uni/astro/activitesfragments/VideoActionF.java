@@ -185,7 +185,7 @@ public class VideoActionF extends BottomSheetDialogFragment implements View.OnCl
         }
 
 
-        if (Functions.getSharedPreference(context).getBoolean(Variables.IsExtended,false) && (item.allow_duet != null && item.allow_duet.equalsIgnoreCase("1"))
+        if ((item.allow_duet != null && item.allow_duet.equalsIgnoreCase("1"))
                 && Functions.isShowContentPrivacy(context, item.apply_privacy_model.getDuet(), item.follow_status_button.equalsIgnoreCase("friends"))) {
             view.findViewById(R.id.duet_layout).setVisibility(View.VISIBLE);
             view.findViewById(R.id.duet_layout).setOnClickListener(this);

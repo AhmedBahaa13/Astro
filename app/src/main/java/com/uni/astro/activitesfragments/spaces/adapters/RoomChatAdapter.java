@@ -56,7 +56,6 @@ public class RoomChatAdapter extends RecyclerView.Adapter<RoomChatAdapter.ViewHo
         ChatModel chat = mDataSet.get(position);
 
         if (chat.getType().equals("text")) {
-            holder.binding.tvFullname.setText(chat.getSender_name());
             holder.binding.ivProfile.setController(Functions.frescoImageLoad(holder.binding.getRoot().getContext(),
                     chat.getSender_name(),chat.getPic_url(),holder.binding.ivProfile));
             holder.binding.tvmessage.setText(chat.getText());

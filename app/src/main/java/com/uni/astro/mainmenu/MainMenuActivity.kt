@@ -31,6 +31,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.uni.astro.Constants
+import com.uni.astro.R
 import com.uni.astro.activitesfragments.DiscoverF
 import com.uni.astro.activitesfragments.HomeF
 import com.uni.astro.activitesfragments.WatchVideosA
@@ -64,23 +65,25 @@ import com.uni.astro.models.UserModel
 import com.uni.astro.simpleclasses.*
 import com.volley.plus.VPackages.VolleyRequest
 import org.json.JSONObject
-import com.uni.astro.R
 
 
 class MainMenuActivity : AppCompatLocaleActivity() {
+    private lateinit var binding: ActivityMainMenuBinding
+
     var mBackPressed: Long = 0
     var context: Context? = null
     var takePermissionUtils: PermissionUtils? = null
     protected var pager: ViewPager2? = null
     private var adapter: ViewPagerAdapter? = null
     var rootRef: DatabaseReference? = null
-    var binding: ActivityMainMenuBinding? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } catch (e: Exception) { }
+        } catch (_: Exception) {
+        }
 
         Functions.setLocale(
             Functions.getSharedPreference(this@MainMenuActivity)
@@ -90,14 +93,12 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             false
         )
 
-        binding = DataBindingUtil.setContentView(
-            this@MainMenuActivity,
-            R.layout.activity_main_menu
-        )
+        binding = DataBindingUtil.setContentView(this@MainMenuActivity, R.layout.activity_main_menu)
 
         context = this@MainMenuActivity
         mainMenuActivity = this
         rootRef = FirebaseDatabase.getInstance().reference
+
         val intent = intent
         chechDeepLink(intent)
         if (intent != null && intent.hasExtra("type")) {
@@ -117,9 +118,6 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             publicIP
         }
 
-        if (!Functions.getSharedPreference(this)
-                .getBoolean(Variables.IsExtended, false)
-        ) checkLicence()
         Functions.makeDirectry(Functions.getAppFolder(this) + Variables.APP_HIDED_FOLDER)
         Functions.makeDirectry(Functions.getAppFolder(this) + Variables.DRAFT_APP_FOLDER)
         setIntent(null)
@@ -163,7 +161,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         if (takePermissionUtils!!.isLocationPermissionGranted) {
             loactionLatlng
         } else {
-            locationPermission
+            //locationPermission
         }
     }
 
@@ -171,9 +169,9 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         adapter = ViewPagerAdapter(this)
         pager = findViewById(R.id.viewpager)
         tabLayout = findViewById(R.id.tabs)
-        pager!!.setOffscreenPageLimit(4)
+        pager!!.offscreenPageLimit = 4
         registerFragmentWithPager()
-        pager!!.setAdapter(adapter)
+        pager!!.adapter = adapter
         addTabs()
         setupTabIcons()
         pager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -182,7 +180,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 tabLayout!!.getTabAt(position)!!.select()
             }
         })
-        pager!!.setUserInputEnabled(false)
+        pager!!.isUserInputEnabled = false
     }
 
     private fun setupTabIcons() {
@@ -263,6 +261,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.whiteColor))
                     }
+
                     1 -> {
                         Functions.whiteStatusBar(this@MainMenuActivity)
                         onotherTabClick()
@@ -278,6 +277,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.appColor))
                     }
+
                     3 -> {
                         Functions.whiteStatusBar(this@MainMenuActivity)
                         onotherTabClick()
@@ -293,6 +293,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.appColor))
                     }
+
                     4 -> {
                         Functions.whiteStatusBar(this@MainMenuActivity)
                         onotherTabClick()
@@ -330,6 +331,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
                     }
+
                     1 -> {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
@@ -343,6 +345,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
                     }
+
                     3 -> {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
@@ -356,6 +359,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         )
                         title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
                     }
+
                     4 -> {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
@@ -439,9 +443,9 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         Functions.makeDirectry(Functions.getAppFolder(context) + Variables.APP_HIDED_FOLDER)
         Functions.makeDirectry(Functions.getAppFolder(context) + Variables.DRAFT_APP_FOLDER)
         if (Functions.checkLoginUser(this@MainMenuActivity)) {
-            val giftFragment = CreateContentF(object :FragmentCallBack{
+            val giftFragment = CreateContentF(object : FragmentCallBack {
                 override fun onResponce(bundle: Bundle?) {
-                    if(bundle!=null){
+                    if (bundle != null) {
                     }
                 }
             })
@@ -454,7 +458,6 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         startActivity(intent)
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
     }
-
 
 
     // add the listener of home bth which will open the recording screen
@@ -547,31 +550,32 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         }
     }
 
-    private val mPermissionResult: ActivityResultLauncher<Array<String>>? =
+    private val mPermissionResult: ActivityResultLauncher<Array<String>> =
         registerForActivityResult<Array<String>, Map<String, Boolean>>(
-            ActivityResultContracts.RequestMultiplePermissions()){ result ->
-                var allPermissionClear = true
-                val blockPermissionCheck: MutableList<String> = ArrayList()
-                for (key in result.keys) {
-                    if (!result[key]!!) {
-                        allPermissionClear = false
-                        blockPermissionCheck.add(
-                            Functions.getPermissionStatus(
-                                this@MainMenuActivity,
-                                key
-                            )
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            var allPermissionClear = true
+            val blockPermissionCheck: MutableList<String> = ArrayList()
+            for (key in result.keys) {
+                if (!result[key]!!) {
+                    allPermissionClear = false
+                    blockPermissionCheck.add(
+                        Functions.getPermissionStatus(
+                            this@MainMenuActivity,
+                            key
                         )
-                    }
-                }
-                if (blockPermissionCheck.contains("blocked")) {
-                    Functions.showPermissionSetting(
-                        context,
-                        context!!.getString(R.string.we_need_storage_camera_recording_permission_for_make_new_video)
                     )
-                } else if (allPermissionClear) {
-                    uploadNewVideo()
                 }
             }
+            if (blockPermissionCheck.contains("blocked")) {
+                Functions.showPermissionSetting(
+                    context,
+                    context!!.getString(R.string.we_need_storage_camera_recording_permission_for_make_new_video)
+                )
+            } else if (allPermissionClear) {
+                uploadNewVideo()
+            }
+        }
 
     private fun addTabs() {
         val tabLayoutMediator = TabLayoutMediator(tabLayout!!, pager!!) { tab, position ->
@@ -627,32 +631,34 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         }
     private val mPermissionPostNotificationResult =
         registerForActivityResult<Array<String>, Map<String, Boolean>>(
-            ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                var allPermissionClear = true
-                val blockPermissionCheck: MutableList<String> = ArrayList()
-                for (key in result.keys) {
-                    if (!result[key]!!) {
-                        allPermissionClear = false
-                        blockPermissionCheck.add(
-                            Functions.getPermissionStatus(
-                                this@MainMenuActivity,
-                                key
-                            )
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            var allPermissionClear = true
+            val blockPermissionCheck: MutableList<String> = ArrayList()
+            for (key in result.keys) {
+                if (!result[key]!!) {
+                    allPermissionClear = false
+                    blockPermissionCheck.add(
+                        Functions.getPermissionStatus(
+                            this@MainMenuActivity,
+                            key
                         )
-                    }
-                }
-                if (blockPermissionCheck.contains("blocked")) {
-                    Functions.showPermissionSetting(
-                        context,
-                        context!!.getString(R.string.we_need_location_permission_to_show_you_nearby_contents)
                     )
-                } else if (allPermissionClear) {
                 }
             }
+            if (blockPermissionCheck.contains("blocked")) {
+                Functions.showPermissionSetting(
+                    context,
+                    context!!.getString(R.string.we_need_location_permission_to_show_you_nearby_contents)
+                )
+            } else if (allPermissionClear) {
+            }
+        }
 
     private val mPermissionLocationResult =
         registerForActivityResult<Array<String>, Map<String, Boolean>>(
-            ActivityResultContracts.RequestMultiplePermissions()){ result ->
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
 
             var allPermissionClear = true
             val blockPermissionCheck: MutableList<String> = ArrayList()
@@ -677,10 +683,6 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             }
 
         }
-
-
-
-
 
 
     var streamId = ""
@@ -745,29 +747,30 @@ class MainMenuActivity : AppCompatLocaleActivity() {
 
     private val mPermissionStreamResult =
         registerForActivityResult<Array<String>, Map<String, Boolean>>(
-            ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                var allPermissionClear = true
-                val blockPermissionCheck: MutableList<String> = ArrayList()
-                for (key in result.keys) {
-                    if (!result[key]!!) {
-                        allPermissionClear = false
-                        blockPermissionCheck.add(
-                            Functions.getPermissionStatus(
-                                this@MainMenuActivity,
-                                key
-                            )
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            var allPermissionClear = true
+            val blockPermissionCheck: MutableList<String> = ArrayList()
+            for (key in result.keys) {
+                if (!result[key]!!) {
+                    allPermissionClear = false
+                    blockPermissionCheck.add(
+                        Functions.getPermissionStatus(
+                            this@MainMenuActivity,
+                            key
                         )
-                    }
-                }
-                if (blockPermissionCheck.contains("blocked")) {
-                    Functions.showPermissionSetting(
-                        context,
-                        context!!.getString(R.string.we_need_camera_and_recording_permission_for_live_streaming)
                     )
-                } else if (allPermissionClear) {
-                    goLive(streamId)
                 }
             }
+            if (blockPermissionCheck.contains("blocked")) {
+                Functions.showPermissionSetting(
+                    context,
+                    context!!.getString(R.string.we_need_camera_and_recording_permission_for_live_streaming)
+                )
+            } else if (allPermissionClear) {
+                goLive(streamId)
+            }
+        }
 
     private fun goLive(streamId: String) {
         Log.d(Constants.TAG_, "StreamingID: $streamId")
@@ -1055,7 +1058,8 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     }
 
     var resultChatCallback = registerForActivityResult<Intent, ActivityResult>(
-        ActivityResultContracts.StartActivityForResult()) { result ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == RESULT_OK) {
             val data = result.data
             if (data!!.getBooleanExtra("isShow", false)) {
@@ -1098,27 +1102,6 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             })
     }
 
-    fun checkLicence() {
-        VolleyRequest.JsonPostRequest(
-            this@MainMenuActivity,
-            ApiLinks.showLicense,
-            null,
-            Functions.getHeaders(this)
-        ) { resp ->
-            Functions.checkStatus(this@MainMenuActivity, resp)
-            try {
-                val jsonObject = JSONObject(resp)
-                val code = jsonObject.optString("code")
-                if (code != null && code == "200") {
-                    Functions.getSharedPreference(this@MainMenuActivity).edit()
-                        .putBoolean(Variables.IsExtended, true).commit()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     override fun onBackPressed() {
         val count = this.supportFragmentManager.backStackEntryCount
         if (count == 0) {
@@ -1159,6 +1142,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
 
     @JvmField
     var roomManager: RoomManager? = null
+
     @JvmField
     var roomFirebaseManager: RoomFirebaseManager? = null
     var model: MainStreamingModel? = null
@@ -1169,8 +1153,8 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         roomManager = RoomManager.getInstance(this)
         roomFirebaseManager = RoomFirebaseManager.getInstance(this)
         roomFirebaseManager!!.setListerner1(object : RoomFirebaseListener {
-            override fun createRoom(bundle: Bundle) {}
-            override fun JoinedRoom(bundle: Bundle) {
+            override fun createRoom(bundle: Bundle?) {}
+            override fun JoinedRoom(bundle: Bundle?) {
                 if (bundle != null) {
                     val roomId = bundle.getString("roomId")
                     Functions.printLog(Constants.TAG_, "JoinedRoom roomId$roomId")
@@ -1180,114 +1164,125 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 }
             }
 
-            override fun onRoomLeave(bundle: Bundle) {
+            override fun onRoomLeave(bundle: Bundle?) {
                 stopRoomService()
                 Dialogs.closeInvitationCookieBar(this@MainMenuActivity)
                 roomFirebaseManager!!.removeAllListener()
-                binding!!.sheetBottomBar.visibility = View.GONE
+                binding.sheetBottomBar.visibility = View.GONE
             }
 
-            override fun onRoomDelete(bundle: Bundle) {
+            override fun onRoomDelete(bundle: Bundle?) {
                 stopRoomService()
                 roomFirebaseManager!!.removeAllListener()
-                binding!!.sheetBottomBar.visibility = View.GONE
+                binding.sheetBottomBar.visibility = View.GONE
             }
 
-            override fun onRoomUpdate(bundle: Bundle) {
-                model = roomFirebaseManager!!.getMainStreamingModel()
-                myUserModel = roomFirebaseManager!!.getMyUserModel()
+            override fun onRoomUpdate(bundle: Bundle?) {
+                model = roomFirebaseManager!!.mainStreamingModel
+                myUserModel = roomFirebaseManager!!.myUserModel
             }
 
-            override fun onRoomUsersUpdate(bundle: Bundle) {
-                model = roomFirebaseManager!!.getMainStreamingModel()
-                myUserModel = roomFirebaseManager!!.getMyUserModel()
-                if (roomFirebaseManager!!.getSpeakersUserList().size > 0) {
-                    val userModel = roomFirebaseManager!!.getSpeakersUserList()[0]
-                    binding!!.ivJoinProfileOne.controller = Functions.frescoImageLoad(
+            override fun onRoomUsersUpdate(bundle: Bundle?) {
+                model = roomFirebaseManager!!.mainStreamingModel
+                myUserModel = roomFirebaseManager!!.myUserModel
+                if (roomFirebaseManager!!.speakersUserList.size > 0) {
+                    val userModel = roomFirebaseManager!!.speakersUserList[0]
+                    binding.ivJoinProfileOne.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
-                        Functions.getUserName(userModel.getUserModel()),
-                        userModel.getUserModel().profilePic,
-                        binding!!.ivJoinProfileOne
+                        Functions.getUserName(userModel?.getUserModel()),
+                        userModel?.getUserModel()?.profilePic,
+                        binding.ivJoinProfileOne
                     )
                 }
-                if (roomFirebaseManager!!.getSpeakersUserList().size > 1) {
-                    binding!!.ivJoinProfileTwo.visibility = View.VISIBLE
-                    val userModel = roomFirebaseManager!!.getSpeakersUserList()[1]
-                    binding!!.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
+
+                if (roomFirebaseManager!!.speakersUserList.size > 1) {
+                    binding.ivJoinProfileTwo.visibility = View.VISIBLE
+                    val userModel = roomFirebaseManager!!.speakersUserList[1]
+                    binding.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
-                        Functions.getUserName(userModel.getUserModel()),
-                        userModel.getUserModel().profilePic,
-                        binding!!.ivJoinProfileTwo
+                        Functions.getUserName(userModel?.getUserModel()),
+                        userModel?.getUserModel()?.profilePic,
+                        binding.ivJoinProfileTwo
                     )
-                } else if (roomFirebaseManager!!.getAudienceUserList().size > 0) {
-                    binding!!.ivJoinProfileTwo.visibility = View.VISIBLE
-                    val userModel = roomFirebaseManager!!.getAudienceUserList()[0]
-                    binding!!.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
+
+                } else if (roomFirebaseManager!!.audienceUserList.size > 0) {
+                    binding.ivJoinProfileTwo.visibility = View.VISIBLE
+                    val userModel = roomFirebaseManager!!.audienceUserList[0]
+                    binding.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
-                        Functions.getUserName(userModel.getUserModel()),
-                        userModel.getUserModel().profilePic,
-                        binding!!.ivJoinProfileTwo
+                        Functions.getUserName(userModel?.getUserModel()),
+                        userModel?.getUserModel()?.profilePic,
+                        binding.ivJoinProfileTwo
                     )
+
                 } else {
-                    binding!!.ivJoinProfileTwo.visibility = View.GONE
+                    binding.ivJoinProfileTwo.visibility = View.GONE
                 }
+
                 val totalCount =
-                    roomFirebaseManager!!.getSpeakersUserList().size + roomFirebaseManager!!.getAudienceUserList().size
+                    roomFirebaseManager!!.speakersUserList.size + roomFirebaseManager!!.audienceUserList.size
                 if (totalCount > 2) {
-                    binding!!.tabJoinCount.visibility = View.VISIBLE
-                    binding!!.tvJoinCount.text = "+" + (totalCount - 2)
+                    binding.tabJoinCount.visibility = View.VISIBLE
+                    binding.tvJoinCount.text = "+" + (totalCount - 2)
                 } else {
-                    binding!!.tabJoinCount.visibility = View.GONE
+                    binding.tabJoinCount.visibility = View.GONE
                 }
             }
 
-            override fun onMyUserUpdate(bundle: Bundle) {
-                model = roomFirebaseManager!!.getMainStreamingModel()
-                myUserModel = roomFirebaseManager!!.getMyUserModel()
+            override fun onMyUserUpdate(bundle: Bundle?) {
+                model = roomFirebaseManager!!.mainStreamingModel
+                myUserModel = roomFirebaseManager!!.myUserModel
                 if (myUserModel!!.getUserRoleType() == null) {
                     myUserModel!!.setUserRoleType("0")
                 }
                 if (myUserModel!!.getUserRoleType() == "1" || myUserModel!!.getUserRoleType() == "2") {
                     if (myUserModel!!.getMice() == "1") {
-                        binding!!.ivMice.setImageDrawable(
+                        binding.ivMice.setImageDrawable(
                             ContextCompat.getDrawable(
-                                binding!!.root.context,
+                                binding.root.context,
                                 R.drawable.ic_mice
                             )
                         )
-                        if (RoomStreamService.streamingInstance != null && RoomStreamService.streamingInstance.ismAudioMuted()) RoomStreamService.streamingInstance.enableVoiceCall()
+
+                        if (RoomStreamService.streamingInstance != null) {
+                            if (RoomStreamService.streamingInstance!!.ismAudioMuted()) {
+                                RoomStreamService.streamingInstance!!.enableVoiceCall()
+                            }
+                        }
+
                     } else {
-                        binding!!.ivMice.setImageDrawable(
+                        binding.ivMice.setImageDrawable(
                             ContextCompat.getDrawable(
-                                binding!!.root.context,
+                                binding.root.context,
                                 R.drawable.ic_mice_mute
                             )
                         )
-                        if (RoomStreamService.streamingInstance != null && !RoomStreamService.streamingInstance.ismAudioMuted()) RoomStreamService.streamingInstance.muteVoiceCall()
+
+                        if (RoomStreamService.streamingInstance != null && !RoomStreamService.streamingInstance!!.ismAudioMuted()) RoomStreamService.streamingInstance!!.muteVoiceCall()
                     }
-                    binding!!.tabMice.visibility = View.VISIBLE
-                    binding!!.tabRaiseHand.visibility = View.GONE
-                    binding!!.tabRiseHandUser.visibility = View.VISIBLE
+                    binding.tabMice.visibility = View.VISIBLE
+                    binding.tabRaiseHand.visibility = View.GONE
+                    binding.tabRiseHandUser.visibility = View.VISIBLE
                 } else {
                     if (myUserModel!!.getRiseHand() == "1") {
-                        binding!!.ivRaiseHand.setImageDrawable(
+                        binding.ivRaiseHand.setImageDrawable(
                             ContextCompat.getDrawable(
-                                binding!!.root.context, R.drawable.ic_hand
+                                binding.root.context, R.drawable.ic_hand
                             )
                         )
                     } else {
-                        binding!!.ivRaiseHand.setImageDrawable(
+                        binding.ivRaiseHand.setImageDrawable(
                             ContextCompat.getDrawable(
-                                binding!!.root.context, R.drawable.ic_hand_black
+                                binding.root.context, R.drawable.ic_hand_black
                             )
                         )
                     }
-                    if (RoomStreamService.streamingInstance != null && !RoomStreamService.streamingInstance.ismAudioMuted()) RoomStreamService.streamingInstance.muteVoiceCall()
-                    binding!!.tabMice.visibility = View.GONE
-                    binding!!.tabRiseHandUser.visibility = View.GONE
+                    if (RoomStreamService.streamingInstance != null && !RoomStreamService.streamingInstance!!.ismAudioMuted()) RoomStreamService.streamingInstance!!.muteVoiceCall()
+                    binding.tabMice.visibility = View.GONE
+                    binding.tabRiseHandUser.visibility = View.GONE
                 }
                 if (myUserModel!!.getUserRoleType() == "1") {
-                    binding!!.tabRiseHandUser.visibility = View.VISIBLE
+                    binding.tabRiseHandUser.visibility = View.VISIBLE
                 }
             }
 
@@ -1298,8 +1293,9 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         Dialogs.showInvitationDialog(
                             this@MainMenuActivity,
                             invitation.getUserName()
-                        ) { bundle ->
-                            if (bundle != null) {
+                        ) { bndl ->
+
+                            if (bndl != null) {
                                 roomFirebaseManager!!.removeInvitation()
                                 val updateRise = HashMap<String, Any>()
                                 updateRise["riseHand"] = "0"
@@ -1310,10 +1306,11 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                                             .getString(Variables.U_ID, "")!!
                                     )
                                     .updateChildren(updateRise)
-                                if (bundle.getBoolean("isShow")) {
-                                    if (RoomStreamService.streamingInstance != null && RoomStreamService.streamingInstance.ismAudioMuted()) {
-                                        RoomStreamService.streamingInstance.enableVoiceCall()
+                                if (bndl.getBoolean("isShow")) {
+                                    if (RoomStreamService.streamingInstance != null && RoomStreamService.streamingInstance!!.ismAudioMuted()) {
+                                        RoomStreamService.streamingInstance!!.enableVoiceCall()
                                     }
+
                                     roomManager!!.speakerJoinRoomHitApi(
                                         Functions.getSharedPreference(
                                             context
@@ -1334,7 +1331,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 if (bundle.getString("action") == "roomInvitationSended") {
                     Functions.showSuccess(
                         this@MainMenuActivity,
-                        binding!!.root.context.getString(R.string.room_invitation_send_successfully)
+                        binding.root.context.getString(R.string.room_invitation_send_successfully)
                     )
                     roomManager!!.selectedInviteFriends = null
                 }
@@ -1348,7 +1345,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     } else {
                         Functions.showError(
                             this@MainMenuActivity,
-                            binding!!.root.context.getString(R.string.something_went_wrong)
+                            binding.root.context.getString(R.string.something_went_wrong)
                         )
                     }
                 }
@@ -1437,20 +1434,20 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 Functions.printLog(Constants.TAG_, "showRoomDetailAfterJoin()")
                 if (bundle != null) {
                     model = bundle["model"] as MainStreamingModel?
-                    roomFirebaseManager!!.setMainStreamingModel(model)
+                    roomFirebaseManager!!.mainStreamingModel = model
                     roomFirebaseManager!!.addAllRoomListerner()
                     startRoomService()
-                    binding!!.sheetBottomBar.visibility = View.VISIBLE
+                    binding.sheetBottomBar.visibility = View.VISIBLE
                     Functions.printLog(Constants.TAG_, "showRoomDetailAfterJoin()")
                     if (tabLayout!!.selectedTabPosition == 3) openRoomScreen()
                 }
             }
         })
-        binding!!.tabRaiseHand.setOnClickListener { openRiseHandToSpeak() }
-        binding!!.tabMice.setOnClickListener { updateMyMiceStatus() }
-        binding!!.tabRiseHandUser.setOnClickListener { openRiseHandList() }
-        binding!!.tabQueitly.setOnClickListener { removeRoom() }
-        binding!!.sheetBottomBar.setOnClickListener { openRoomScreen() }
+        binding.tabRaiseHand.setOnClickListener { openRiseHandToSpeak() }
+        binding.tabMice.setOnClickListener { updateMyMiceStatus() }
+        binding.tabRiseHandUser.setOnClickListener { openRiseHandList() }
+        binding.tabQueitly.setOnClickListener { removeRoom() }
+        binding.sheetBottomBar.setOnClickListener { openRoomScreen() }
     }
 
     fun removeListener() {
@@ -1586,11 +1583,12 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     private fun updateMyMiceStatus() {
         if (RoomStreamService.streamingInstance != null) {
             val updateMice = HashMap<String, Any>()
-            if (RoomStreamService.streamingInstance.ismAudioMuted()) {
+            if (RoomStreamService.streamingInstance!!.ismAudioMuted()) {
                 updateMice["mice"] = "1"
             } else {
                 updateMice["mice"] = "0"
             }
+
             reference!!.child(Variables.roomKey).child(model!!.model.id)
                 .child(Variables.roomUsers)
                 .child(Functions.getSharedPreference(context).getString(Variables.U_ID, "")!!)
@@ -1633,7 +1631,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     if (task.isSuccessful) {
                         Functions.showSuccess(
                             this@MainMenuActivity,
-                            binding!!.root.context.getString(R.string.great_we_are_sent_them_an_invite)
+                            binding.root.context.getString(R.string.great_we_are_sent_them_an_invite)
                         )
                     }
                 }
@@ -1643,6 +1641,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     companion object {
         @JvmField
         var mainMenuActivity: MainMenuActivity? = null
+
         @JvmField
         var tabLayout: TabLayout? = null
         private val PROJECTION = arrayOf(

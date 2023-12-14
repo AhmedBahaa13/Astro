@@ -187,11 +187,9 @@ public class PostVideoA extends AppCompatLocaleActivity implements View.OnClickL
             findViewById(R.id.duet_layout).setVisibility(View.GONE);
             findViewById(R.id.save_draft_btn).setVisibility(View.GONE);
             duetSwitch.setChecked(false);
-        } else if (Functions.getSharedPreference(this).getBoolean(Variables.IsExtended, false)) {
-            findViewById(R.id.duet_layout).setVisibility(View.VISIBLE);
+
         } else {
-            findViewById(R.id.duet_layout).setVisibility(View.GONE);
-            duetSwitch.setChecked(false);
+            findViewById(R.id.duet_layout).setVisibility(View.VISIBLE);
         }
 
         aditionalDetailsTextCount.setText("0" + "/" + Constants.VIDEO_DESCRIPTION_CHAR_LIMIT);

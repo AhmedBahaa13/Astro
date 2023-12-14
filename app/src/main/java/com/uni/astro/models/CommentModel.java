@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 
 public class CommentModel {
-    public String video_id,videoOwnerId, userId,user_name, first_name, last_name,comments, created, comment_type;
-    public String comment_id, pin_comment_id,isLikedByOwner,isVerified;
+    public String video_id, videoOwnerId, userId, user_name, first_name, last_name, commentText, created, type;
+    public String comment_id, pin_comment_id, isLikedByOwner, isVerified;
     public String liked;
     public String like_count;
     public String item_count_replies;
@@ -18,7 +18,7 @@ public class CommentModel {
     public String comment_reply_id, comment_reply, reply_create_date, arraylist_size, replay_user_name, parent_comment_id;
     public String comment_reply_liked, reply_liked_count;
 
-    private String profile_pic,replay_user_url;
+    private String profile_pic, replay_user_url;
 
     public CommentModel() { }
 

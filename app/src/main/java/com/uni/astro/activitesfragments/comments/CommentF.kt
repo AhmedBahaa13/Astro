@@ -13,23 +13,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devlomi.record_view.OnRecordListener
-import com.downloader.Error
-import com.downloader.OnDownloadListener
-import com.downloader.PRDownloader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hendraanggrian.appcompat.widget.SocialView
 import com.uni.astro.Constants
+import com.uni.astro.Constants.TAG_
 import com.uni.astro.R
-import com.uni.astro.activitesfragments.chat.ChatA.playingId
 import com.uni.astro.activitesfragments.comments.adapters.CommentsAdapter
 import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.OnRelyItemCLickListener
 import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.LinkClickListener
@@ -45,6 +42,7 @@ import com.uni.astro.models.UsersModel
 import com.uni.astro.simpleclasses.DataParsing
 import com.uni.astro.simpleclasses.DebounceClickHandler
 import com.uni.astro.simpleclasses.Functions
+import com.uni.astro.simpleclasses.Functions.deleteDir
 import com.uni.astro.simpleclasses.PermissionUtils
 import com.uni.astro.simpleclasses.Variables
 import com.volley.plus.VPackages.VolleyRequest
@@ -52,10 +50,7 @@ import com.volley.plus.interfaces.APICallBack
 import org.json.JSONObject
 import java.io.File
 
-class CommentF @SuppressLint("ValidFragment") constructor(
-    count: Int,
-    var fragmentDataSend: FragmentDataSend?
-) : BottomSheetDialogFragment() {
+class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomSheetDialogFragment() {
     private lateinit var bind: FragmentCommentBinding
 
 
@@ -86,24 +81,13 @@ class CommentF @SuppressLint("ValidFragment") constructor(
 
 
     // Voice Comment Variables
-    var audioPostion = 0
-    var selectedAudioPosition = 0
-
     var audioPermissionCheck = "player"
-    var selectedAudioView: View? = null
-    private var countDownTimer: CountDownTimer? = null
     private var sendAudio: VoiceCommentManager? = null
     private var permissionUtils: PermissionUtils? = null
     var takePermissionUtils: PermissionUtils? = null
 
 
     companion object {
-        @JvmStatic
-        var mediaPlayer: MediaPlayer = MediaPlayer()
-
-        @JvmStatic
-        var mediaPlayerProgress = 0
-
         @JvmStatic
         private var commentsCount = 0
     }
@@ -126,7 +110,7 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                     mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
 
         return dialog as BottomSheetDialog
@@ -135,15 +119,8 @@ class CommentF @SuppressLint("ValidFragment") constructor(
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = FragmentCommentBinding.inflate(inflater, container, false)
 
-        Log.d(Constants.TAG_, "onCreateView: Dialog Started")
-
         bind.apply {
             tvComment.setOnClickListener(DebounceClickHandler {
-                replyStatus = null
-                hitComment()
-            })
-
-            btnSend.setOnClickListener(DebounceClickHandler {
                 replyStatus = null
                 hitComment()
             })
@@ -162,10 +139,11 @@ class CommentF @SuppressLint("ValidFragment") constructor(
 
             isSendAllow = if (Functions.isShowContentPrivacy(context, homeModel.apply_privacy_model.video_comment,
                     homeModel.follow_status_button.equals("friends", ignoreCase = true))) {
-                btnSend.visibility = View.VISIBLE
+                writeLayout.visibility = View.VISIBLE
                 true
+
             } else {
-                btnSend.visibility = View.GONE
+                writeLayout.visibility = View.GONE
                 false
             }
 
@@ -177,13 +155,10 @@ class CommentF @SuppressLint("ValidFragment") constructor(
 
             commentsAdapter = CommentsAdapter(requireContext(), dataList,
                 object : CommentsAdapter.OnItemClickListener {
-                    override fun onItemClick(
-                        positon: Int,
-                        itemUpdate: CommentModel,
-                        view: View
-                    ) {
+                    override fun onItemClick(positon: Int, itemUpdate: CommentModel, view: View) {
                         selectedCommentPosition = positon
                         selectedComment = dataList[selectedCommentPosition]
+
                         when (view.id) {
                             R.id.tabUserPic, R.id.user_pic, R.id.username -> {
                                 openProfile(selectedComment)
@@ -215,59 +190,43 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                                 commentsAdapter?.notifyDataSetChanged()
                             }
 
-                            R.id.comment_audio_bubble -> {
-                                Log.d(Constants.TAG_, "onItemClick: " + view.id)
-                                Toast.makeText(
-                                    requireContext(),
-                                    "audio bubble clicked",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            R.id.voiceCommentPanel -> {
+                                /*
+                                Log.d(Constants.TAG_, "onItemC1lick: " + view.id)
+                                Toast.makeText(requireContext(), "audio bubble clicked", Toast.LENGTH_SHORT).show()
 
                                 selectedComment?.isPlaying = true
                                 selectedAudioView = view
                                 selectedAudioPosition = selectedCommentPosition
 
-                                takePermissionUtils = PermissionUtils(
-                                    requireActivity(),
-                                    permissionStorageRecordingResult
-                                )
+                                takePermissionUtils = PermissionUtils(requireActivity(), permissionStorageRecordingResult)
 
                                 audioPermissionCheck = "playing"
                                 playingId = selectedComment!!.comment_id
                                 if (takePermissionUtils!!.isStorageRecordingPermissionGranted) {
-                                    audioPlaying(
-                                        selectedAudioView,
-                                        selectedComment,
-                                        selectedAudioPosition
-                                    )
+                                    audioPlaying(selectedAudioView, selectedComment, selectedAudioPosition)
+
                                 } else {
                                     takePermissionUtils!!.showStorageRecordingPermissionDailog(
                                         getString(R.string.we_need_recording_permission_for_upload_sound)
                                     )
                                 }
+                                */
                             }
                         }
                     }
 
-                    override fun onItemLongPress(
-                        positon: Int,
-                        itemUpdate: CommentModel,
-                        view: View
-                    ) {
+                    override fun onItemLongPress(positon: Int, itemUpdate: CommentModel, view: View) {
                         selectedCommentPosition = positon
                         selectedComment = dataList[selectedCommentPosition]
-                        if (view.id == R.id.message_layout) {
+                        if (view.id == R.id.commentPanel) {
                             openCommentSetting(selectedComment, selectedCommentPosition)
                         }
                     }
                 },
 
                 object : OnRelyItemCLickListener {
-                    override fun onItemClick(
-                        arrayList: ArrayList<CommentModel>,
-                        postion: Int,
-                        view: View
-                    ) {
+                    override fun onItemClick(arrayList: ArrayList<CommentModel>, postion: Int, view: View) {
                         selectedReplyCommentPosition = postion
                         selectedReplyComment = arrayList[selectedReplyCommentPosition]
                         when (view.id) {
@@ -286,11 +245,7 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                         }
                     }
 
-                    override fun onItemLongPress(
-                        arrayList: ArrayList<CommentModel>,
-                        postion: Int,
-                        view: View
-                    ) {
+                    override fun onItemLongPress(arrayList: ArrayList<CommentModel>, postion: Int, view: View) {
                         selectedReplyCommentPosition = postion
                         selectedReplyComment = arrayList[selectedReplyCommentPosition]
                         if (view.id == R.id.reply_layout) {
@@ -350,7 +305,7 @@ class CommentF @SuppressLint("ValidFragment") constructor(
             })
 
 
-            sendAudio = VoiceCommentManager(videoId, requireActivity())
+            sendAudio = VoiceCommentManager(videoId!!, requireActivity())
             takePermissionUtils = PermissionUtils(requireActivity(), permissionStorageRecordingResult)
 
 
@@ -382,23 +337,106 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                     permissionUtils = PermissionUtils(activity, permissionStorageRecordingResult)
                     audioPermissionCheck = "recording"
                     if (takePermissionUtils!!.isStorageRecordingPermissionGranted) {
+                        requireActivity().runOnUiThread {
+                            recordPanel.visibility = View.VISIBLE
+                            recordView.visibility = View.VISIBLE
+                            tvComment.visibility = View.GONE
+                        }
+
                         sendAudio?.startVoiceRecording(requireActivity())
+
                     } else {
                         takePermissionUtils?.showStorageRecordingPermissionDailog(getString(R.string.we_need_recording_permission_for_upload_sound))
                     }
                 }
 
                 override fun onCancel() {
+                    resetRecordViews()
                     sendAudio?.stopTimer()
                 }
 
-                override fun onFinish(recordTime: Long) {
-                    Log.d(Constants.TAG_, "onFinish: recordSopped")
-                    sendAudio?.stopRecording(requireActivity())
+                override fun onFinish(recordDuration: Long) {
+                    requireActivity().runOnUiThread {
+                        recordPanel.visibility = View.VISIBLE
+                        playRecordPanel.visibility = View.VISIBLE
+                        recordView.visibility = View.GONE
+                        tvComment.visibility = View.GONE
+                        btnMic.visibility = View.GONE
+                    }
+
+                    val recordFile = sendAudio?.finishRecording(requireActivity())
+                    val mediaPlayer = MediaPlayer.create(context, Uri.parse(recordFile))
+
+                    requireActivity().runOnUiThread {
+                        recordTime.text = "${Functions.getfileduration(requireContext(), Uri.parse(recordFile))}"
+                    }
+
+                    btnSendVoice.setOnClickListener {
+                        btnSendVoice.visibility = View.GONE
+                        btnDeleteRecord.visibility = View.GONE
+                        voiceProgress.visibility = View.VISIBLE
+
+                        sendAudio?.uploadAudio(requireActivity()) { resx ->
+                            if (resx == "200") {
+                                Toast.makeText(requireContext(), "Voice Comment Added.", Toast.LENGTH_SHORT).show()
+                                resetRecordViews()
+                                getComments()
+
+                            } else {
+                                Toast.makeText(requireContext(), "Voice Comment Upload Failed.", Toast.LENGTH_SHORT).show()
+                                resetRecordViews()
+                            }
+                        }
+                    }
+
+                    btnDeleteRecord.setOnClickListener {
+                        Toast.makeText(requireContext(), "Record Deleted Successfully.", Toast.LENGTH_SHORT).show()
+                        deleteDir(File(recordFile))
+                        resetRecordViews()
+                    }
+
+                    var togglePlay = false
+                    btnPlay.setOnClickListener(DebounceClickHandler {
+                        if (!togglePlay) {
+                            mediaPlayer.start()
+                            btnPlay.setImageResource(R.drawable.ic_pause_icon)
+
+                            val timr = object : CountDownTimer(recordDuration, 100) {
+                                override fun onTick(millisUntilFinished: Long) {
+                                    seekBar.progress = mediaPlayer.currentPosition
+                                }
+
+                                override fun onFinish() {
+                                    btnPlay.setImageResource(R.drawable.ic_play_icon)
+                                    seekBar.progress = 0
+                                }
+                            }
+                            timr.start()
+
+                            togglePlay = true
+
+                        } else {
+                            togglePlay = false
+                            mediaPlayer.pause()
+                            btnPlay.setImageResource(R.drawable.ic_play_icon)
+                        }
+                    })
+
+                    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer.seekTo(progress)
+                            }
+                        }
+
+                        override fun onStartTrackingTouch(seekBar: SeekBar) { }
+                        override fun onStopTrackingTouch(seekBar: SeekBar) { }
+                    })
                 }
 
                 override fun onLessThanSecond() {
-                    sendAudio?.stopTimerWithoutRecorder()
+                    Toast.makeText(requireContext(), "Record Is Too Short...", Toast.LENGTH_SHORT).show()
+                    resetRecordViews()
                 }
             })
 
@@ -417,6 +455,26 @@ class CommentF @SuppressLint("ValidFragment") constructor(
             intent.putExtra("user_name", tag)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun resetRecordViews() {
+        bind.apply {
+            requireActivity().runOnUiThread {
+                recordPanel.visibility = View.GONE
+                sendProgress.visibility = View.GONE
+                voiceProgress.visibility = View.GONE
+                playRecordPanel.visibility = View.GONE
+                btnDeleteRecord.visibility = View.GONE
+                btnMic.visibility = View.VISIBLE
+                tvComment.visibility = View.VISIBLE
+                recordView.visibility = View.VISIBLE
+                btnSendVoice.visibility = View.VISIBLE
+                btnPlay.setImageResource(R.drawable.ic_play_icon)
+                seekBar.progress = 0
+                recordTime.text = "00:00"
+            }
         }
     }
 
@@ -441,7 +499,7 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                         bundle.getSerializable("taggedUserList") as ArrayList<UsersModel>?
                     val message = bundle.getString("message")
                     bind.tvComment.text = message
-                    sendComment("" + message)
+                    sendComment("$message")
                 }
             }
         }
@@ -480,30 +538,30 @@ class CommentF @SuppressLint("ValidFragment") constructor(
     }
 
     private fun openCommentSetting(commentModel: CommentModel?, position: Int) {
-        val fragment =
-            CommentSettingF(commentModel) { bundle ->
-                if (bundle.getBoolean("isShow", false)) {
-                    if (bundle.getString("action") == "copyText") {
-                        Functions.copyCode(requireContext(), commentModel?.comments)
+        val fragment = CommentSettingF(commentModel) { bundle ->
+            if (bundle.getBoolean("isShow", false)) {
+                if (bundle.getString("action") == "copyText") {
+                    Functions.copyCode(requireContext(), commentModel?.commentText)
 
-                    } else if (bundle.getString("action") == "pinComment") {
-                        if (Integer.valueOf(commentModel?.pin_comment_id) > 0) {
-                            if (commentModel?.pin_comment_id == commentModel?.comment_id) {
-                                hitApiPinComment(commentModel, "unpin")
-
-                            } else {
-                                replacePreviousPinned(commentModel)
-                            }
+                } else if (bundle.getString("action") == "pinComment") {
+                    if (Integer.valueOf(commentModel?.pin_comment_id) > 0) {
+                        if (commentModel?.pin_comment_id == commentModel?.comment_id) {
+                            hitApiPinComment(commentModel, "unpin")
 
                         } else {
-                            hitApiPinComment(commentModel, "pin")
+                            replacePreviousPinned(commentModel)
                         }
 
-                    } else if (bundle.getString("action") == "deleteComment") {
-                        hitApiCommentDelete(commentModel, position)
+                    } else {
+                        hitApiPinComment(commentModel, "pin")
                     }
+
+                } else if (bundle.getString("action") == "deleteComment") {
+                    hitApiCommentDelete(commentModel, position)
                 }
             }
+        }
+
         fragment.show(parentFragmentManager, "CommentSettingF")
     }
 
@@ -748,7 +806,6 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                 var pinnedCommentModel: CommentModel? = null
                 val tempList = ArrayList<CommentModel>()
 
-                    Log.d(Constants.TAG_,  "COMMENTS: \n$resp")
                 try {
                     val response = JSONObject(resp)
                     val code = response.optString("code")
@@ -770,6 +827,7 @@ class CommentF @SuppressLint("ValidFragment") constructor(
 
                                     val commntModel = CommentModel()
                                     commntModel.comment_reply_id = jsonObject.optString("id")
+                                    commntModel.type = jsonObject.optString("type")
                                     commntModel.reply_liked_count = jsonObject.optString("like_count")
                                     commntModel.comment_reply_liked = jsonObject.optString("like")
                                     commntModel.comment_reply = jsonObject.optString("comment")
@@ -798,7 +856,8 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                             commsModel.profile_pic = userDetailModel.profilePic
                             commsModel.arrayList = replyList
                             commsModel.video_id = videoComment.optString("video_id")
-                            commsModel.comments = videoComment.optString("comment")
+                            commsModel.type = videoComment.optString("type")
+                            commsModel.commentText = videoComment.optString("comment")
                             commsModel.liked = videoComment.optString("like")
                             commsModel.like_count = videoComment.optString("like_count")
                             commsModel.comment_id = videoComment.optString("id")
@@ -873,14 +932,14 @@ class CommentF @SuppressLint("ValidFragment") constructor(
     // this function will call an api to upload your comment
     private fun sendComments(video_id: String?, comment: String?) {
         bind.apply {
-            btnSend.visibility = View.GONE
+            btnMic.visibility = View.GONE
             sendProgress.visibility = View.VISIBLE
 
             Functions.callApiForSendComment(activity, "text", video_id, comment, taggedUserList, object : APICallBack {
                 override fun arrayData(arrayList: ArrayList<*>) {
-                    btnSend.visibility = View.VISIBLE
+                    btnMic.visibility = View.VISIBLE
                     sendProgress.visibility = View.GONE
-                    tvNoCommentData!!.visibility = View.GONE
+                    tvNoCommentData.visibility = View.GONE
 
                     for (item in arrayList as ArrayList<CommentModel?>) {
                         dataList.add(0, item!!)
@@ -894,12 +953,12 @@ class CommentF @SuppressLint("ValidFragment") constructor(
                 }
 
                 override fun onSuccess(response: String) {
-                    btnSend.visibility = View.VISIBLE
+                    btnMic.visibility = View.VISIBLE
                     sendProgress.visibility = View.GONE
                 }
 
                 override fun onFail(response: String) {
-                    btnSend.visibility = View.VISIBLE
+                    btnMic.visibility = View.VISIBLE
                     sendProgress.visibility = View.GONE
                 }
             })
@@ -931,100 +990,6 @@ class CommentF @SuppressLint("ValidFragment") constructor(
     }
 
 
-
-    // ============================= Voice Comment Functions =============================
-    private fun audioPlaying(view: View?, commentModel: CommentModel?, position: Int) {
-        Log.d(Constants.TAG_, "audioPlaying: fired")
-        val mainLayout = view?.parent as LinearLayout
-        val fullPath = File(Functions.getAppFolder(activity) + commentModel?.comment_id + ".mp3")
-
-        downloadAudio(position, commentModel)
-//        if (fullPath.exists()) {
-//            Log.d(TAG, "audioPlaying: "+ fullPath);
-//            if (playingId.equals(item.getVideo_id())) {
-//                stopPlaying();
-//            } else {
-//                playAudio(postion, item);
-//            }
-//        } else {
-//            downloadAudio(mainLayout.findViewById(R.id.p_bar), item);
-//        }
-    }
-
-
-    fun playAudio(position: Int, commentModel: CommentModel?) {
-        audioPostion = position
-        mediaPlayerProgress = 0
-        stopPlaying()
-
-        val fullPath = File(Functions.getAppFolder(context) + commentModel?.comment_id + ".mp3")
-        if (fullPath.exists()) {
-            val uri = Uri.parse(fullPath.absolutePath)
-            mediaPlayer = MediaPlayer.create(context, uri)
-
-            if (mediaPlayer != null) {
-                mediaPlayer.start()
-                countdownTimer(true)
-                mediaPlayer.setOnCompletionListener(MediaPlayer.OnCompletionListener { stopPlaying() })
-                commentsAdapter?.notifyDataSetChanged()
-            }
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun stopPlaying() {
-        playingId = "none"
-        countdownTimer(false)
-        commentsAdapter?.notifyDataSetChanged()
-        if (mediaPlayer != null) {
-            mediaPlayer.reset()
-            mediaPlayer.release()
-        }
-    }
-
-    private fun downloadAudio(position: Int, commentModel: CommentModel?) {
-        Log.d(Constants.TAG_, "downloadAudio: fired")
-        Log.d(Constants.TAG_, "downloadAudio: " + Functions.getAppFolder(context))
-
-        PRDownloader.download(commentModel?.comments, Functions.getAppFolder(context), commentModel?.comment_id + ".mp3")
-        .build().start(object : OnDownloadListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onDownloadComplete() {
-                playAudio(position, commentModel)
-                commentsAdapter?.notifyDataSetChanged()
-            }
-
-            override fun onError(error: Error) {
-                Log.d(Constants.TAG_, "onError: " + error.serverErrorMessage)
-            }
-        })
-    }
-
-    fun countdownTimer(startTimer: Boolean) {
-        if (countDownTimer != null) countDownTimer!!.cancel()
-        if (startTimer) {
-            countDownTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 300) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        mediaPlayerProgress = mediaPlayer.currentPosition * 100 / mediaPlayer.duration
-
-                        if (mediaPlayerProgress > 95) {
-                            countdownTimer(false)
-                            mediaPlayerProgress = 0
-                        }
-                        commentsAdapter?.notifyItemChanged(audioPostion)
-                    }
-
-                    override fun onFinish() {
-                        mediaPlayerProgress = 0
-                        countdownTimer(false)
-                        commentsAdapter?.notifyItemChanged(audioPostion)
-                    }
-                }
-            countDownTimer?.start()
-        }
-    }
-
-
     private val permissionStorageRecordingResult = registerForActivityResult<Array<String>, Map<String, Boolean>>(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         var allPermissionClear = true
         val blockPermissionCheck: MutableList<String> = java.util.ArrayList()
@@ -1044,10 +1009,10 @@ class CommentF @SuppressLint("ValidFragment") constructor(
 
         } else if (allPermissionClear) {
             if (audioPermissionCheck.equals("playing", ignoreCase = true)) {
-                audioPlaying(selectedAudioView, selectedComment, selectedAudioPosition)
+                //audioPlaying(selectedAudioView, selectedComment, selectedAudioPosition)
 
             } else {
-                sendAudio?.stopRecording(requireActivity())
+                sendAudio?.finishRecording(requireActivity())
             }
         }
     }

@@ -3,6 +3,9 @@
     <color name="colorPrimary">#B7332F</color>
     <color name="colorPrimaryDark">#831E1B</color>
     <color name="colorAccent">#B7332F</color>
+    <color name="colorControlHighlight">#AE9090</color>
+    <color name="colorControlNormal">#B7332F</color>
+    <color name="colorText">#000000</color>
 
     <!--    darkmode same color-->
     <color name="appColor">#B7332F</color>
@@ -82,6 +85,4 @@
 
     <!-- Changes color of recording button on camera screen -->
     <color name="rec_btn_idle_state_color">@color/primary_color</color>
-
-
 </resources>

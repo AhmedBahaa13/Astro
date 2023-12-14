@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -164,7 +163,6 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
 
 
     private void initControl() {
-        takePermissionUtils = new PermissionUtils(getActivity(), mPermissionResult);
 
         width = (int)(getResources().getDisplayMetrics().widthPixels*0.95);
 
@@ -287,14 +285,7 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
             switch (view.getId())
             {
                 case R.id.tabView:
-                    if (takePermissionUtils.isStorageRecordingPermissionGranted()) {
-
-                        roomManager.checkMyRoomJoinStatus("join",itemUpdate.getId());
-
-                    }
-                    else {
-                        takePermissionUtils.showStorageRecordingPermissionDailog(binding.getRoot().getContext().getString(R.string.we_need_voice_and_read_write_storage_permission));
-                    }
+                    roomManager.checkMyRoomJoinStatus("join",itemUpdate.getId());
                 break;
 
                 case R.id.menuBtn:
@@ -334,7 +325,7 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
 
                 }
                 else if (allPermissionClear) {
-                    Toast.makeText(getContext(), "Tap Again", Toast.LENGTH_SHORT).show();
+                    createRoomByUser();
                 }
 
             });
@@ -413,6 +404,7 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
 
 
     private void startRoom() {
+        takePermissionUtils = new PermissionUtils(getActivity(), mPermissionResult);
         if (takePermissionUtils.isStorageRecordingPermissionGranted()) {
 
             createRoomByUser();
@@ -428,10 +420,14 @@ public class SpaceTabF extends Fragment implements View.OnClickListener{
         switch (v.getId())
         {
 
-            case R.id.tabStartRoom: {
+            case R.id.tabStartRoom:
+            {
                 startRoom();
             }
             break;
+
+
+
 
 
         }

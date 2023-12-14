@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -36,8 +37,6 @@
                 app:placeholderImage="@drawable/ic_user_icon"
                 app:placeholderImageScaleType="centerCrop"
                 fresco:roundAsCircle="true" />
-
-
         </FrameLayout>
 
 
@@ -123,10 +122,7 @@
                                     android:textColor="@color/redColor"
                                     android:textSize="@dimen/_11sdp"
                                     android:textStyle="bold" />
-
                             </LinearLayout>
-
-
                         </LinearLayout>
 
                         <TextView
@@ -140,6 +136,65 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/_10sdp" />
 
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/voiceCommentPanel"
+                            android:layout_width="@dimen/_160sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_4sdp"
+                            android:background="@drawable/d_other_msg_background"
+                            android:gravity="start|center_vertical"
+                            android:padding="@dimen/_6sdp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <ImageView
+                                android:id="@+id/btnPlay"
+                                android:layout_width="@dimen/_26sdp"
+                                android:layout_height="@dimen/_26sdp"
+                                android:background="@color/transparent"
+                                android:clickable="false"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/ic_play_icon"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/blackColor"
+                                tools:ignore="ContentDescription" />
+
+                            <SeekBar
+                                android:id="@+id/seekBar"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center"
+                                android:layout_toStartOf="@+id/voiceTime"
+                                android:clickable="false"
+                                android:theme="@style/MySeekBar2"
+                                app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
+                                app:layout_constraintEnd_toStartOf="@+id/voiceTime"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toEndOf="@+id/btnPlay"
+                                app:layout_constraintTop_toTopOf="@+id/btnPlay" />
+
+                            <TextView
+                                android:id="@+id/voiceTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="4dp"
+                                android:gravity="start|center_vertical"
+                                android:textAlignment="viewStart"
+                                android:textColor="@color/colorblackfix_50"
+                                android:textSize="@dimen/_10sdp"
+                                app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toEndOf="@+id/seekBar"
+                                app:layout_constraintTop_toTopOf="@+id/seekBar"
+                                tools:text="13 min" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </LinearLayout>
 
 
@@ -147,6 +202,7 @@
                         android:id="@+id/like_layout"
                         android:layout_width="@dimen/_32sdp"
                         android:layout_height="@dimen/_32sdp"
+                        android:layout_marginTop="8dp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:gravity="center"
@@ -168,10 +224,7 @@
                             android:text="@string/likes"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_10sdp" />
-
                     </LinearLayout>
-
-
                 </RelativeLayout>
 
 

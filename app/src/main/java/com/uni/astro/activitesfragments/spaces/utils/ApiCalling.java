@@ -2,7 +2,6 @@ package com.uni.astro.activitesfragments.spaces.utils;
 
 import android.app.Activity;
 import android.util.Log;
-
 import com.uni.astro.Constants;
 import com.uni.astro.apiclasses.ApiLinks;
 import com.uni.astro.simpleclasses.Functions;

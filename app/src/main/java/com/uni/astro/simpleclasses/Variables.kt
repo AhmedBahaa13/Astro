@@ -53,7 +53,6 @@ object Variables {
     const val DEFAULT_LANGUAGE_CODE = "en"
     const val DEFAULT_LANGUAGE = "English"
     const val countryRegion = "countryRegion"
-    const val IsExtended = "IsExtended"
     const val IsPrivacyPolicyAccept = "IsPrivacyPolicyAccept"
     const val ShowAdvertAfter = "show_advert_after"
     const val CoinWorth = "coin_worth"

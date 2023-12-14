@@ -1,17 +1,17 @@
 package com.uni.astro.activitesfragments.spaces.voicecallmodule.openacall;
 
 import android.util.Log;
-
 import com.uni.astro.Constants;
-import com.uni.astro.activitesfragments.livestreaming.rtc.EventHandler;
+import com.uni.astro.activitesfragments.spaces.voicecallmodule.openacall.model.AGEventHandler;
 import com.uni.astro.activitesfragments.spaces.voicecallmodule.openacall.model.ConstantApp;
 import com.uni.astro.interfaces.FragmentCallBack;
-import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Astro;
+import com.uni.astro.simpleclasses.Functions;
 
 import io.agora.rtc.IRtcEngineEventHandler;
+import io.agora.rtc.RtcEngine;
 
-public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements EventHandler {
+public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements AGEventHandler {
 
     private volatile boolean mAudioMuted = true;
     private volatile int mAudioRouting = -1;
@@ -48,33 +48,34 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
 
     protected void initConfiguration() {
         isCallStart=true;
-        event(this);
+        event().addEventHandler(this);
 
-
-        rtcEngine().disableVideo();
-
-        rtcEngine().setDefaultAudioRoutetoSpeakerphone(true);
-        rtcEngine().adjustRecordingSignalVolume(100);
-        rtcEngine().adjustPlaybackSignalVolume(100);
-        rtcEngine().adjustAudioMixingVolume(100);
-
-        rtcEngine().joinChannel(null,channelName,"OpenVCall", config().mUid);
+        worker().joinChannel(channelName, config().mUid);
         Log.d(Constants.TAG_,"Connected Channel ID: "+channelName);
-
-        onEnableSpeakerSwitch();
-
+        //volum control
+//        setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
     protected void removeConfiguration() {
         isCallStart=false;
         doLeaveChannel();
-        removeRtcEventHandler(this);
+        event().removeEventHandler(this);
     }
 
 
+    public void onEnableSpeakerSwitch() {
+        Functions.printLog(Constants.TAG_,"onSwitchSpeakerClicked "+ mAudioMuted + " " + mAudioRouting);
+        RtcEngine rtcEngine = rtcEngine();
+        rtcEngine.setEnableSpeakerphone(true);
+    }
+    public void onDisableSpeakerSwitch() {
+        Functions.printLog(Constants.TAG_,"onSwitchSpeakerClicked "+ mAudioMuted + " " + mAudioRouting);
+        RtcEngine rtcEngine = rtcEngine();
+        rtcEngine.setEnableSpeakerphone(false);
+    }
 
     private void doLeaveChannel() {
-        rtcEngine().leaveChannel();
+        worker().leaveChannel(config().mChannel);
     }
 
     public void quitCall() {
@@ -85,9 +86,9 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
     public void muteVoiceCall() {
         Functions.printLog(Constants.TAG_,"muteVoiceCall");
         mAudioMuted=true;
-        rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE);
-        rtcEngine().muteLocalAudioStream(mAudioMuted);
 
+        RtcEngine rtcEngine = rtcEngine();
+        rtcEngine.muteLocalAudioStream(mAudioMuted);
         if(mAudioRouting==0){
             onDisableSpeakerSwitch();
         }
@@ -100,9 +101,10 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
     public void enableVoiceCall(){
         Functions.printLog(Constants.TAG_,"enableVoiceCall");
         mAudioMuted=false;
-        rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER);
-        rtcEngine().muteLocalAudioStream(mAudioMuted);
 
+
+        RtcEngine rtcEngine = rtcEngine();
+        rtcEngine.muteLocalAudioStream(mAudioMuted);
         if(mAudioRouting==0){
             onDisableSpeakerSwitch();
         }
@@ -110,6 +112,9 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
             onEnableSpeakerSwitch();
         }
     }
+
+
+
 
 
     public boolean ismAudioMuted() {
@@ -132,22 +137,22 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
 
     }
 
-//    @Override
-//    public void onExtraCallback(final int type, final Object... data) {
-//
-//        if (isCallStart)
-//        {
-//            doHandleExtraCallback(type, data);
-//        }
-//
-//    }
+    @Override
+    public void onExtraCallback(final int type, final Object... data) {
+
+        if (isCallStart)
+        {
+            doHandleExtraCallback(type, data);
+        }
+
+    }
 
     private void doHandleExtraCallback(int type, Object... data) {
         int peerUid;
         boolean muted;
 
         switch (type) {
-            case EventHandler.EVENT_TYPE_ON_USER_AUDIO_MUTED: {
+            case AGEventHandler.EVENT_TYPE_ON_USER_AUDIO_MUTED: {
                 peerUid = (Integer) data[0];
                 muted = (boolean) data[1];
 
@@ -155,11 +160,18 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
                 break;
             }
 
-            case EventHandler.EVENT_TYPE_ON_AUDIO_QUALITY: {
+            case AGEventHandler.EVENT_TYPE_ON_AUDIO_QUALITY: {
+                peerUid = (Integer) data[0];
+                int quality = (int) data[1];
+                short delay = (short) data[2];
+                short lost = (short) data[3];
+
+
+//                setupLocalCallback("speaker",""+peerUid);
                 break;
             }
 
-            case EventHandler.EVENT_TYPE_ON_SPEAKER_STATS: {
+            case AGEventHandler.EVENT_TYPE_ON_SPEAKER_STATS: {
                 IRtcEngineEventHandler.AudioVolumeInfo[] infos = (IRtcEngineEventHandler.AudioVolumeInfo[]) data[0];
 
 
@@ -170,28 +182,28 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
                 break;
             }
 
-            case EventHandler.EVENT_TYPE_ON_APP_ERROR: {
+            case AGEventHandler.EVENT_TYPE_ON_APP_ERROR: {
                 int subType = (int) data[0];
                 if (subType == ConstantApp.AppError.NO_NETWORK_CONNECTION) {
                     Functions.printLog(Constants.TAG_,"msgNoNetworkConnection " + subType);
                 }
+
                 break;
             }
 
-            case EventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR: {
+            case AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR: {
                 int error = (int) data[0];
                 String description = (String) data[1];
                 Functions.printLog(Constants.TAG_,error + " " + description);
                 break;
             }
 
-            case EventHandler.EVENT_TYPE_ON_AUDIO_ROUTE_CHANGED: {
+            case AGEventHandler.EVENT_TYPE_ON_AUDIO_ROUTE_CHANGED: {
                 notifyHeadsetPlugged((int) data[0]);
                 break;
             }
         }
     }
-
 
     public void notifyHeadsetPlugged(final int routing) {
         Functions.printLog(Constants.TAG_,"notifyHeadsetPlugged " + routing);
@@ -203,17 +215,6 @@ public class VoiceStreamingNonUiChat extends VoiceStreamingNonUiBase implements 
             onEnableSpeakerSwitch();
         }
 
-    }
-
-
-
-
-    public void onEnableSpeakerSwitch() {
-        rtcEngine().setEnableSpeakerphone(true);
-
-    }
-    public void onDisableSpeakerSwitch() {
-        rtcEngine().setEnableSpeakerphone(false);
     }
 
 

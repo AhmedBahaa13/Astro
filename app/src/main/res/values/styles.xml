@@ -6,9 +6,32 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:windowDisablePreview">true</item>
+
+        <item name="android:button">@style/ButtonStyle</item>
+    </style>
+
+    <style name="textColor" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+    <style name="ButtonStyle" parent="Theme.MaterialComponents">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorPrimary</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="MtButton" parent="Theme.MaterialComponents">
+        <item name="colorOnPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorPrimaryDark</item>
     </style>
 
 
@@ -101,10 +124,6 @@
         <item name="android:paddingLeft">@dimen/_8sdp</item>
     </style>
 
-    <style name="ButtonStyle" parent="ThemeOverlay.AppCompat">
-        <item name="colorButtonNormal">@drawable/btn_blur</item>
-        <item name="android:textColor">@color/whiteColor</item>
-    </style>
 
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>

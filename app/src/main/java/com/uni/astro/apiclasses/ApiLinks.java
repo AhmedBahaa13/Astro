@@ -137,8 +137,6 @@ public class ApiLinks {
 
     public static final String sendLiveStreamPushNotfication = API_BASE_URL + "sendLiveStreamPushNotfication";
 
-    public static final String showLicense = API_BASE_URL + "showLicense";
-
     public static final String showSettings = API_BASE_URL + "showSettings";
 
     public static final String showVideoDetailAd = API_BASE_URL + "showVideoDetailAd";

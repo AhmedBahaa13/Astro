@@ -2,12 +2,17 @@
     <!-- Base application theme -->
     <style name="Theme.IntegrationApp" parent="Theme.Material3.Light.NoActionBar">
 
-        <item name="colorPrimary">@color/blackColor</item>
-        <item name="colorPrimaryDark">@color/blackColor</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:navigationBarColor">@color/blackColor</item>
+
+        <item name="android:button">@style/ButtonStyle</item>
     </style>
 
     <style name="AlertDialogTitleStyle">

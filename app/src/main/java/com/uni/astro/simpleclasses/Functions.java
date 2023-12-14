@@ -1097,7 +1097,7 @@ public class Functions {
                     item.arrayList = new ArrayList<>();
                     item.arraylist_size = "0";
                     item.video_id = videoComment.optString("video_id");
-                    item.comments = videoComment.optString("comment");
+                    item.commentText = videoComment.optString("comment");
                     item.liked = videoComment.optString("like");
                     item.like_count = videoComment.optString("like_count");
                     item.comment_id = videoComment.optString("id");
@@ -1177,7 +1177,7 @@ public class Functions {
                         item.setReplay_user_url(userDetailModel.getProfilePic());
 
                         item.video_id = videoComment.optString("video_id");
-                        item.comments = videoComment.optString("comment");
+                        item.commentText = videoComment.optString("comment");
                         item.created = videoComment.optString("created");
 
 
@@ -1811,18 +1811,14 @@ public class Functions {
         }
     }
 
-    // these function are remove the cache memory which is very helpfull in memmory managmet
+    // these function are remove the cache memory which is very helpful in memmory managmet
     public static void deleteCache(Context context) {
-
-
         try {
             File dir = context.getCacheDir();
             deleteDir(dir);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     public static boolean deleteDir(File dir) {

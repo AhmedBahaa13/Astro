@@ -20,7 +20,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
+import com.smartnsoft.backgrounddetector.BackgroundDetectorCallback
+import com.smartnsoft.backgrounddetector.BackgroundDetectorHandler
 import com.uni.astro.Constants
+import com.uni.astro.R
 import com.uni.astro.activitesfragments.CustomErrorActivity
 import com.uni.astro.activitesfragments.livestreaming.model.LiveUserModel
 import com.uni.astro.activitesfragments.livestreaming.rtc.AgoraEventHandler
@@ -29,14 +32,13 @@ import com.uni.astro.activitesfragments.livestreaming.rtc.EventHandler
 import com.uni.astro.activitesfragments.livestreaming.stats.StatsManager
 import com.uni.astro.activitesfragments.livestreaming.utils.FileUtil
 import com.uni.astro.activitesfragments.livestreaming.utils.PrefManager
+import com.uni.astro.activitesfragments.spaces.voicecallmodule.openacall.model.CurrentUserSettings
+import com.uni.astro.activitesfragments.spaces.voicecallmodule.openacall.model.WorkerThread
 import com.uni.astro.models.UserOnlineModel
-import com.smartnsoft.backgrounddetector.BackgroundDetectorCallback
-import com.smartnsoft.backgrounddetector.BackgroundDetectorHandler
 import com.volley.plus.VPackages.VolleyRequest
 import io.agora.rtc.RtcEngine
 import io.paperdb.Paper
 import java.io.File
-import com.uni.astro.R
 
 
 class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandler.OnVisibilityChangedListener {
@@ -427,6 +429,36 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
         addStreamingListener()
     }
 
+
+    private var mWorkerThread: WorkerThread? = null
+
+    @Synchronized
+    fun initWorkerThread() {
+        if (mWorkerThread == null) {
+            mWorkerThread = WorkerThread(applicationContext)
+            mWorkerThread?.start()
+            mWorkerThread?.waitForReady()
+        }
+    }
+
+    @Synchronized
+    fun getWorkerThread(): WorkerThread? {
+        return mWorkerThread
+    }
+
+    @Synchronized
+    fun deInitWorkerThread() {
+        mWorkerThread?.exit()
+
+        try {
+            mWorkerThread?.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        mWorkerThread = null
+    }
+
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         @JvmField
@@ -436,8 +468,12 @@ class Astro : Application(), ActivityLifecycleCallbacks, BackgroundDetectorHandl
         var exoDatabaseProvider: DatabaseProvider? = null
         var exoPlayerCacheSize = (100 * 1024 * 1024).toLong()
         var allOnlineUser = HashMap<String, UserOnlineModel?>()
+
         @JvmField
         var allLiveStreaming = HashMap<String, LiveUserModel?>()
+
+        @JvmField
+        var mAudioSettings: CurrentUserSettings = CurrentUserSettings()
 
         // below code is for cache the videos in local
         @JvmStatic

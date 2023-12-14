@@ -184,6 +184,8 @@ public class HomeF extends Fragment implements FragmentCallBack {
         tabPlaylist=view.findViewById(R.id.tabPlaylist);
         liveUsers = view.findViewById(R.id.live_users);
         swiperefresh = view.findViewById(R.id.swiperefresh);
+
+
         liveUsers.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

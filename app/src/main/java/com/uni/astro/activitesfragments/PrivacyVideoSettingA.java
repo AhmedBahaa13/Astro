@@ -62,7 +62,7 @@ public class PrivacyVideoSettingA extends AppCompatLocaleActivity implements Vie
 
         allowDuetSwitch.setChecked(getTrueFalseCondition(duetValue));
 
-        if (Functions.getSharedPreference(PrivacyVideoSettingA.this).getBoolean(Variables.IsExtended,false) && (duetVideoId != null && duetVideoId.equalsIgnoreCase("0"))) {
+        if (duetVideoId != null && duetVideoId.equalsIgnoreCase("0")) {
             allowDuetLayout.setVisibility(View.VISIBLE);
         }
     }

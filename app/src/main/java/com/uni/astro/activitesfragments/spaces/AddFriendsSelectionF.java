@@ -8,13 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import com.uni.astro.Constants;
 import com.uni.astro.R;
 import com.uni.astro.activitesfragments.spaces.adapters.FriendsSelectionAdapter;
+import com.uni.astro.activitesfragments.spaces.models.HomeUserModel;
 import com.uni.astro.apiclasses.ApiLinks;
 import com.uni.astro.databinding.FragmentAddFriendsSelectionBinding;
 import com.uni.astro.interfaces.AdapterClickListener;
@@ -25,8 +29,10 @@ import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
 import com.volley.plus.VPackages.VolleyRequest;
 import com.volley.plus.interfaces.Callback;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
