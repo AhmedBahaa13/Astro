@@ -22,16 +22,13 @@ object Constants {
     const val IS_SECURE_INFO = false
 
     // if you show the ad on after every specific video count
-    const val SHOW_AD_ON_EVERY = 8
+    const val SHOW_AD_ON_EVERY = 10
 
     // if you want a video thumbnail image show rather then a video gif then set the below value to false.
-    const val IS_SHOW_GIF = true
+    const val IS_SHOW_GIF = false
 
-    // if you want to disable all the toasts in the app
     const val IS_TOAST_ENABLE = true
 
-    // if you want to add a limit that a user can watch only 6 video then change the below value to true
-    // if you want to change the demo videos limit count then set the count as you want
     const val IS_DEMO_APP = false
     const val DEMO_APP_VIDEOS_COUNT = 6
 

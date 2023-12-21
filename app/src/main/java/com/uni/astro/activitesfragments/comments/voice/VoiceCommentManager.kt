@@ -38,13 +38,14 @@ class VoiceCommentManager(val videoId: String, context: Context) {
     }
 
 
-    fun uploadAudio(activity: Activity, callback: (String?) -> Unit) {
+    fun uploadAudio(activity: Activity, duration: String, callback: (String?) -> Unit) {
         val parameters = JSONObject()
         try {
             parameters.put("user_id", Functions.getSharedPreference(activity).getString(Variables.U_ID, "0"))
             parameters.put("video_id", videoId)
             parameters.put("comment", encodeMP3ToBase64(File(fileName)))
             parameters.put("type", "audio")
+            parameters.put("duration", duration)
         } catch (e: Exception) {
             Log.d(TAG_, "uploadAudio: $e")
         }

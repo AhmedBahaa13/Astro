@@ -228,12 +228,12 @@ public class ApiLinks {
 
     public static String showTopics= API_BASE_URL + "showTopics";
 
-
     public static String showDailyCheckins= API_BASE_URL + "showDailyCheckins";
 
     public static String addDailyCheckin= API_BASE_URL + "addDailyCheckin";
 
 
-
+    public static String saveCloseFriends = API_BASE_URL + "addUserCloseFriend";
+    public static String showCloseFriends = API_BASE_URL + "getCloseFriends";
 
 }

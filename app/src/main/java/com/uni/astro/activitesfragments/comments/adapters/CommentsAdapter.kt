@@ -1,7 +1,7 @@
 package com.uni.astro.activitesfragments.comments.adapters
 
+import android.app.Activity
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,15 +20,12 @@ import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import com.uni.astro.Constants
-import com.uni.astro.Constants.TAG_
 import com.uni.astro.R
-import com.uni.astro.activitesfragments.chat.ChatA
 import com.uni.astro.databinding.ItemCommentLayoutBinding
 import com.uni.astro.interfaces.FragmentCallBack
 import com.uni.astro.models.CommentModel
 import com.uni.astro.simpleclasses.FriendsTagHelper
 import com.uni.astro.simpleclasses.Functions
-import java.io.File
 
 
 // make the onItemClick listener interface and this interface is implement in Chat inbox activity
@@ -47,55 +44,29 @@ class CommentsAdapter(
 
     private var commentsReplyAdapter: Comments_Reply_Adapter? = null
 
+    private val activity = context as Activity
 
-    var mediaPlayer: MediaPlayer = MediaPlayer()
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private var currentPlayingPosition: Int = -1
+
+    init {
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.setOnCompletionListener { }
+    }
 
     var mediaPlayerProgress = 0
 
 
-    companion object {
-        const val TEXT_COMMENT = 0
-        const val AUDIO_COMMENT = 1
-        const val ALERT_MESSAGE = 2
-    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewtype: Int): CommentsViewHolder {
         val cBind = ItemCommentLayoutBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         return CommentsViewHolder(cBind)
-
-        //val view: View = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_comment_layout, viewGroup, false)
-
-        /*
-        val view: View
-        return when (viewtype) {
-            TEXT_COMMENT -> {
-                Log.d(Constants.TAG_, "onCreateViewHolder: $TEXT_COMMENT$viewtype")
-                view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_comment_layout, viewGroup, false)
-                TextCommentViewHolder(view)
-            }
-
-            AUDIO_COMMENT -> {
-                Log.d(Constants.TAG_, "onCreateViewHolder: $AUDIO_COMMENT$viewtype")
-                view = LayoutInflater.from(viewGroup.context).inflate(R.layout.audio_comment_item, viewGroup, false)
-                CommentAudioViewHolder(view)
-            }
-
-            else -> {
-                Log.d(Constants.TAG_, "ELSE HAPPENED: $TEXT_COMMENT$viewtype")
-                view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_comment_layout, viewGroup, false)
-                TextCommentViewHolder(view)
-            }
-        }
-        */
     }
-
-    override fun getItemCount(): Int = dataList.size
 
     override fun onBindViewHolder(holder: CommentsViewHolder, pox: Int) {
         val position = holder.bindingAdapterPosition
         val cbind = holder.cBinder
         val item = dataList[position]
-        Log.d(Constants.TAG_, "onBindViewHolder: " + item.type)
 
 
         cbind.apply {
@@ -111,16 +82,16 @@ class CommentsAdapter(
 
 
             } else if (item.type == "audio") { // Voice Comment
-                if (mediaPlayer.isPlaying) {
-                    btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_pause_icon))
-                    seekBar.progress = mediaPlayerProgress
+//                if (mediaPlayer.isPlaying) {
+//                    btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_pause_icon))
+//                    seekBar.progress = mediaPlayerProgress
+//
+//                } else {
+//                    btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play_icon))
+//                    seekBar.progress = 0
+//                }
 
-                } else {
-                    btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play_icon))
-                    seekBar.progress = 0
-                }
-
-                voiceTime.text = getFileDuration(Uri.parse(item.commentText))
+                voiceTime.text = item.duration
 
                 message.visibility = View.GONE
                 voiceCommentPanel.visibility = View.VISIBLE
@@ -197,12 +168,12 @@ class CommentsAdapter(
 
 
             // ============================= Click Listeners =============================
-            voiceCommentPanel.setOnClickListener {
+            btnPlay.setOnClickListener {
                 if (mediaPlayer.isPlaying) {
-                    holder.stopPlaying(position)
+                    holder.stopPlaying()
 
                 } else {
-                    holder.playAudio(position, item.commentText)
+                    holder.playAudio(item.commentText, position)
                 }
             }
 
@@ -216,74 +187,92 @@ class CommentsAdapter(
 
     inner class CommentsViewHolder(val cBinder: ItemCommentLayoutBinding) : RecyclerView.ViewHolder(cBinder.root) {
         // ============================= Voice Comment Functions =============================
-        fun playAudio(position: Int, vID: String) {
-            mediaPlayer = MediaPlayer.create(context, Uri.parse(vID))
-
-            if (!mediaPlayer.isPlaying) {
-                mediaPlayer.start()
-
-                countdownTimer(position, true)
-
-                cBinder.btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_pause_icon))
-                cBinder.seekBar.progress = mediaPlayerProgress
-
-                mediaPlayer.setOnCompletionListener { stopPlaying(position) }
-                //notifyItemChanged(position)
-            }
+        private var cTimer: CountDownTimer = object : CountDownTimer(0, 0) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {}
         }
 
-        fun stopPlaying(position: Int) {
-            if (mediaPlayer.isPlaying) {
-                countdownTimer(position, false)
-
-                mediaPlayer.reset()
-                mediaPlayer.release()
-
-                cBinder.btnPlay.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_play_icon))
-                cBinder.seekBar.progress = 0
-                //notifyItemChanged(position)
+        fun playAudio(vID: String, position: Int) {
+            //mediaPlayer = MediaPlayer.create(context, Uri.parse(vID))
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(vID)
+                prepare()
+                start()
             }
-        }
 
-        fun countdownTimer(position: Int, startTimer: Boolean) {
-            if (startTimer && mediaPlayer.isPlaying) {
-                val countDownTimer: CountDownTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 300) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        mediaPlayerProgress = mediaPlayer.currentPosition * 100 / mediaPlayer.duration
+            cBinder.apply {
+                seekBar.max = getRecordDuration(dataList[position].duration)
 
-                        if (mediaPlayerProgress > 98) {
-                            countdownTimer(position, false)
-                            mediaPlayerProgress = 0
+                if (!mediaPlayer.isPlaying) {
+                    mediaPlayer.start()
+                    btnPlay.setImageResource(R.drawable.ic_pause_icon)
+
+                    cTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 300) {
+                        override fun onTick(millisUntilFinished: Long) {
+                            if (mediaPlayer.isPlaying) {
+                                seekBar.progress = mediaPlayer.currentPosition
+                            }
                         }
 
-                        //notifyItemChanged(position)
+                        override fun onFinish() {
+                            btnPlay.setImageResource(R.drawable.ic_play_icon)
+                            seekBar.progress = 0
+                        }
                     }
+                    cTimer.start()
 
-                    override fun onFinish() {
-                        mediaPlayerProgress = 0
-                        countdownTimer(position, false)
-                        //notifyItemChanged(position)
-                    }
+                    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer.seekTo(progress)
+                            }
+                        }
+
+                        override fun onStartTrackingTouch(seekBar: SeekBar) {
+                            btnPlay.setImageResource(R.drawable.ic_play_icon)
+                            mediaPlayer.pause()
+                            cTimer.cancel()
+                        }
+
+                        override fun onStopTrackingTouch(seekBar: SeekBar) {
+                            btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                            mediaPlayer.seekTo(seekBar.progress)
+                            mediaPlayer.start()
+                            cTimer.start()
+                        }
+                    })
+
+                    mediaPlayer.setOnCompletionListener { stopPlaying() }
                 }
+            }
+        }
 
-                countDownTimer.start()
+        fun stopPlaying() {
+            if (mediaPlayer.isPlaying) {
+                cBinder.btnPlay.setImageResource(R.drawable.ic_play_icon)
+                mediaPlayer.pause()
+                cTimer.cancel()
             }
         }
 
         fun downloadAudio(vUrl: String, vID: String) {
-            Log.d(Constants.TAG_, "downloadAudio: " + Functions.getAppFolder(context))
+            PRDownloader.download(vUrl, Functions.getAppFolder(context), "$vID.mp3").build().start(object : OnDownloadListener {
+                override fun onDownloadComplete() {
+                    Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
+                }
 
-            PRDownloader.download(vUrl, Functions.getAppFolder(context), "$vID.mp3")
-                .build().start(object : OnDownloadListener {
-                    override fun onDownloadComplete() {
-                        Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
-                    }
+                override fun onError(error: Error) {
+                    Toast.makeText(context, "Download Failed", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
 
-                    override fun onError(error: Error) {
-                        Log.d(Constants.TAG_, "onError: " + error.serverErrorMessage)
-                        Toast.makeText(context, "Download Failed", Toast.LENGTH_SHORT).show()
-                    }
-                })
+        fun getRecordDuration(durationString: String): Int {
+            val parts = durationString.split(":")
+            val minutes = parts[0].toIntOrNull() ?: 0
+            val seconds = parts[1].toIntOrNull() ?: 0
+
+            return minutes * 60 + seconds
         }
 
 
@@ -310,28 +299,12 @@ class CommentsAdapter(
         }
     }
 
+    override fun getItemCount(): Int = dataList.size
+
 
     interface OnItemClickListener {
         fun onItemClick(positon: Int, item: CommentModel, view: View)
         fun onItemLongPress(positon: Int, item: CommentModel, view: View)
-    }
-
-    private fun getFileDuration(uri: Uri): String {
-        try {
-            val mmr = MediaMetadataRetriever()
-            mmr.setDataSource(context, uri)
-            val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            val file_duration = Functions.parseInterger(durationStr)
-            val second = (file_duration / 1000 % 60).toLong()
-            val minute = (file_duration / (1000 * 60) % 60).toLong()
-            return String.format("%02d:%02d", minute, second)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d(TAG_, "getFileDurationERROR: " + e.message)
-        }
-
-        return "00:00"
     }
 
     private fun openUserProfile(friendsTag: String) {

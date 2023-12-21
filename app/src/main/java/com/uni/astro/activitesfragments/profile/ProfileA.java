@@ -1,20 +1,5 @@
 package com.uni.astro.activitesfragments.profile;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.uni.astro.activitesfragments.profile.usersstory.ViewStoryA;
-import com.uni.astro.adapters.ViewPagerAdapter;
-import com.uni.astro.models.StoryModel;
-import com.uni.astro.models.StoryVideoModel;
-import com.uni.astro.simpleclasses.AppCompatLocaleActivity;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
@@ -33,40 +18,54 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.uni.astro.Constants;
+import com.uni.astro.R;
+import com.uni.astro.activitesfragments.WebviewA;
 import com.uni.astro.activitesfragments.accounts.LoginA;
 import com.uni.astro.activitesfragments.accounts.ManageAccountsF;
 import com.uni.astro.activitesfragments.chat.ChatA;
-
-
 import com.uni.astro.activitesfragments.profile.followtabs.NotificationPriorityF;
 import com.uni.astro.activitesfragments.profile.likedvideos.LikedVideoF;
+import com.uni.astro.activitesfragments.profile.usersstory.ViewStoryA;
 import com.uni.astro.activitesfragments.profile.uservideos.UserVideoF;
-import com.uni.astro.activitesfragments.WebviewA;
 import com.uni.astro.adapters.SuggestionAdapter;
+import com.uni.astro.adapters.ViewPagerAdapter;
 import com.uni.astro.apiclasses.ApiLinks;
-import com.uni.astro.Constants;
-import com.uni.astro.simpleclasses.CircleDivisionView;
-import com.uni.astro.simpleclasses.DebounceClickHandler;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
 import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.models.FollowingModel;
 import com.uni.astro.models.PrivacyPolicySettingModel;
 import com.uni.astro.models.PushNotificationSettingModel;
+import com.uni.astro.models.StoryModel;
+import com.uni.astro.models.StoryVideoModel;
 import com.uni.astro.models.UserModel;
-import com.uni.astro.R;
+import com.uni.astro.simpleclasses.AppCompatLocaleActivity;
+import com.uni.astro.simpleclasses.CircleDivisionView;
 import com.uni.astro.simpleclasses.DataParsing;
+import com.uni.astro.simpleclasses.DebounceClickHandler;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
+import com.volley.plus.VPackages.VolleyRequest;
+import com.volley.plus.interfaces.APICallBack;
+import com.volley.plus.interfaces.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -75,62 +74,80 @@ import java.util.ArrayList;
 
 public class ProfileA extends AppCompatLocaleActivity {
 
+    public TextView username, username2Txt, tvFollowBtn, messageBtn, tvBio, tvLink, tvEditProfile;
+    public SimpleDraweeView imageView, suggestionBtn;
+    public TextView followCountTxt, fansCountTxt, heartCountTxt;
+    public boolean isdataload = false, isDirectMessage = false, isLikeVideoShow = false;
+    public String picUrl, profileGif, followerCount, followingCount;
+    protected TabLayout tabLayout;
+    protected ViewPager2 pager;
     Context context;
     LinearLayout tabPrivacyLikes;
     RelativeLayout viewTabLikes;
-    public TextView username, username2Txt,tvFollowBtn,messageBtn,tvBio,tvLink,tvEditProfile;
-    public SimpleDraweeView imageView,suggestionBtn;
-    public TextView followCountTxt, fansCountTxt, heartCountTxt;
-    ImageView backBtn, menu_btn,unFriendBtn,notificationBtn,favBtn;
-    String userId, userName,fullName,buttonStatus, userPic,totalLikes="";
+    ImageView backBtn, menu_btn, unFriendBtn, notificationBtn, favBtn;
+    String userId, userName, fullName, buttonStatus, userPic, totalLikes = "";
     RecyclerView rvSugesstion;
     SuggestionAdapter adapterSuggestion;
-    protected TabLayout tabLayout;
-    protected ViewPager2 pager;
-    private ViewPagerAdapter adapter;
-    public boolean isdataload = false ,isDirectMessage=false,isLikeVideoShow=false;
-    public String picUrl,profileGif,followerCount,followingCount;
-    LinearLayout tabSuggestion,tabAllSuggestion,tabLink;
-    LinearLayout tabFollowOtherUser,tabFollowSelfUser;
-
-    String notificationType="1";
+    LinearLayout tabSuggestion, tabAllSuggestion, tabLink;
+    LinearLayout tabFollowOtherUser, tabFollowSelfUser;
+    String notificationType = "1";
     String isUserAlreadyBlock = "0";
     String blockByUserId = "0";
     DatabaseReference rootref;
     UserVideoF fragmentUserVides;
     LikedVideoF fragmentLikesVides;
-
-
-    ArrayList<StoryModel> storyDataList=new ArrayList<>();
+    ArrayList<StoryModel> storyDataList = new ArrayList<>();
     CircleDivisionView circleDivisionView;
+    boolean isSuggestion = true;
+    TextView tvBlockUser;
+    ActivityResultLauncher<Intent> resultCallback = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data.getBooleanExtra("isShow", false)) {
+                        updateProfile();
+                    }
+
+                }
+            });
+
+    ArrayList<FollowingModel> suggestionList = new ArrayList<>();
+    // get the profile details of user
+    boolean isRunFirstTime = false;
+    ActivityResultLauncher<Intent> resultFollowCallback = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data.getBooleanExtra("isShow", false)) {
+                        callApiForGetAllvideos();
+                    }
+
+                }
+            });
+
+    private ViewPagerAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Functions.setLocale(Functions.getSharedPreference(ProfileA.this).getString(Variables.APP_LANGUAGE_CODE,Variables.DEFAULT_LANGUAGE_CODE)
-                , this, getClass(),false);
+        Functions.setLocale(Functions.getSharedPreference(ProfileA.this).getString(Variables.APP_LANGUAGE_CODE, Variables.DEFAULT_LANGUAGE_CODE)
+                , this, getClass(), false);
         setContentView(R.layout.activity_profile_);
         context = ProfileA.this;
 
-        if (getIntent().hasExtra("user_id") && getIntent().hasExtra("user_name") && getIntent().hasExtra("user_pic"))
-        {
+        if (getIntent().hasExtra("user_id") && getIntent().hasExtra("user_name") && getIntent().hasExtra("user_pic")) {
             userId = getIntent().getStringExtra("user_id");
             userName = getIntent().getStringExtra("user_name");
             userPic = getIntent().getStringExtra("user_pic");
-        }
-        else
-        {
+
+        } else {
             userName = getIntent().getStringExtra("user_name");
         }
 
         init();
     }
 
-    boolean isSuggestion=true;
-
-
-    TextView tvBlockUser;
     private void showVideoOption() {
         final Dialog alertDialog = new Dialog(context);
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -138,24 +155,18 @@ public class ProfileA extends AppCompatLocaleActivity {
 
         RelativeLayout tabReportUser = alertDialog.findViewById(R.id.tabReportUser);
         RelativeLayout tabBlockUser = alertDialog.findViewById(R.id.tabBlockUser);
-        RelativeLayout tabShareProfile=alertDialog.findViewById(R.id.tabShareProfile);
+        RelativeLayout tabShareProfile = alertDialog.findViewById(R.id.tabShareProfile);
         tvBlockUser = alertDialog.findViewById(R.id.tvBlockUser);
 
-        Log.d(Constants.TAG_,"blockObj: "+blockByUserId);
-        Log.d(Constants.TAG_,"isUserAlreadyBlock: "+isUserAlreadyBlock);
+        Log.d(Constants.TAG_, "blockObj: " + blockByUserId);
+        Log.d(Constants.TAG_, "isUserAlreadyBlock: " + isUserAlreadyBlock);
 
-        if (blockByUserId.equals(Functions.getSharedPreference(context).getString(Variables.U_ID,"")))
-        {
+        if (blockByUserId.equals(Functions.getSharedPreference(context).getString(Variables.U_ID, ""))) {
             tabBlockUser.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            if (isUserAlreadyBlock.equals("1"))
-            {
+        } else {
+            if (isUserAlreadyBlock.equals("1")) {
                 tabBlockUser.setVisibility(View.GONE);
-            }
-            else
-            {
+            } else {
                 tabBlockUser.setVisibility(View.VISIBLE);
             }
 
@@ -199,7 +210,6 @@ public class ProfileA extends AppCompatLocaleActivity {
         overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
     }
 
-
     private void showLoadingProgressSuggestionButton() {
         ImageRequest request = ImageRequestBuilder.newBuilderWithResourceId(R.raw.ic_progress_animation)
                 .build();
@@ -213,7 +223,7 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void openChatF() {
-        Intent intent=new Intent(ProfileA.this,ChatA.class);
+        Intent intent = new Intent(ProfileA.this, ChatA.class);
         intent.putExtra("user_id", userId);
         intent.putExtra("user_name", userName);
         intent.putExtra("user_pic", userPic);
@@ -222,22 +232,20 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void openProfileShareTab() {
-        boolean isGif=false;
+        boolean isGif = false;
         String mediaURL;
-        if (profileGif!=null && !(profileGif.equals(Constants.BASE_URL))) {
-            isGif=true;
-            mediaURL=profileGif;
+        if (profileGif != null && !(profileGif.equals(Constants.BASE_URL))) {
+            isGif = true;
+            mediaURL = profileGif;
+        } else {
+            isGif = false;
+            mediaURL = picUrl;
         }
-        else {
-            isGif=false;
-            mediaURL=picUrl;
-        }
-        final ShareAndViewProfileF fragment = new ShareAndViewProfileF(isGif,mediaURL,userId, new FragmentCallBack() {
+        final ShareAndViewProfileF fragment = new ShareAndViewProfileF(isGif, mediaURL, userId, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
                 if (bundle.getString("action").equals("profileShareMessage")) {
-                    if (Functions.checkLoginUser(ProfileA.this))
-                    {
+                    if (Functions.checkLoginUser(ProfileA.this)) {
                         // firebase sharing
                     }
                 }
@@ -249,30 +257,13 @@ public class ProfileA extends AppCompatLocaleActivity {
 
     // open the favourite videos fragment
     private void openFavouriteVideos() {
-        Intent intent=new Intent(ProfileA.this, FavouriteMainA.class);
+        Intent intent = new Intent(ProfileA.this, FavouriteMainA.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-
-    ActivityResultLauncher<Intent> resultCallback = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data.getBooleanExtra("isShow",false))
-                        {
-                            updateProfile();
-                        }
-
-                    }
-                }
-            });
-
-
     private void openEditProfile() {
-        Intent intent=new Intent(ProfileA.this,EditProfileA.class);
+        Intent intent = new Intent(ProfileA.this, EditProfileA.class);
         resultCallback.launch(intent);
         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }
@@ -287,58 +278,39 @@ public class ProfileA extends AppCompatLocaleActivity {
         } else {
             username.setText(firstName + " " + lastName);
         }
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_BIO, "")))
-        {
+        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_BIO, ""))) {
             tvBio.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             tvBio.setVisibility(View.VISIBLE);
             tvBio.setText(Functions.getSharedPreference(context).getString(Variables.U_BIO, ""));
         }
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_LINK, "")))
-        {
+        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_LINK, ""))) {
             tabLink.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             tabLink.setVisibility(View.VISIBLE);
             tvLink.setText(Functions.getSharedPreference(context).getString(Variables.U_LINK, ""));
         }
         picUrl = Functions.getSharedPreference(context).getString(Variables.U_PIC, "");
-        profileGif=Functions.getSharedPreference(context).getString(Variables.U_GIF, "");
-        if (profileGif.equals(Constants.BASE_URL))
-        {
-            imageView.setController(Functions.frescoImageLoad(picUrl,imageView,false));
-        }
-        else
-        {
-            imageView.setController(Functions.frescoImageLoad(profileGif,R.drawable.ic_user_icon,imageView,true));
+        profileGif = Functions.getSharedPreference(context).getString(Variables.U_GIF, "");
+        if (profileGif.equals(Constants.BASE_URL)) {
+            imageView.setController(Functions.frescoImageLoad(picUrl, imageView, false));
+        } else {
+            imageView.setController(Functions.frescoImageLoad(profileGif, R.drawable.ic_user_icon, imageView, true));
         }
 
     }
 
     private void selectNotificationPriority() {
-        boolean isFriend=false;
-        if (tvFollowBtn.getVisibility()==View.GONE)
-        {
-            isFriend=true;
-        }
-        else
-        {
-          isFriend=false;
-        }
+        boolean isFriend = false;
+        isFriend = tvFollowBtn.getVisibility() == View.GONE;
 
-        NotificationPriorityF f = new NotificationPriorityF(notificationType,isFriend,userName,userId,new FragmentCallBack() {
+        NotificationPriorityF f = new NotificationPriorityF(notificationType, isFriend, userName, userId, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
-                    notificationType=bundle.getString("type");
+                if (bundle.getBoolean("isShow", false)) {
+                    notificationType = bundle.getString("type");
                     setUpNotificationIcon(notificationType);
-                }
-                else
-                {
+                } else {
                     callApiForGetAllvideos();
                 }
             }
@@ -348,14 +320,10 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void setUpNotificationIcon(String type) {
-        if (type.equalsIgnoreCase("1"))
-        {
-            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_live_notification));
-        }
-        else
-        if (type.equalsIgnoreCase("0"))
-        {
-            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_mute_notification));
+        if (type.equalsIgnoreCase("1")) {
+            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_live_notification));
+        } else if (type.equalsIgnoreCase("0")) {
+            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_mute_notification));
         }
     }
 
@@ -365,11 +333,11 @@ public class ProfileA extends AppCompatLocaleActivity {
         dialog.setContentView(R.layout.show_likes_alert_popup_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        final TextView tvMessage,tvDone;
-        tvDone=dialog.findViewById(R.id.tvDone);
-        tvMessage=dialog.findViewById(R.id.tvMessage);
+        final TextView tvMessage, tvDone;
+        tvDone = dialog.findViewById(R.id.tvDone);
+        tvMessage = dialog.findViewById(R.id.tvMessage);
 
-        tvMessage.setText(username.getText()+" "+getString(R.string.received_a_total_of)+" "+totalLikes+" "+getString(R.string.likes_across_all_video));
+        tvMessage.setText(username.getText() + " " + getString(R.string.received_a_total_of) + " " + totalLikes + " " + getString(R.string.likes_across_all_video));
         tvDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -380,30 +348,15 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void OpenSuggestionScreen() {
-        Intent intent=new Intent(ProfileA.this, FollowsMainTabA.class);
+        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
         intent.putExtra("id", userId);
         intent.putExtra("from_where", "suggestion");
         intent.putExtra("userName", userName);
-        intent.putExtra("followingCount",""+followingCount);
-        intent.putExtra("followerCount",""+followerCount);
+        intent.putExtra("followingCount", followingCount);
+        intent.putExtra("followerCount", followerCount);
         resultFollowCallback.launch(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
-
-    ActivityResultLauncher<Intent> resultFollowCallback = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data.getBooleanExtra("isShow",false))
-                        {
-                            callApiForGetAllvideos();
-                        }
-
-                    }
-                }
-            });
 
     private void getSuggestionUserList() {
         JSONObject parameters = new JSONObject();
@@ -414,12 +367,12 @@ public class ProfileA extends AppCompatLocaleActivity {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showSuggestedUsers, parameters,Functions.getHeaders(this), new Callback() {
+        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showSuggestedUsers, parameters, Functions.getHeaders(this), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this,resp);
+                Functions.checkStatus(ProfileA.this, resp);
 
-               hideSugestionButtonProgress();
+                hideSugestionButtonProgress();
 
                 suggestionList.clear();
 
@@ -431,12 +384,12 @@ public class ProfileA extends AppCompatLocaleActivity {
                         for (int i = 0; i < msgArray.length(); i++) {
 
                             JSONObject object = msgArray.optJSONObject(i);
-                            UserModel userDetailModel=DataParsing.getUserDataModel(object.optJSONObject("User"));
+                            UserModel userDetailModel = DataParsing.getUserDataModel(object.optJSONObject("User"));
 
                             FollowingModel item = new FollowingModel();
                             item.fb_id = userDetailModel.getId();
                             item.first_name = userDetailModel.getFirstName();
-                            item.last_name =userDetailModel.getLastName();
+                            item.last_name = userDetailModel.getLastName();
                             item.bio = userDetailModel.getBio();
                             item.username = userDetailModel.getUsername();
 
@@ -448,20 +401,15 @@ public class ProfileA extends AppCompatLocaleActivity {
                             adapterSuggestion.notifyDataSetChanged();
                         }
 
-                        if (suggestionList.isEmpty())
-                        {
+                        if (suggestionList.isEmpty()) {
                             findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
+                        } else {
                             findViewById(R.id.tvNoSuggestionFound).setVisibility(View.GONE);
                         }
 
                     } else {
                         findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
                     }
-
-
 
 
                 } catch (Exception e) {
@@ -483,7 +431,6 @@ public class ProfileA extends AppCompatLocaleActivity {
         suggestionBtn.setController(controller);
     }
 
-
     public void init() {
         rootref = FirebaseDatabase.getInstance().getReference();
         username = findViewById(R.id.username);
@@ -492,31 +439,28 @@ public class ProfileA extends AppCompatLocaleActivity {
         imageView.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (circleDivisionView.getVisibility()==View.VISIBLE)
-                {
+                if (circleDivisionView.getVisibility() == View.VISIBLE) {
                     openStoryView();
-                }
-                else
-                {
+                } else {
                     openProfileShareTab();
                 }
             }
         }));
-        tabSuggestion=findViewById(R.id.tabSuggestion);
+        tabSuggestion = findViewById(R.id.tabSuggestion);
         followCountTxt = findViewById(R.id.follow_count_txt);
         fansCountTxt = findViewById(R.id.fan_count_txt);
         heartCountTxt = findViewById(R.id.heart_count_txt);
-        viewTabLikes=findViewById(R.id.viewTabLikes);
-        tabPrivacyLikes=findViewById(R.id.tabPrivacyLikes);
+        viewTabLikes = findViewById(R.id.viewTabLikes);
+        tabPrivacyLikes = findViewById(R.id.tabPrivacyLikes);
         tabPrivacyLikes.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showMyLikesCounts();
             }
         }));
-        circleDivisionView=findViewById(R.id.circleStatusBar);
+        circleDivisionView = findViewById(R.id.circleStatusBar);
         circleDivisionView.setStrokeLineColor(ProfileA.this.getColor(R.color.colorAccent));
-        tabAllSuggestion=findViewById(R.id.tabAllSuggestion);
+        tabAllSuggestion = findViewById(R.id.tabAllSuggestion);
         tabAllSuggestion.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -524,16 +468,16 @@ public class ProfileA extends AppCompatLocaleActivity {
             }
         }));
 
-        tvBio=findViewById(R.id.tvBio);
-        tvLink=findViewById(R.id.tvLink);
-        tabLink=findViewById(R.id.tabLink);
+        tvBio = findViewById(R.id.tvBio);
+        tvLink = findViewById(R.id.tvLink);
+        tabLink = findViewById(R.id.tabLink);
         tabLink.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openWebUrl(getString(R.string.web_browser),""+tvLink.getText().toString());
+                openWebUrl(getString(R.string.web_browser), tvLink.getText().toString());
             }
         }));
-        favBtn=findViewById(R.id.favBtn);
+        favBtn = findViewById(R.id.favBtn);
         favBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -541,35 +485,31 @@ public class ProfileA extends AppCompatLocaleActivity {
             }
         }));
 
-        tvEditProfile=findViewById(R.id.edit_profile_btn);
+        tvEditProfile = findViewById(R.id.edit_profile_btn);
         tvEditProfile.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openEditProfile();
             }
         }));
-        suggestionBtn=findViewById(R.id.suggestionBtn);
+        suggestionBtn = findViewById(R.id.suggestionBtn);
         suggestionBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isSuggestion)
-                {
+                if (isSuggestion) {
                     suggestionBtn.animate().rotation(180).setDuration(300).setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
                             tabSuggestion.setVisibility(View.VISIBLE);
-                            if (suggestionList.isEmpty())
-                            {
+                            if (suggestionList.isEmpty()) {
                                 showLoadingProgressSuggestionButton();
                                 getSuggestionUserList();
                             }
                         }
                     }).start();
-                    isSuggestion=false;
-                }
-                else
-                {
+                    isSuggestion = false;
+                } else {
                     suggestionBtn.animate().rotation(0).setDuration(300).setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -577,13 +517,13 @@ public class ProfileA extends AppCompatLocaleActivity {
                             tabSuggestion.setVisibility(View.GONE);
                         }
                     }).start();
-                    isSuggestion=true;
+                    isSuggestion = true;
                 }
             }
         }));
 
 
-        messageBtn=findViewById(R.id.messageBtn);
+        messageBtn = findViewById(R.id.messageBtn);
         messageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -602,7 +542,7 @@ public class ProfileA extends AppCompatLocaleActivity {
         }));
         tabFollowOtherUser = findViewById(R.id.tabFollowOtherUser);
         tabFollowSelfUser = findViewById(R.id.tabFollowSelfUser);
-        notificationBtn=findViewById(R.id.notification_btn);
+        notificationBtn = findViewById(R.id.notification_btn);
         notificationBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -624,7 +564,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                     followUnFollowUser();
             }
         }));
-        tvFollowBtn=findViewById(R.id.tvFollowBtn);
+        tvFollowBtn = findViewById(R.id.tvFollowBtn);
         tvFollowBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -676,16 +616,12 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void addTabs() {
-        TabLayoutMediator tabLayoutMediator=new TabLayoutMediator(tabLayout, pager, new TabLayoutMediator.TabConfigurationStrategy() {
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, pager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                if (position==0)
-                {
+                if (position == 0) {
                     tab.setText(context.getString(R.string.my_videos));
-                }
-                else
-                if (position==1)
-                {
+                } else if (position == 1) {
                     tab.setText(context.getString(R.string.liked_videos));
                 }
             }
@@ -694,34 +630,27 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
     private void registerFragmentWithPager() {
-        fragmentUserVides=UserVideoF.newInstance(false, userId,userName,isUserAlreadyBlock);
+        fragmentUserVides = UserVideoF.newInstance(false, userId, userName, isUserAlreadyBlock);
         adapter.addFrag(fragmentUserVides);
-        fragmentLikesVides=LikedVideoF.newInstance(false, userId,userName,isLikeVideoShow,isUserAlreadyBlock);
+        fragmentLikesVides = LikedVideoF.newInstance(false, userId, userName, isLikeVideoShow, isUserAlreadyBlock);
         adapter.addFrag(fragmentLikesVides);
     }
 
-
-
-    ArrayList<FollowingModel> suggestionList=new ArrayList<>();
     private void setUpSuggestionRecyclerview() {
-        rvSugesstion=findViewById(R.id.rvSugesstion);
-        LinearLayoutManager layoutManager=new LinearLayoutManager(ProfileA.this);
+        rvSugesstion = findViewById(R.id.rvSugesstion);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(ProfileA.this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         rvSugesstion.setLayoutManager(layoutManager);
-        adapterSuggestion=new SuggestionAdapter(suggestionList, new SuggestionAdapter.OnItemClickListener() {
+        adapterSuggestion = new SuggestionAdapter(suggestionList, new SuggestionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int postion, FollowingModel item) {
 
 
-                if (view.getId()==R.id.tvFollowBtn)
-                {
+                if (view.getId() == R.id.tvFollowBtn) {
                     if (Functions.checkLoginUser(ProfileA.this))
-                        followSuggestedUser(item.fb_id,postion);
-                }
-                else
-                if (view.getId()==R.id.user_image)
-                {
-                    if(Functions.checkProfileOpenValidation(item.fb_id)) {
+                        followSuggestedUser(item.fb_id, postion);
+                } else if (view.getId() == R.id.user_image) {
+                    if (Functions.checkProfileOpenValidation(item.fb_id)) {
                         Intent intent = new Intent(view.getContext(), ProfileA.class);
                         intent.putExtra("user_id", item.fb_id);
                         intent.putExtra("user_name", item.username);
@@ -729,10 +658,7 @@ public class ProfileA extends AppCompatLocaleActivity {
                         startActivity(intent);
                         overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                     }
-                }
-                else
-                if (view.getId()==R.id.ivCross)
-                {
+                } else if (view.getId() == R.id.ivCross) {
                     suggestionList.remove(postion);
                     adapterSuggestion.notifyDataSetChanged();
                 }
@@ -740,7 +666,6 @@ public class ProfileA extends AppCompatLocaleActivity {
         });
         rvSugesstion.setAdapter(adapterSuggestion);
     }
-
 
     @Override
     public void onResume() {
@@ -754,33 +679,32 @@ public class ProfileA extends AppCompatLocaleActivity {
 
     }
 
-
     private void setupTabIcons() {
         View view1 = LayoutInflater.from(context).inflate(R.layout.item_tabs_profile_menu, null);
         ImageView imageView1 = view1.findViewById(R.id.image);
-        imageView1.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_my_video_select));
+        imageView1.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_select));
         tabLayout.getTabAt(0).setCustomView(view1);
 
         View view2 = LayoutInflater.from(context).inflate(R.layout.item_tabs_profile_menu, null);
         ImageView imageView2 = view2.findViewById(R.id.image);
-        imageView2.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_liked_video_gray));
+        imageView2.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_gray));
         tabLayout.getTabAt(1).setCustomView(view2);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                pager.setCurrentItem(tab.getPosition(),true);
+                pager.setCurrentItem(tab.getPosition(), true);
                 View v = tab.getCustomView();
                 ImageView image = v.findViewById(R.id.image);
 
                 switch (tab.getPosition()) {
                     case 0:
 
-                        image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_my_video_select));
+                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_select));
                         break;
 
                     case 1:
-                        image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_liked_video_color));
+                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_color));
                         break;
                 }
                 tab.setCustomView(v);
@@ -793,10 +717,10 @@ public class ProfileA extends AppCompatLocaleActivity {
 
                 switch (tab.getPosition()) {
                     case 0:
-                        image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_my_video_gray));
+                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_gray));
                         break;
                     case 1:
-                        image.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_liked_video_gray));
+                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_gray));
                         break;
                 }
 
@@ -813,12 +737,6 @@ public class ProfileA extends AppCompatLocaleActivity {
 
     }
 
-
-
-
-    // get the profile details of user
-    boolean isRunFirstTime = false;
-
     private void callApiForGetAllvideos() {
 
         if (getIntent() == null) {
@@ -834,9 +752,8 @@ public class ProfileA extends AppCompatLocaleActivity {
             } else if (userId != null) {
                 parameters.put("user_id", userId);
             } else {
-                if (Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false))
-                {
-                    parameters.put("user_id",  Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
+                if (Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false)) {
+                    parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
                 }
                 parameters.put("username", userName);
             }
@@ -846,10 +763,10 @@ public class ProfileA extends AppCompatLocaleActivity {
         }
 
 
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showUserDetail, parameters,Functions.getHeaders(this), new Callback() {
+        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showUserDetail, parameters, Functions.getHeaders(this), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this,resp);
+                Functions.checkStatus(ProfileA.this, resp);
                 isRunFirstTime = true;
                 parseData(resp);
             }
@@ -865,38 +782,32 @@ public class ProfileA extends AppCompatLocaleActivity {
             String code = jsonObject.optString("code");
             if (code.equals("200")) {
                 JSONObject msg = jsonObject.optJSONObject("msg");
-                JSONObject userObj=msg.optJSONObject("User");
+                JSONObject userObj = msg.optJSONObject("User");
                 UserModel userDetailModel = DataParsing.getUserDataModel(userObj);
 
 
                 try {
-                    JSONArray storyArray=userObj.getJSONArray("story");
+                    JSONArray storyArray = userObj.getJSONArray("story");
                     storyDataList.clear();
-                    StoryModel storyItem=new StoryModel();
+                    StoryModel storyItem = new StoryModel();
                     storyItem.setUserModel(userDetailModel);
-                    ArrayList<StoryVideoModel> storyVideoList=new ArrayList<>();
-                    for (int i=0; i<storyArray.length();i++)
-                    {
-                        JSONObject itemObj=storyArray.getJSONObject(i);
-                        StoryVideoModel storyVideoItem=DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"));
+                    ArrayList<StoryVideoModel> storyVideoList = new ArrayList<>();
+                    for (int i = 0; i < storyArray.length(); i++) {
+                        JSONObject itemObj = storyArray.getJSONObject(i);
+                        StoryVideoModel storyVideoItem = DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"));
                         storyVideoList.add(storyVideoItem);
                     }
                     storyItem.setVideoList(storyVideoList);
-                    if (storyVideoList.size()>0)
-                    {
+                    if (storyVideoList.size() > 0) {
                         storyDataList.add(storyItem);
 
                         circleDivisionView.setVisibility(View.VISIBLE);
                         circleDivisionView.setCounts(storyVideoList.size());
-                    }
-                    else
-                    {
+                    } else {
                         circleDivisionView.setVisibility(View.GONE);
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.d(Constants.TAG_,"Exception: "+e);
+                } catch (Exception e) {
+                    Log.d(Constants.TAG_, "Exception: " + e);
                 }
 
 
@@ -920,60 +831,48 @@ public class ProfileA extends AppCompatLocaleActivity {
                 username2Txt.setText(Functions.showUsername(userDetailModel.getUsername()));
 
                 picUrl = userDetailModel.getProfilePic();
-                profileGif=userDetailModel.getProfileGif();
-                userPic= userDetailModel.getProfilePic();
-                fullName=first_name + " " + last_name;
-                buttonStatus =userDetailModel.getButton().toLowerCase();
+                profileGif = userDetailModel.getProfileGif();
+                userPic = userDetailModel.getProfilePic();
+                fullName = first_name + " " + last_name;
+                buttonStatus = userDetailModel.getButton().toLowerCase();
 
-                if (profileGif.equals(Constants.BASE_URL))
-                {
-                    imageView.setController(Functions.frescoImageLoad(picUrl,imageView,false));
-                }
-                else
-                {
-                    imageView.setController(Functions.frescoImageLoad(profileGif,R.drawable.ic_user_icon,imageView,true));
+                if (profileGif.equals(Constants.BASE_URL)) {
+                    imageView.setController(Functions.frescoImageLoad(picUrl, imageView, false));
+                } else {
+                    imageView.setController(Functions.frescoImageLoad(profileGif, R.drawable.ic_user_icon, imageView, true));
                 }
 
-                if (TextUtils.isEmpty(userDetailModel.getBio()))
-                {
+                if (TextUtils.isEmpty(userDetailModel.getBio())) {
                     tvBio.setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     tvBio.setVisibility(View.VISIBLE);
                     tvBio.setText(userDetailModel.getBio());
                 }
 
-                if (TextUtils.isEmpty(userDetailModel.getWebsite()))
-                {
+                if (TextUtils.isEmpty(userDetailModel.getWebsite())) {
                     tabLink.setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     tabLink.setVisibility(View.VISIBLE);
                     tvLink.setText(userDetailModel.getWebsite());
                 }
 
 
-                followingCount=userDetailModel.getFollowingCount();
-                followerCount=userDetailModel.getFollowersCount();
-                totalLikes=userDetailModel.getLikesCount();
+                followingCount = userDetailModel.getFollowingCount();
+                followerCount = userDetailModel.getFollowersCount();
+                totalLikes = userDetailModel.getLikesCount();
                 isUserAlreadyBlock = userDetailModel.getBlock();
                 blockByUserId = userDetailModel.getBlockByUser();
-                notificationType=userDetailModel.getNotification();
+                notificationType = userDetailModel.getNotification();
                 setUpNotificationIcon(notificationType);
 
 
-                if (fragmentUserVides!=null)
-                {
-                    if (msg.has("Playlist"))
-                    {
+                if (fragmentUserVides != null) {
+                    if (msg.has("Playlist")) {
                         JSONArray playlistArray = msg.getJSONArray("Playlist");
                         fragmentUserVides.updateUserPlaylist(playlistArray, userDetailModel.getVerified(), new FragmentCallBack() {
                             @Override
                             public void onResponce(Bundle bundle) {
-                                if (bundle.getBoolean("isShow",false))
-                                {
+                                if (bundle.getBoolean("isShow", false)) {
                                     callApiForGetAllvideos();
                                 }
                             }
@@ -983,41 +882,34 @@ public class ProfileA extends AppCompatLocaleActivity {
 
 
                 PushNotificationSettingModel pushNotificationSetting_model = new PushNotificationSettingModel();
-                pushNotificationSetting_model.setComments("" + push_notification_setting.optString("comments"));
-                pushNotificationSetting_model.setLikes("" + push_notification_setting.optString("likes"));
-                pushNotificationSetting_model.setNewfollowers("" + push_notification_setting.optString("new_followers"));
-                pushNotificationSetting_model.setMentions("" + push_notification_setting.optString("mentions"));
-                pushNotificationSetting_model.setDirectmessage("" + push_notification_setting.optString("direct_messages"));
-                pushNotificationSetting_model.setVideoupdates("" + push_notification_setting.optString("video_updates"));
+                pushNotificationSetting_model.setComments(push_notification_setting.optString("comments"));
+                pushNotificationSetting_model.setLikes(push_notification_setting.optString("likes"));
+                pushNotificationSetting_model.setNewfollowers(push_notification_setting.optString("new_followers"));
+                pushNotificationSetting_model.setMentions(push_notification_setting.optString("mentions"));
+                pushNotificationSetting_model.setDirectmessage(push_notification_setting.optString("direct_messages"));
+                pushNotificationSetting_model.setVideoupdates(push_notification_setting.optString("video_updates"));
 
 
                 PrivacyPolicySettingModel privacyPolicySetting_model = new PrivacyPolicySettingModel();
-                privacyPolicySetting_model.setVideos_download("" + privacy_policy_setting.optString("videos_download"));
-                privacyPolicySetting_model.setDirect_message("" + privacy_policy_setting.optString("direct_message"));
-                privacyPolicySetting_model.setDuet("" + privacy_policy_setting.optString("duet"));
-                privacyPolicySetting_model.setLiked_videos("" + privacy_policy_setting.optString("liked_videos"));
-                privacyPolicySetting_model.setVideo_comment("" + privacy_policy_setting.optString("video_comment"));
+                privacyPolicySetting_model.setVideos_download(privacy_policy_setting.optString("videos_download"));
+                privacyPolicySetting_model.setDirect_message(privacy_policy_setting.optString("direct_message"));
+                privacyPolicySetting_model.setDuet(privacy_policy_setting.optString("duet"));
+                privacyPolicySetting_model.setLiked_videos(privacy_policy_setting.optString("liked_videos"));
+                privacyPolicySetting_model.setVideo_comment(privacy_policy_setting.optString("video_comment"));
 
 
-                if (privacyPolicySetting_model.getLiked_videos().toLowerCase().equalsIgnoreCase("only_me")) {
-                    isLikeVideoShow=false;
-                } else {
-                    isLikeVideoShow=true;
-                }
+                isLikeVideoShow = !privacyPolicySetting_model.getLiked_videos().equalsIgnoreCase("only_me");
 
-                Log.d(Constants.TAG_,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
+                Log.d(Constants.TAG_, "isUserAlreadyBlock:: " + isUserAlreadyBlock);
                 //perform block functionality
-                if (isUserAlreadyBlock.equals("1"))
-                {
+                if (isUserAlreadyBlock.equals("1")) {
                     notificationBtn.setVisibility(View.GONE);
                     tabFollowOtherUser.setVisibility(View.GONE);
                     followCountTxt.setText(Functions.getSuffix("0"));
                     fansCountTxt.setText(Functions.getSuffix("0"));
                     heartCountTxt.setText(Functions.getSuffix("0"));
-                    Log.d(Constants.TAG_,"isUserAlreadyBlock:: "+isUserAlreadyBlock);
-                }
-                else
-                {
+                    Log.d(Constants.TAG_, "isUserAlreadyBlock:: " + isUserAlreadyBlock);
+                } else {
                     notificationBtn.setVisibility(View.VISIBLE);
                     tabFollowOtherUser.setVisibility(View.VISIBLE);
                     followCountTxt.setText(Functions.getSuffix(followingCount));
@@ -1026,38 +918,29 @@ public class ProfileA extends AppCompatLocaleActivity {
                 }
 
 
-
                 fragmentLikesVides.updateLikeVideoState(isLikeVideoShow);
-                fragmentLikesVides.updateUserData(userId,Functions.getUserName(context),isUserAlreadyBlock);
-                fragmentUserVides.updateUserData(userId,Functions.getUserName(context),isUserAlreadyBlock);
+                fragmentLikesVides.updateUserData(userId, Functions.getUserName(context), isUserAlreadyBlock);
+                fragmentUserVides.updateUserData(userId, Functions.getUserName(context), isUserAlreadyBlock);
 
 
-
-                if (Functions.isShowContentPrivacy(context, privacyPolicySetting_model.getDirect_message(),
-                        userDetailModel.getButton().toLowerCase().equalsIgnoreCase("friends"))) {
-                    isDirectMessage=true;
-                } else {
-                    isDirectMessage=false;
-                }
+                isDirectMessage = Functions.isShowContentPrivacy(context, privacyPolicySetting_model.getDirect_message(),
+                        userDetailModel.getButton().equalsIgnoreCase("friends"));
 
                 String follow_status = userDetailModel.getButton().toLowerCase();
 
-                    if (follow_status.equalsIgnoreCase("following")) {
-                        unFriendBtn.setVisibility(View.VISIBLE);
-                        tvFollowBtn.setVisibility(View.GONE);
-                    } else if (follow_status.equalsIgnoreCase("friends")) {
-                        unFriendBtn.setVisibility(View.VISIBLE);
-                        tvFollowBtn.setVisibility(View.GONE);
-                    }
-                    else if (follow_status.equalsIgnoreCase("follow back")){
-                        unFriendBtn.setVisibility(View.GONE);
-                        tvFollowBtn.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        unFriendBtn.setVisibility(View.GONE);
-                        tvFollowBtn.setVisibility(View.VISIBLE);
-                    }
-
+                if (follow_status.equalsIgnoreCase("following")) {
+                    unFriendBtn.setVisibility(View.VISIBLE);
+                    tvFollowBtn.setVisibility(View.GONE);
+                } else if (follow_status.equalsIgnoreCase("friends")) {
+                    unFriendBtn.setVisibility(View.VISIBLE);
+                    tvFollowBtn.setVisibility(View.GONE);
+                } else if (follow_status.equalsIgnoreCase("follow back")) {
+                    unFriendBtn.setVisibility(View.GONE);
+                    tvFollowBtn.setVisibility(View.VISIBLE);
+                } else {
+                    unFriendBtn.setVisibility(View.GONE);
+                    tvFollowBtn.setVisibility(View.VISIBLE);
+                }
 
 
                 String verified = userDetailModel.getVerified();
@@ -1088,34 +971,29 @@ public class ProfileA extends AppCompatLocaleActivity {
         }
 
 
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.blockUser, params,Functions.getHeaders(this), new Callback() {
+        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.blockUser, params, Functions.getHeaders(this), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this,resp);
+                Functions.checkStatus(ProfileA.this, resp);
 
                 try {
                     JSONObject jsonObject = new JSONObject(resp);
                     String code = jsonObject.optString("code");
                     if (code.equals("200")) {
-                        JSONObject msgObj=jsonObject.getJSONObject("msg");
-                        if(msgObj.has("BlockUser"))
-                        {
+                        JSONObject msgObj = jsonObject.getJSONObject("msg");
+                        if (msgObj.has("BlockUser")) {
                             Functions.showToast(ProfileA.this, getString(R.string.user_blocked));
                             tvBlockUser.setText(R.string.unblock_user);
                             isUserAlreadyBlock = "1";
-                        }
-                        else
-                        {
+                        } else {
                             isUserAlreadyBlock = "0";
                         }
-                    }
-                    else
-                    {
+                    } else {
                         isUserAlreadyBlock = "0";
                     }
                     callApiForGetAllvideos();
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception: "+e);
+                    Log.d(Constants.TAG_, "Exception: " + e);
                 }
             }
         });
@@ -1124,21 +1002,13 @@ public class ProfileA extends AppCompatLocaleActivity {
 
 
     private void shareProfile() {
-        boolean fromSetting=false;
-        if (userId.equalsIgnoreCase(Functions.getSharedPreference(ProfileA.this).getString(Variables.U_ID,"")))
-        {
-            fromSetting=true;
-        }
-        else
-        {
-            fromSetting=false;
-        }
+        boolean fromSetting = false;
+        fromSetting = userId.equalsIgnoreCase(Functions.getSharedPreference(ProfileA.this).getString(Variables.U_ID, ""));
 
-        final ShareUserProfileF fragment = new ShareUserProfileF(userId,userName,fullName,userPic,buttonStatus,isDirectMessage,fromSetting, new FragmentCallBack() {
+        final ShareUserProfileF fragment = new ShareUserProfileF(userId, userName, fullName, userPic, buttonStatus, isDirectMessage, fromSetting, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
+                if (bundle.getBoolean("isShow", false)) {
                     callApiForGetAllvideos();
                 }
             }
@@ -1148,11 +1018,7 @@ public class ProfileA extends AppCompatLocaleActivity {
     }
 
 
-
-
-
-
-    private void followSuggestedUser(String userId,int position) {
+    private void followSuggestedUser(String userId, int position) {
         Functions.callApiForFollowUnFollow(ProfileA.this,
                 Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
                 userId,
@@ -1205,7 +1071,7 @@ public class ProfileA extends AppCompatLocaleActivity {
 
 
     public void openWebUrl(String title, String url) {
-        Intent intent=new Intent(ProfileA.this, WebviewA.class);
+        Intent intent = new Intent(ProfileA.this, WebviewA.class);
         intent.putExtra("url", url);
         intent.putExtra("title", title);
         startActivity(intent);
@@ -1216,8 +1082,7 @@ public class ProfileA extends AppCompatLocaleActivity {
         ManageAccountsF f = new ManageAccountsF(new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
+                if (bundle.getBoolean("isShow", false)) {
                     Functions.hideSoftKeyboard(ProfileA.this);
                     Intent intent = new Intent(ProfileA.this, LoginA.class);
                     startActivity(intent);
@@ -1232,12 +1097,12 @@ public class ProfileA extends AppCompatLocaleActivity {
     // open the following screen
     private void openFollowing() {
 
-        Intent intent=new Intent(ProfileA.this, FollowsMainTabA.class);
+        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
         intent.putExtra("id", userId);
         intent.putExtra("from_where", "following");
         intent.putExtra("userName", userName);
-        intent.putExtra("followingCount",""+followingCount);
-        intent.putExtra("followerCount",""+followerCount);
+        intent.putExtra("followingCount", followingCount);
+        intent.putExtra("followerCount", followerCount);
         resultFollowCallback.launch(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -1247,22 +1112,21 @@ public class ProfileA extends AppCompatLocaleActivity {
     // open the followers screen
     private void openFollowers() {
 
-        Intent intent=new Intent(ProfileA.this, FollowsMainTabA.class);
+        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
         intent.putExtra("id", userId);
         intent.putExtra("from_where", "fan");
         intent.putExtra("userName", userName);
-        intent.putExtra("followingCount",""+followingCount);
-        intent.putExtra("followerCount",""+followerCount);
+        intent.putExtra("followingCount", followingCount);
+        intent.putExtra("followerCount", followerCount);
         resultFollowCallback.launch(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
     }
 
 
-    public void openStoryView()
-    {
+    public void openStoryView() {
         Intent myIntent = new Intent(ProfileA.this, ViewStoryA.class);
-        myIntent.putExtra("storyList",storyDataList); //Optional parameters
+        myIntent.putExtra("storyList", storyDataList); //Optional parameters
         myIntent.putExtra("position", 0); //Optional parameters
         startActivity(myIntent);
         overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);

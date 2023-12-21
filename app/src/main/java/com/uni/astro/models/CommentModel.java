@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 
 public class CommentModel {
-    public String video_id, videoOwnerId, userId, user_name, first_name, last_name, commentText, created, type;
+    public String video_id, videoOwnerId, userId, user_name, first_name, last_name, commentText, created, type, duration;
     public String comment_id, pin_comment_id, isLikedByOwner, isVerified;
     public String liked;
     public String like_count;

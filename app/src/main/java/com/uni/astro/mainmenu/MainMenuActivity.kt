@@ -1290,21 +1290,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 if (bundle != null) {
                     val invitation = bundle.getSerializable("data") as InviteForSpeakModel?
                     if (invitation!!.getInvite() == "1") {
-                        Dialogs.showInvitationDialog(
-                            this@MainMenuActivity,
-                            invitation.getUserName()
-                        ) { bndl ->
-
+                        Dialogs.showInvitationDialog(this@MainMenuActivity, invitation.getUserName()) { bndl ->
                             if (bndl != null) {
                                 roomFirebaseManager!!.removeInvitation()
                                 val updateRise = HashMap<String, Any>()
                                 updateRise["riseHand"] = "0"
                                 reference!!.child(Variables.roomKey)
                                     .child(model!!.model.id).child(Variables.roomUsers)
-                                    .child(
-                                        Functions.getSharedPreference(context)
-                                            .getString(Variables.U_ID, "")!!
-                                    )
+                                    .child(Functions.getSharedPreference(context).getString(Variables.U_ID, "")!!)
                                     .updateChildren(updateRise)
                                 if (bndl.getBoolean("isShow")) {
                                     if (RoomStreamService.streamingInstance != null && RoomStreamService.streamingInstance!!.ismAudioMuted()) {

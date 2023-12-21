@@ -342,10 +342,33 @@
                                 android:id="@+id/username2_txt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text=""
+                                tools:text="Encept Ltd"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/_11sdp"
                                 android:textStyle="bold" />
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp">
+
+                                <ImageView
+                                    android:id="@+id/close_friend_1"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_marginEnd="@dimen/_34sdp"
+                                    tools:src="@mipmap/ic_launcher"
+                                    tools:ignore="ContentDescription" />
+
+                                <ImageView
+                                    android:id="@+id/close_friend_2"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    tools:src="@mipmap/ic_launcher"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
 
 
                             <LinearLayout
@@ -583,25 +606,14 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginTop="@dimen/_22sdp"
                                 android:background="@color/gainsboro" />
-
                         </LinearLayout>
-
                     </LinearLayout>
-
-
                 </androidx.appcompat.widget.Toolbar>
-
-
             </com.google.android.material.appbar.AppBarLayout>
 
-
-            <include layout="@layout/layout_profile_bottom_tabs" />
-
-
+            <include layout="@layout/layout_profile_bottom_tabs"
+                android:id="@+id/bottomLayout"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-
 
         <LinearLayout
             android:id="@+id/create_popup_layout"
@@ -624,9 +636,5 @@
                 android:textColor="@color/white"
                 android:textStyle="bold" />
         </LinearLayout>
-
-
     </RelativeLayout>
-
-
 </FrameLayout>

@@ -356,6 +356,15 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                 }
 
                 override fun onFinish(recordDuration: Long) {
+                    var timer: CountDownTimer = object : CountDownTimer(0, 0) {
+                        override fun onTick(millisUntilFinished: Long) {}
+                        override fun onFinish() {}
+                    }
+
+                    val recTime = formatDuration(recordDuration)
+                    Log.d(TAG_, "NativeRecTime: $recordDuration")
+                    Log.d(TAG_, "recTime: $recTime")
+
                     requireActivity().runOnUiThread {
                         recordPanel.visibility = View.VISIBLE
                         playRecordPanel.visibility = View.VISIBLE
@@ -366,9 +375,10 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
 
                     val recordFile = sendAudio?.finishRecording(requireActivity())
                     val mediaPlayer = MediaPlayer.create(context, Uri.parse(recordFile))
+                    seekBar.max = recordDuration.toInt()
 
                     requireActivity().runOnUiThread {
-                        recordTime.text = "${Functions.getfileduration(requireContext(), Uri.parse(recordFile))}"
+                        recordTime.text = recTime
                     }
 
                     btnSendVoice.setOnClickListener {
@@ -376,7 +386,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                         btnDeleteRecord.visibility = View.GONE
                         voiceProgress.visibility = View.VISIBLE
 
-                        sendAudio?.uploadAudio(requireActivity()) { resx ->
+                        sendAudio?.uploadAudio(requireActivity(), recTime) { resx ->
                             if (resx == "200") {
                                 Toast.makeText(requireContext(), "Voice Comment Added.", Toast.LENGTH_SHORT).show()
                                 resetRecordViews()
@@ -391,6 +401,9 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
 
                     btnDeleteRecord.setOnClickListener {
                         Toast.makeText(requireContext(), "Record Deleted Successfully.", Toast.LENGTH_SHORT).show()
+                        if (mediaPlayer.isPlaying) {
+                            mediaPlayer.stop()
+                        }
                         deleteDir(File(recordFile))
                         resetRecordViews()
                     }
@@ -401,7 +414,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                             mediaPlayer.start()
                             btnPlay.setImageResource(R.drawable.ic_pause_icon)
 
-                            val timr = object : CountDownTimer(recordDuration, 100) {
+                            timer = object : CountDownTimer(recordDuration, 100) {
                                 override fun onTick(millisUntilFinished: Long) {
                                     seekBar.progress = mediaPlayer.currentPosition
                                 }
@@ -411,26 +424,39 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                                     seekBar.progress = 0
                                 }
                             }
-                            timr.start()
+                            timer.start()
+
+                            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                                    recordTime.text = String.format("%02d:%02d", mediaPlayer.currentPosition / (60 * 1000), (mediaPlayer.currentPosition / 1000) % 60)
+
+                                    if (fromUser) {
+                                        mediaPlayer.seekTo(progress)
+                                    }
+                                }
+
+                                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                                    btnPlay.setImageResource(R.drawable.ic_play_icon)
+                                    mediaPlayer.pause()
+                                    timer.cancel()
+                                }
+
+                                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                                    btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                                    mediaPlayer.seekTo(seekBar.progress)
+                                    mediaPlayer.start()
+                                    timer.start()
+                                }
+                            })
 
                             togglePlay = true
 
                         } else {
                             togglePlay = false
+                            timer.cancel()
                             mediaPlayer.pause()
                             btnPlay.setImageResource(R.drawable.ic_play_icon)
                         }
-                    })
-
-                    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                            if (fromUser) {
-                                mediaPlayer.seekTo(progress)
-                            }
-                        }
-
-                        override fun onStartTrackingTouch(seekBar: SeekBar) { }
-                        override fun onStopTrackingTouch(seekBar: SeekBar) { }
                     })
                 }
 
@@ -447,6 +473,14 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
         }
 
         return bind.root
+    }
+
+    fun formatDuration(duration: Long): String {
+        val seconds = duration / 1000
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+
+        return String.format("%02d:%02d", minutes, remainingSeconds)
     }
 
     private fun openTagUser(tag: String?) {
@@ -466,11 +500,11 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                 sendProgress.visibility = View.GONE
                 voiceProgress.visibility = View.GONE
                 playRecordPanel.visibility = View.GONE
-                btnDeleteRecord.visibility = View.GONE
                 btnMic.visibility = View.VISIBLE
                 tvComment.visibility = View.VISIBLE
                 recordView.visibility = View.VISIBLE
                 btnSendVoice.visibility = View.VISIBLE
+                btnDeleteRecord.visibility = View.VISIBLE
                 btnPlay.setImageResource(R.drawable.ic_play_icon)
                 seekBar.progress = 0
                 recordTime.text = "00:00"
@@ -511,25 +545,19 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
     }
 
     private fun sendComment(message: String) {
-        var message = message
-        if (!TextUtils.isEmpty(message)) {
+        var msg = message
+        if (!TextUtils.isEmpty(msg)) {
             if (Functions.checkLoginUser(activity)) {
                 if (replyStatus == null) {
-                    sendComments(videoId, message)
+                    sendComments(videoId, msg)
 
                 } else if (replyStatus == "commentReply") {
-                    message = "${getString(R.string.replied_to)} @${selectedReplyComment!!.replay_user_name} $message"
-                    sendCommentsReply(
-                        selectedReplyComment!!.parent_comment_id,
-                        message, videoId, selectedReplyComment!!.videoOwnerId
-                    )
+                    msg = "${getString(R.string.replied_to)} @${selectedReplyComment!!.replay_user_name} $msg"
+                    sendCommentsReply(selectedReplyComment!!.parent_comment_id, msg, videoId, selectedReplyComment!!.videoOwnerId)
 
                 } else {
-                    Log.d(Constants.TAG_, "HitAPI here comment_id " + selectedComment!!.comment_id)
-                    sendCommentsReply(
-                        selectedComment!!.comment_id,
-                        message, videoId, selectedComment!!.videoOwnerId
-                    )
+                    Log.d(TAG_, "HitAPI here comment_id " + selectedComment!!.comment_id)
+                    sendCommentsReply(selectedComment!!.comment_id, msg, videoId, selectedComment!!.videoOwnerId)
                 }
 
                 bind.tvComment.text = getString(R.string.leave_a_comment)
@@ -831,6 +859,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                                     commntModel.reply_liked_count = jsonObject.optString("like_count")
                                     commntModel.comment_reply_liked = jsonObject.optString("like")
                                     commntModel.comment_reply = jsonObject.optString("comment")
+                                    commntModel.duration = jsonObject.optString("duration")
                                     commntModel.created = jsonObject.optString("created")
                                     commntModel.videoOwnerId = videoObj.optString("user_id")
                                     commntModel.replay_user_name = userDetailModelReply.username
@@ -858,6 +887,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                             commsModel.video_id = videoComment.optString("video_id")
                             commsModel.type = videoComment.optString("type")
                             commsModel.commentText = videoComment.optString("comment")
+                            commsModel.duration = videoComment.optString("duration")
                             commsModel.liked = videoComment.optString("like")
                             commsModel.like_count = videoComment.optString("like_count")
                             commsModel.comment_id = videoComment.optString("id")
