@@ -607,7 +607,8 @@
             </com.google.android.material.appbar.AppBarLayout>
 
 
-            <include layout="@layout/layout_other_profile_bottom_tabs" />
+            <include layout="@layout/layout_other_profile_bottom_tabs"
+                android:id="@+id/bottomTabs"/>
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

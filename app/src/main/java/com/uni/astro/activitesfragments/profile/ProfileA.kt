@@ -1,1144 +1,988 @@
-package com.uni.astro.activitesfragments.profile;
+package com.uni.astro.activitesfragments.profile
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.app.Dialog
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.Window
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.interfaces.DraweeController
+import com.facebook.imagepipeline.request.ImageRequestBuilder
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.uni.astro.Constants
+import com.uni.astro.R
+import com.uni.astro.activitesfragments.WebviewA
+import com.uni.astro.activitesfragments.accounts.LoginA
+import com.uni.astro.activitesfragments.accounts.ManageAccountsF
+import com.uni.astro.activitesfragments.chat.ChatA
+import com.uni.astro.activitesfragments.profile.followtabs.NotificationPriorityF
+import com.uni.astro.activitesfragments.profile.likedvideos.LikedVideoF
+import com.uni.astro.activitesfragments.profile.privatevideos.PrivateVideoF
+import com.uni.astro.activitesfragments.profile.usersstory.ViewStoryA
+import com.uni.astro.activitesfragments.profile.uservideos.UserVideoF
+import com.uni.astro.adapters.SuggestionAdapter
+import com.uni.astro.adapters.ViewPagerAdapter
+import com.uni.astro.apiclasses.ApiLinks
+import com.uni.astro.databinding.ActivityProfileBinding
+import com.uni.astro.databinding.ItemReportUserDialogBinding
+import com.uni.astro.databinding.LayoutOtherProfileBottomTabsBinding
+import com.uni.astro.databinding.ShowLikesAlertPopupDialogBinding
+import com.uni.astro.models.FollowingModel
+import com.uni.astro.models.PrivacyPolicySettingModel
+import com.uni.astro.models.PushNotificationSettingModel
+import com.uni.astro.models.StoryModel
+import com.uni.astro.models.StoryVideoModel
+import com.uni.astro.simpleclasses.AppCompatLocaleActivity
+import com.uni.astro.simpleclasses.DataParsing
+import com.uni.astro.simpleclasses.DebounceClickHandler
+import com.uni.astro.simpleclasses.Functions
+import com.uni.astro.simpleclasses.Variables
+import com.volley.plus.VPackages.VolleyRequest
+import com.volley.plus.interfaces.APICallBack
+import org.json.JSONObject
+import java.util.Locale
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
+class ProfileA : AppCompatLocaleActivity() {
+    private lateinit var bind: ActivityProfileBinding
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.uni.astro.Constants;
-import com.uni.astro.R;
-import com.uni.astro.activitesfragments.WebviewA;
-import com.uni.astro.activitesfragments.accounts.LoginA;
-import com.uni.astro.activitesfragments.accounts.ManageAccountsF;
-import com.uni.astro.activitesfragments.chat.ChatA;
-import com.uni.astro.activitesfragments.profile.followtabs.NotificationPriorityF;
-import com.uni.astro.activitesfragments.profile.likedvideos.LikedVideoF;
-import com.uni.astro.activitesfragments.profile.usersstory.ViewStoryA;
-import com.uni.astro.activitesfragments.profile.uservideos.UserVideoF;
-import com.uni.astro.adapters.SuggestionAdapter;
-import com.uni.astro.adapters.ViewPagerAdapter;
-import com.uni.astro.apiclasses.ApiLinks;
-import com.uni.astro.interfaces.FragmentCallBack;
-import com.uni.astro.models.FollowingModel;
-import com.uni.astro.models.PrivacyPolicySettingModel;
-import com.uni.astro.models.PushNotificationSettingModel;
-import com.uni.astro.models.StoryModel;
-import com.uni.astro.models.StoryVideoModel;
-import com.uni.astro.models.UserModel;
-import com.uni.astro.simpleclasses.AppCompatLocaleActivity;
-import com.uni.astro.simpleclasses.CircleDivisionView;
-import com.uni.astro.simpleclasses.DataParsing;
-import com.uni.astro.simpleclasses.DebounceClickHandler;
-import com.uni.astro.simpleclasses.Functions;
-import com.uni.astro.simpleclasses.Variables;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
+    private lateinit var bottomTabsBind: LayoutOtherProfileBottomTabsBinding
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+    private val tabIcons = intArrayOf(
+        R.drawable.ic_my_video_select,
+        R.drawable.ic_liked_video_gray
+    )
 
-import java.util.ArrayList;
+    private var isdataload = false
+    private var isDirectMessage = false
+    private var isLikeVideoShow = false
+    private var picUrl: String? = null
+    private var profileGif: String? = null
+    private var followerCount: String? = null
+    private var followingCount: String? = null
 
-public class ProfileA extends AppCompatLocaleActivity {
+    var userId: String? = null
+    var userName: String? = null
+    var fullName: String? = null
+    var buttonStatus: String? = null
+    var userPic: String? = null
+    private var totalLikes = ""
 
-    public TextView username, username2Txt, tvFollowBtn, messageBtn, tvBio, tvLink, tvEditProfile;
-    public SimpleDraweeView imageView, suggestionBtn;
-    public TextView followCountTxt, fansCountTxt, heartCountTxt;
-    public boolean isdataload = false, isDirectMessage = false, isLikeVideoShow = false;
-    public String picUrl, profileGif, followerCount, followingCount;
-    protected TabLayout tabLayout;
-    protected ViewPager2 pager;
-    Context context;
-    LinearLayout tabPrivacyLikes;
-    RelativeLayout viewTabLikes;
-    ImageView backBtn, menu_btn, unFriendBtn, notificationBtn, favBtn;
-    String userId, userName, fullName, buttonStatus, userPic, totalLikes = "";
-    RecyclerView rvSugesstion;
-    SuggestionAdapter adapterSuggestion;
-    LinearLayout tabSuggestion, tabAllSuggestion, tabLink;
-    LinearLayout tabFollowOtherUser, tabFollowSelfUser;
-    String notificationType = "1";
-    String isUserAlreadyBlock = "0";
-    String blockByUserId = "0";
-    DatabaseReference rootref;
-    UserVideoF fragmentUserVides;
-    LikedVideoF fragmentLikesVides;
-    ArrayList<StoryModel> storyDataList = new ArrayList<>();
-    CircleDivisionView circleDivisionView;
-    boolean isSuggestion = true;
-    TextView tvBlockUser;
-    ActivityResultLauncher<Intent> resultCallback = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data.getBooleanExtra("isShow", false)) {
-                        updateProfile();
-                    }
+    var adapterSuggestion: SuggestionAdapter? = null
+    var notificationType: String? = "1"
+    private var isUserAlreadyBlock = "0"
+    private var blockByUserId = "0"
+    private var rootref: DatabaseReference? = null
+    private var fragmentUserVides: UserVideoF? = null
+    private var fragmentLikesVides: LikedVideoF? = null
+    private var storyDataList = ArrayList<StoryModel>()
+    private var isSuggestion = true
 
-                }
-            });
+    var suggestionList = ArrayList<FollowingModel>()
 
-    ArrayList<FollowingModel> suggestionList = new ArrayList<>();
     // get the profile details of user
-    boolean isRunFirstTime = false;
-    ActivityResultLauncher<Intent> resultFollowCallback = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data.getBooleanExtra("isShow", false)) {
-                        callApiForGetAllvideos();
-                    }
+    private var isRunFirstTime = false
 
-                }
-            });
+    private var adapter: ViewPagerAdapter? = null
 
-    private ViewPagerAdapter adapter;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Functions.setLocale(Functions.getSharedPreference(ProfileA.this).getString(Variables.APP_LANGUAGE_CODE, Variables.DEFAULT_LANGUAGE_CODE)
-                , this, getClass(), false);
-        setContentView(R.layout.activity_profile_);
-        context = ProfileA.this;
-
-        if (getIntent().hasExtra("user_id") && getIntent().hasExtra("user_name") && getIntent().hasExtra("user_pic")) {
-            userId = getIntent().getStringExtra("user_id");
-            userName = getIntent().getStringExtra("user_name");
-            userPic = getIntent().getStringExtra("user_pic");
-
-        } else {
-            userName = getIntent().getStringExtra("user_name");
+    var resultCallback = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            if (data!!.getBooleanExtra("isShow", false)) {
+                updateProfile()
+            }
         }
-
-        init();
     }
 
-    private void showVideoOption() {
-        final Dialog alertDialog = new Dialog(context);
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(R.layout.item_report_user_dialog);
+    private var resultFollowCallback = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            if (data!!.getBooleanExtra("isShow", false)) {
+                callApiForGetAllvideos()
+            }
+        }
+    }
 
-        RelativeLayout tabReportUser = alertDialog.findViewById(R.id.tabReportUser);
-        RelativeLayout tabBlockUser = alertDialog.findViewById(R.id.tabBlockUser);
-        RelativeLayout tabShareProfile = alertDialog.findViewById(R.id.tabShareProfile);
-        tvBlockUser = alertDialog.findViewById(R.id.tvBlockUser);
 
-        Log.d(Constants.TAG_, "blockObj: " + blockByUserId);
-        Log.d(Constants.TAG_, "isUserAlreadyBlock: " + isUserAlreadyBlock);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Functions.setLocale(
+            Functions.getSharedPreference(this@ProfileA).getString(Variables.APP_LANGUAGE_CODE, Variables.DEFAULT_LANGUAGE_CODE), this, javaClass, false
+        )
+        bind = ActivityProfileBinding.inflate(layoutInflater)
+        setContentView(bind.root)
 
-        if (blockByUserId.equals(Functions.getSharedPreference(context).getString(Variables.U_ID, ""))) {
-            tabBlockUser.setVisibility(View.VISIBLE);
+        if (intent.hasExtra("user_id") && intent.hasExtra("user_name") && intent.hasExtra("user_pic")) {
+            userId = intent.getStringExtra("user_id")
+            userName = intent.getStringExtra("user_name")
+            userPic = intent.getStringExtra("user_pic")
         } else {
-            if (isUserAlreadyBlock.equals("1")) {
-                tabBlockUser.setVisibility(View.GONE);
+            userName = intent.getStringExtra("user_name")
+        }
+
+
+        bottomTabsBind = bind.bottomTabs
+
+
+        bottomTabsBind.apply {
+            setupViewPager(pager)
+            TabLayoutMediator(tabs, pager) { _, _ -> }.attach()
+            setupTabIcons()
+            pager.offscreenPageLimit = 2
+        }
+
+
+        rootref = FirebaseDatabase.getInstance().reference
+        isdataload = true
+
+        callApiForGetAllvideos()
+        setUpSuggestionRecyclerview()
+
+        bind.apply {
+            circleStatusBar.strokeLineColor = getColor(R.color.colorAccent)
+
+            messageBtn.setOnClickListener { openChatF() }
+            backBtn.setOnClickListener(DebounceClickHandler { onBackPressed() })
+            menuBtn.setOnClickListener(DebounceClickHandler { showVideoOption() })
+            fansLayout.setOnClickListener(DebounceClickHandler { openFollowers() })
+            favBtn.setOnClickListener(DebounceClickHandler { openFavouriteVideos() })
+            followingLayout.setOnClickListener(DebounceClickHandler { openFollowing() })
+            editProfileBtn.setOnClickListener(DebounceClickHandler { openEditProfile() })
+            tabPrivacyLikes.setOnClickListener(DebounceClickHandler { showMyLikesCounts() })
+            tabAllSuggestion.setOnClickListener(DebounceClickHandler { openSuggestionScreen() })
+            notificationBtn.setOnClickListener(DebounceClickHandler { selectNotificationPriority() })
+
+            userImage.setOnClickListener(DebounceClickHandler {
+                if (circleStatusBar.visibility == View.VISIBLE) {
+                    openStoryView()
+                } else {
+                    openProfileShareTab()
+                }
+            })
+
+            tabLink.setOnClickListener(DebounceClickHandler {
+                openWebUrl(
+                    getString(R.string.web_browser),
+                    tvLink.text.toString()
+                )
+            })
+
+            suggestionBtn.setOnClickListener(DebounceClickHandler {
+                isSuggestion = if (isSuggestion) {
+                    suggestionBtn.animate().rotation(180f).setDuration(300).setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            tabSuggestion.visibility = View.VISIBLE
+                            if (suggestionList.isEmpty()) {
+                                showLoadingProgressSuggestionButton()
+                                suggestionUserList
+                            }
+                        }
+                    }).start()
+                    false
+
+                } else {
+                    suggestionBtn.animate().rotation(0f).setDuration(300).setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            tabSuggestion.visibility = View.GONE
+                        }
+                    }).start()
+                    true
+                }
+            })
+
+            unFriendBtn.setOnClickListener(DebounceClickHandler {
+                if (Functions.checkLoginUser(this@ProfileA)) followUnFollowUser()
+            })
+
+            tvFollowBtn.setOnClickListener(DebounceClickHandler {
+                if (Functions.checkLoginUser(this@ProfileA)) {
+                    followUnFollowUser()
+                }
+            })
+        }
+
+
+        bottomTabsBind.apply {
+            tabs.addOnTabSelectedListener(object : OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    pager.setCurrentItem(tab.position, true)
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) { }
+
+                override fun onTabReselected(tab: TabLayout.Tab) { }
+            })
+
+
+            pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    tabs.getTabAt(position)?.select()
+                }
+            })
+        }
+    }
+
+    private fun setupViewPager(viewPager: ViewPager2) {
+        fragmentUserVides = UserVideoF.newInstance(false, userId, userName, isUserAlreadyBlock)
+        fragmentLikesVides = LikedVideoF.newInstance(false, userId, userName, isLikeVideoShow, isUserAlreadyBlock)
+
+        val adapter2 = ViewPagerAdapter(this)
+        adapter2.addFragment(fragmentUserVides!!, getString(R.string.my_videos))
+        adapter2.addFragment(fragmentLikesVides!!, getString(R.string.liked_videos))
+        viewPager.adapter = adapter2
+    }
+    private fun setupTabIcons() {
+        bottomTabsBind.apply {
+            tabs.getTabAt(0)?.setIcon(tabIcons[0])
+            tabs.getTabAt(1)?.setIcon(tabIcons[1])
+        }
+    }
+
+    internal class ViewPagerAdapter(fmanager: FragmentActivity) : FragmentStateAdapter(fmanager) {
+        private val mFragmentList: MutableList<Fragment> = ArrayList()
+        private val mFragmentTitleList: MutableList<String> = ArrayList()
+
+        fun addFragment(fragment: Fragment, title: String) {
+            mFragmentList.add(fragment)
+            mFragmentTitleList.add(title)
+        }
+
+        override fun getItemCount(): Int = mFragmentList.size
+
+        override fun createFragment(position: Int): Fragment = mFragmentList[position]
+    }
+
+
+    private fun showVideoOption() {
+        val alertDialog = Dialog(this@ProfileA)
+        val dialogBind = ItemReportUserDialogBinding.inflate(layoutInflater)
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        alertDialog.setContentView(dialogBind.root)
+        Log.d(Constants.TAG_, "blockObj: $blockByUserId")
+        Log.d(Constants.TAG_, "isUserAlreadyBlock: $isUserAlreadyBlock")
+
+        dialogBind.apply {
+            if (blockByUserId == Functions.getSharedPreference(this@ProfileA).getString(Variables.U_ID, "")) {
+                tabBlockUser.visibility = View.VISIBLE
             } else {
-                tabBlockUser.setVisibility(View.VISIBLE);
-            }
-
-        }
-
-        if (isUserAlreadyBlock.equals("1"))
-            tvBlockUser.setText(context.getString(R.string.unblock_user));
-        else
-            tvBlockUser.setText(context.getString(R.string.block_user));
-
-        tabShareProfile.setOnClickListener(v -> {
-            alertDialog.dismiss();
-            if (Functions.checkLoginUser(ProfileA.this)) {
-                shareProfile();
-            }
-        });
-        tabReportUser.setOnClickListener(v -> {
-            alertDialog.dismiss();
-            if (Functions.checkLoginUser(ProfileA.this)) {
-                openUserReport();
-            }
-        });
-
-
-        tabBlockUser.setOnClickListener(v -> {
-            alertDialog.dismiss();
-            if (Functions.checkLoginUser(ProfileA.this)) {
-                openBlockUserDialog();
-            }
-        });
-
-        alertDialog.show();
-
-    }
-
-    public void openUserReport() {
-        Intent intent = new Intent(ProfileA.this, ReportTypeA.class);
-        intent.putExtra("user_id", userId);
-        intent.putExtra("isFrom", false);
-        startActivity(intent);
-        overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
-    }
-
-    private void showLoadingProgressSuggestionButton() {
-        ImageRequest request = ImageRequestBuilder.newBuilderWithResourceId(R.raw.ic_progress_animation)
-                .build();
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(request)
-                .setOldController(suggestionBtn.getController())
-                .setAutoPlayAnimations(true)
-                .build();
-
-        suggestionBtn.setController(controller);
-    }
-
-    private void openChatF() {
-        Intent intent = new Intent(ProfileA.this, ChatA.class);
-        intent.putExtra("user_id", userId);
-        intent.putExtra("user_name", userName);
-        intent.putExtra("user_pic", userPic);
-        startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-    }
-
-    private void openProfileShareTab() {
-        boolean isGif = false;
-        String mediaURL;
-        if (profileGif != null && !(profileGif.equals(Constants.BASE_URL))) {
-            isGif = true;
-            mediaURL = profileGif;
-        } else {
-            isGif = false;
-            mediaURL = picUrl;
-        }
-        final ShareAndViewProfileF fragment = new ShareAndViewProfileF(isGif, mediaURL, userId, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getString("action").equals("profileShareMessage")) {
-                    if (Functions.checkLoginUser(ProfileA.this)) {
-                        // firebase sharing
-                    }
+                if (isUserAlreadyBlock == "1") {
+                    tabBlockUser.visibility = View.GONE
+                } else {
+                    tabBlockUser.visibility = View.VISIBLE
                 }
-
             }
-        });
-        fragment.show(getSupportFragmentManager(), "");
+
+            if (isUserAlreadyBlock == "1")
+                tvBlockUser.text = getString(R.string.unblock_user)
+            else
+                tvBlockUser.text = getString(R.string.block_user)
+
+            tabShareProfile.setOnClickListener { v: View? ->
+                alertDialog.dismiss()
+                if (Functions.checkLoginUser(this@ProfileA)) {
+                    shareProfile()
+                }
+            }
+
+            tabReportUser.setOnClickListener { v: View? ->
+                alertDialog.dismiss()
+                if (Functions.checkLoginUser(this@ProfileA)) {
+                    openUserReport()
+                }
+            }
+
+            tabBlockUser.setOnClickListener { v: View? ->
+                alertDialog.dismiss()
+                if (Functions.checkLoginUser(this@ProfileA)) {
+                    openBlockUserDialog()
+                }
+            }
+        }
+        alertDialog.show()
+    }
+
+    private fun openUserReport() {
+        val intent = Intent(this@ProfileA, ReportTypeA::class.java)
+        intent.putExtra("user_id", userId)
+        intent.putExtra("isFrom", false)
+        startActivity(intent)
+        overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
+    }
+
+    private fun showLoadingProgressSuggestionButton() {
+        val request = ImageRequestBuilder.newBuilderWithResourceId(R.raw.ic_progress_animation)
+            .build()
+
+        val controller: DraweeController = Fresco.newDraweeControllerBuilder()
+            .setImageRequest(request)
+            .setOldController(bind.suggestionBtn.controller)
+            .setAutoPlayAnimations(true)
+            .build()
+        bind.suggestionBtn.controller = controller
+    }
+
+    private fun openChatF() {
+        val intent = Intent(this@ProfileA, ChatA::class.java)
+        intent.putExtra("user_id", userId)
+        intent.putExtra("user_name", userName)
+        intent.putExtra("user_pic", userPic)
+        startActivity(intent)
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
+    }
+
+    private fun openProfileShareTab() {
+        var isGif = false
+        val mediaURL: String?
+        if (profileGif != null && profileGif != Constants.BASE_URL) {
+            isGif = true
+            mediaURL = profileGif
+        } else {
+            isGif = false
+            mediaURL = picUrl
+        }
+        val fragment = ShareAndViewProfileF(isGif, mediaURL, userId) { bundle ->
+            if (bundle.getString("action") == "profileShareMessage") {
+                if (Functions.checkLoginUser(this@ProfileA)) {
+                    // firebase sharing
+                }
+            }
+        }
+        fragment.show(supportFragmentManager, "")
     }
 
     // open the favourite videos fragment
-    private void openFavouriteVideos() {
-        Intent intent = new Intent(ProfileA.this, FavouriteMainA.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    private fun openFavouriteVideos() {
+        val intent = Intent(this@ProfileA, FavouriteMainA::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-    private void openEditProfile() {
-        Intent intent = new Intent(ProfileA.this, EditProfileA.class);
-        resultCallback.launch(intent);
-        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+    private fun openEditProfile() {
+        val intent = Intent(this@ProfileA, EditProfileA::class.java)
+        resultCallback.launch(intent)
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
     }
 
     // place the profile data
-    private void updateProfile() {
-        username2Txt.setText(Functions.showUsername(Functions.getSharedPreference(context).getString(Variables.U_NAME, "")));
-        String firstName = Functions.getSharedPreference(context).getString(Variables.F_NAME, "");
-        String lastName = Functions.getSharedPreference(context).getString(Variables.L_NAME, "");
-        if (firstName.equalsIgnoreCase("") && lastName.equalsIgnoreCase("")) {
-            username.setText(Functions.getSharedPreference(context).getString(Variables.U_NAME, ""));
+    private fun updateProfile() {
+        bind.username2Txt.text = Functions.showUsername(
+            Functions.getSharedPreference(this).getString(Variables.U_NAME, "")
+        )
+
+        val firstName = Functions.getSharedPreference(this).getString(Variables.F_NAME, "")
+        val lastName = Functions.getSharedPreference(this).getString(Variables.L_NAME, "")
+
+        if (firstName.equals("", ignoreCase = true) && lastName.equals("", ignoreCase = true)) {
+            bind.username.text = Functions.getSharedPreference(this)
+                .getString(Variables.U_NAME, "")
         } else {
-            username.setText(firstName + " " + lastName);
+            bind.username.text = "$firstName $lastName"
         }
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_BIO, ""))) {
-            tvBio.setVisibility(View.GONE);
+
+        if (TextUtils.isEmpty(Functions.getSharedPreference(this).getString(Variables.U_BIO, ""))) {
+            bind.tvBio.visibility = View.GONE
         } else {
-            tvBio.setVisibility(View.VISIBLE);
-            tvBio.setText(Functions.getSharedPreference(context).getString(Variables.U_BIO, ""));
+            bind.tvBio.visibility = View.VISIBLE
+            bind.tvBio.text = Functions.getSharedPreference(this).getString(Variables.U_BIO, "")
         }
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_LINK, ""))) {
-            tabLink.setVisibility(View.GONE);
+
+        if (TextUtils.isEmpty(Functions.getSharedPreference(this).getString(Variables.U_LINK, ""))) {
+            bind.tabLink.visibility = View.GONE
         } else {
-            tabLink.setVisibility(View.VISIBLE);
-            tvLink.setText(Functions.getSharedPreference(context).getString(Variables.U_LINK, ""));
+            bind.tabLink.visibility = View.VISIBLE
+            bind.tvLink.text = Functions.getSharedPreference(this).getString(Variables.U_LINK, "")
         }
-        picUrl = Functions.getSharedPreference(context).getString(Variables.U_PIC, "");
-        profileGif = Functions.getSharedPreference(context).getString(Variables.U_GIF, "");
-        if (profileGif.equals(Constants.BASE_URL)) {
-            imageView.setController(Functions.frescoImageLoad(picUrl, imageView, false));
+
+        picUrl = Functions.getSharedPreference(this).getString(Variables.U_PIC, "")
+        profileGif = Functions.getSharedPreference(this).getString(Variables.U_GIF, "")
+
+        if (profileGif == Constants.BASE_URL) {
+            bind.userImage.controller = Functions.frescoImageLoad(picUrl, bind.userImage, false)
         } else {
-            imageView.setController(Functions.frescoImageLoad(profileGif, R.drawable.ic_user_icon, imageView, true));
-        }
-
-    }
-
-    private void selectNotificationPriority() {
-        boolean isFriend = false;
-        isFriend = tvFollowBtn.getVisibility() == View.GONE;
-
-        NotificationPriorityF f = new NotificationPriorityF(notificationType, isFriend, userName, userId, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow", false)) {
-                    notificationType = bundle.getString("type");
-                    setUpNotificationIcon(notificationType);
-                } else {
-                    callApiForGetAllvideos();
-                }
-            }
-        });
-        f.show(getSupportFragmentManager(), "");
-
-    }
-
-    private void setUpNotificationIcon(String type) {
-        if (type.equalsIgnoreCase("1")) {
-            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_live_notification));
-        } else if (type.equalsIgnoreCase("0")) {
-            notificationBtn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_mute_notification));
+            bind.userImage.controller = Functions.frescoImageLoad(
+                profileGif,
+                R.drawable.ic_user_icon,
+                bind.userImage,
+                true
+            )
         }
     }
 
-    private void showMyLikesCounts() {
-        final Dialog dialog = new Dialog(context);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.show_likes_alert_popup_dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+    private fun selectNotificationPriority() {
+        var isFriend = false
+        isFriend = bind.tvFollowBtn.visibility == View.GONE
 
-        final TextView tvMessage, tvDone;
-        tvDone = dialog.findViewById(R.id.tvDone);
-        tvMessage = dialog.findViewById(R.id.tvMessage);
-
-        tvMessage.setText(username.getText() + " " + getString(R.string.received_a_total_of) + " " + totalLikes + " " + getString(R.string.likes_across_all_video));
-        tvDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
-
-    private void OpenSuggestionScreen() {
-        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
-        intent.putExtra("id", userId);
-        intent.putExtra("from_where", "suggestion");
-        intent.putExtra("userName", userName);
-        intent.putExtra("followingCount", followingCount);
-        intent.putExtra("followerCount", followerCount);
-        resultFollowCallback.launch(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
-    private void getSuggestionUserList() {
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, "0"));
-            parameters.put("starting_point", "0");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showSuggestedUsers, parameters, Functions.getHeaders(this), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this, resp);
-
-                hideSugestionButtonProgress();
-
-                suggestionList.clear();
-
-                try {
-                    JSONObject jsonObject = new JSONObject(resp);
-                    String code = jsonObject.optString("code");
-                    if (code.equals("200")) {
-                        JSONArray msgArray = jsonObject.getJSONArray("msg");
-                        for (int i = 0; i < msgArray.length(); i++) {
-
-                            JSONObject object = msgArray.optJSONObject(i);
-                            UserModel userDetailModel = DataParsing.getUserDataModel(object.optJSONObject("User"));
-
-                            FollowingModel item = new FollowingModel();
-                            item.fb_id = userDetailModel.getId();
-                            item.first_name = userDetailModel.getFirstName();
-                            item.last_name = userDetailModel.getLastName();
-                            item.bio = userDetailModel.getBio();
-                            item.username = userDetailModel.getUsername();
-
-                            item.setProfile_pic(userDetailModel.getProfilePic());
-
-                            item.follow_status_button = "follow";
-
-                            suggestionList.add(item);
-                            adapterSuggestion.notifyDataSetChanged();
-                        }
-
-                        if (suggestionList.isEmpty()) {
-                            findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
-                        } else {
-                            findViewById(R.id.tvNoSuggestionFound).setVisibility(View.GONE);
-                        }
-
-                    } else {
-                        findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
-                    }
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-    }
-
-    private void hideSugestionButtonProgress() {
-        ImageRequest request = ImageRequestBuilder.newBuilderWithResourceId(R.drawable.ic_arrow_drop_down_black_24dp)
-                .build();
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(request)
-                .setOldController(suggestionBtn.getController())
-                .build();
-        suggestionBtn.setController(controller);
-    }
-
-    public void init() {
-        rootref = FirebaseDatabase.getInstance().getReference();
-        username = findViewById(R.id.username);
-        username2Txt = findViewById(R.id.username2_txt);
-        imageView = findViewById(R.id.user_image);
-        imageView.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (circleDivisionView.getVisibility() == View.VISIBLE) {
-                    openStoryView();
-                } else {
-                    openProfileShareTab();
-                }
-            }
-        }));
-        tabSuggestion = findViewById(R.id.tabSuggestion);
-        followCountTxt = findViewById(R.id.follow_count_txt);
-        fansCountTxt = findViewById(R.id.fan_count_txt);
-        heartCountTxt = findViewById(R.id.heart_count_txt);
-        viewTabLikes = findViewById(R.id.viewTabLikes);
-        tabPrivacyLikes = findViewById(R.id.tabPrivacyLikes);
-        tabPrivacyLikes.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showMyLikesCounts();
-            }
-        }));
-        circleDivisionView = findViewById(R.id.circleStatusBar);
-        circleDivisionView.setStrokeLineColor(ProfileA.this.getColor(R.color.colorAccent));
-        tabAllSuggestion = findViewById(R.id.tabAllSuggestion);
-        tabAllSuggestion.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OpenSuggestionScreen();
-            }
-        }));
-
-        tvBio = findViewById(R.id.tvBio);
-        tvLink = findViewById(R.id.tvLink);
-        tabLink = findViewById(R.id.tabLink);
-        tabLink.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openWebUrl(getString(R.string.web_browser), tvLink.getText().toString());
-            }
-        }));
-        favBtn = findViewById(R.id.favBtn);
-        favBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFavouriteVideos();
-            }
-        }));
-
-        tvEditProfile = findViewById(R.id.edit_profile_btn);
-        tvEditProfile.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openEditProfile();
-            }
-        }));
-        suggestionBtn = findViewById(R.id.suggestionBtn);
-        suggestionBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isSuggestion) {
-                    suggestionBtn.animate().rotation(180).setDuration(300).setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            tabSuggestion.setVisibility(View.VISIBLE);
-                            if (suggestionList.isEmpty()) {
-                                showLoadingProgressSuggestionButton();
-                                getSuggestionUserList();
-                            }
-                        }
-                    }).start();
-                    isSuggestion = false;
-                } else {
-                    suggestionBtn.animate().rotation(0).setDuration(300).setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            tabSuggestion.setVisibility(View.GONE);
-                        }
-                    }).start();
-                    isSuggestion = true;
-                }
-            }
-        }));
-
-
-        messageBtn = findViewById(R.id.messageBtn);
-        messageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openChatF();
-            }
-        });
-
-
-        menu_btn = findViewById(R.id.menu_btn);
-        menu_btn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showVideoOption();
-
-            }
-        }));
-        tabFollowOtherUser = findViewById(R.id.tabFollowOtherUser);
-        tabFollowSelfUser = findViewById(R.id.tabFollowSelfUser);
-        notificationBtn = findViewById(R.id.notification_btn);
-        notificationBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectNotificationPriority();
-            }
-        }));
-        backBtn = findViewById(R.id.back_btn);
-        backBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        }));
-        unFriendBtn = findViewById(R.id.unFriendBtn);
-        unFriendBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Functions.checkLoginUser(ProfileA.this))
-                    followUnFollowUser();
-            }
-        }));
-        tvFollowBtn = findViewById(R.id.tvFollowBtn);
-        tvFollowBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (Functions.checkLoginUser(ProfileA.this)) {
-                    followUnFollowUser();
-                }
-
-            }
-        }));
-        setUpSuggestionRecyclerview();
-        findViewById(R.id.following_layout).setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFollowing();
-            }
-        }));
-        findViewById(R.id.fans_layout).setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFollowers();
-            }
-        }));
-
-        isdataload = true;
-
-
-        SetTabs();
-        callApiForGetAllvideos();
-
-    }
-
-    public void SetTabs() {
-        adapter = new ViewPagerAdapter(this);
-        pager = (ViewPager2) findViewById(R.id.pager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        pager.setOffscreenPageLimit(2);
-        registerFragmentWithPager();
-        pager.setAdapter(adapter);
-        addTabs();
-        setupTabIcons();
-        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                tabLayout.getTabAt(position).select();
-            }
-        });
-    }
-
-    private void addTabs() {
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, pager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                if (position == 0) {
-                    tab.setText(context.getString(R.string.my_videos));
-                } else if (position == 1) {
-                    tab.setText(context.getString(R.string.liked_videos));
-                }
-            }
-        });
-        tabLayoutMediator.attach();
-    }
-
-    private void registerFragmentWithPager() {
-        fragmentUserVides = UserVideoF.newInstance(false, userId, userName, isUserAlreadyBlock);
-        adapter.addFrag(fragmentUserVides);
-        fragmentLikesVides = LikedVideoF.newInstance(false, userId, userName, isLikeVideoShow, isUserAlreadyBlock);
-        adapter.addFrag(fragmentLikesVides);
-    }
-
-    private void setUpSuggestionRecyclerview() {
-        rvSugesstion = findViewById(R.id.rvSugesstion);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(ProfileA.this);
-        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
-        rvSugesstion.setLayoutManager(layoutManager);
-        adapterSuggestion = new SuggestionAdapter(suggestionList, new SuggestionAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int postion, FollowingModel item) {
-
-
-                if (view.getId() == R.id.tvFollowBtn) {
-                    if (Functions.checkLoginUser(ProfileA.this))
-                        followSuggestedUser(item.fb_id, postion);
-                } else if (view.getId() == R.id.user_image) {
-                    if (Functions.checkProfileOpenValidation(item.fb_id)) {
-                        Intent intent = new Intent(view.getContext(), ProfileA.class);
-                        intent.putExtra("user_id", item.fb_id);
-                        intent.putExtra("user_name", item.username);
-                        intent.putExtra("user_pic", item.getProfile_pic());
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-                    }
-                } else if (view.getId() == R.id.ivCross) {
-                    suggestionList.remove(postion);
-                    adapterSuggestion.notifyDataSetChanged();
-                }
-            }
-        });
-        rvSugesstion.setAdapter(adapterSuggestion);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (isRunFirstTime) {
-
-            callApiForGetAllvideos();
-
-        }
-
-    }
-
-    private void setupTabIcons() {
-        View view1 = LayoutInflater.from(context).inflate(R.layout.item_tabs_profile_menu, null);
-        ImageView imageView1 = view1.findViewById(R.id.image);
-        imageView1.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_select));
-        tabLayout.getTabAt(0).setCustomView(view1);
-
-        View view2 = LayoutInflater.from(context).inflate(R.layout.item_tabs_profile_menu, null);
-        ImageView imageView2 = view2.findViewById(R.id.image);
-        imageView2.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_gray));
-        tabLayout.getTabAt(1).setCustomView(view2);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                pager.setCurrentItem(tab.getPosition(), true);
-                View v = tab.getCustomView();
-                ImageView image = v.findViewById(R.id.image);
-
-                switch (tab.getPosition()) {
-                    case 0:
-
-                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_select));
-                        break;
-
-                    case 1:
-                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_color));
-                        break;
-                }
-                tab.setCustomView(v);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                View v = tab.getCustomView();
-                ImageView image = v.findViewById(R.id.image);
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_my_video_gray));
-                        break;
-                    case 1:
-                        image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_liked_video_gray));
-                        break;
-                }
-
-                tab.setCustomView(v);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-
-        });
-
-
-    }
-
-    private void callApiForGetAllvideos() {
-
-        if (getIntent() == null) {
-            userId = Functions.getSharedPreference(context).getString(Variables.U_ID, "0");
-        }
-
-        JSONObject parameters = new JSONObject();
-        try {
-
-            if (Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false) && userId != null) {
-                parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
-                parameters.put("other_user_id", userId);
-            } else if (userId != null) {
-                parameters.put("user_id", userId);
+        val f = NotificationPriorityF(notificationType, isFriend, userName, userId) { bundle ->
+            if (bundle.getBoolean("isShow", false)) {
+                notificationType = bundle.getString("type")
+                setUpNotificationIcon(notificationType)
             } else {
-                if (Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false)) {
-                    parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
-                }
-                parameters.put("username", userName);
+                callApiForGetAllvideos()
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
+        f.show(supportFragmentManager, "")
+    }
 
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.showUserDetail, parameters, Functions.getHeaders(this), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this, resp);
-                isRunFirstTime = true;
-                parseData(resp);
+    private fun setUpNotificationIcon(type: String?) {
+        if (type.equals("1", ignoreCase = true)) {
+            bind.notificationBtn.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.ic_live_notification
+                )
+            )
+
+        } else if (type.equals("0", ignoreCase = true)) {
+            bind.notificationBtn.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.ic_mute_notification
+                )
+            )
+        }
+    }
+
+    private fun showMyLikesCounts() {
+        val dialog = Dialog(this)
+        dialog.setCancelable(false)
+        val likeDialogBind = ShowLikesAlertPopupDialogBinding.inflate(layoutInflater)
+        dialog.setContentView(R.layout.show_likes_alert_popup_dialog)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        likeDialogBind.tvMessage.text =
+            bind.username.text.toString() + " " + getString(R.string.received_a_total_of) + " " + totalLikes + " " + getString(
+                R.string.likes_across_all_video
+            )
+        likeDialogBind.tvDone.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
+    private fun openSuggestionScreen() {
+        val intent = Intent(this@ProfileA, FollowsMainTabA::class.java)
+        intent.putExtra("id", userId)
+        intent.putExtra("from_where", "suggestion")
+        intent.putExtra("userName", userName)
+        intent.putExtra("followingCount", followingCount)
+        intent.putExtra("followerCount", followerCount)
+        resultFollowCallback.launch(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+
+    private val suggestionUserList: Unit
+        get() {
+            val parameters = JSONObject()
+            try {
+                parameters.put(
+                    "user_id",
+                    Functions.getSharedPreference(this).getString(Variables.U_ID, "0")
+                )
+                parameters.put("starting_point", "0")
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        });
 
+            VolleyRequest.JsonPostRequest(
+                this@ProfileA,
+                ApiLinks.showSuggestedUsers,
+                parameters,
+                Functions.getHeaders(this)
+            ) { resp ->
+                Functions.checkStatus(this@ProfileA, resp)
+                hideSuggestionButtonProgress()
+                suggestionList.clear()
+                try {
+                    val jsonObject = JSONObject(resp)
+                    val code = jsonObject.optString("code")
+                    if (code == "200") {
+                        val msgArray = jsonObject.getJSONArray("msg")
+                        for (i in 0 until msgArray.length()) {
+                            val `object` = msgArray.optJSONObject(i)
+                            val userDetailModel =
+                                DataParsing.getUserDataModel(`object`.optJSONObject("User"))
+                            val item = FollowingModel()
+                            item.fb_id = userDetailModel.id
+                            item.first_name = userDetailModel.firstName
+                            item.last_name = userDetailModel.lastName
+                            item.bio = userDetailModel.bio
+                            item.username = userDetailModel.username
+                            item.profile_pic = userDetailModel.profilePic
+                            item.follow_status_button = "follow"
+                            suggestionList.add(item)
+                            adapterSuggestion!!.notifyDataSetChanged()
+                        }
+                        if (suggestionList.isEmpty()) {
+                            findViewById<View>(R.id.tvNoSuggestionFound).visibility = View.VISIBLE
+                        } else {
+                            findViewById<View>(R.id.tvNoSuggestionFound).visibility = View.GONE
+                        }
+                    } else {
+                        findViewById<View>(R.id.tvNoSuggestionFound).visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+    private fun hideSuggestionButtonProgress() {
+        val request = ImageRequestBuilder.newBuilderWithResourceId(R.drawable.ic_arrow_drop_down_black_24dp).build()
+        val controller: DraweeController = Fresco.newDraweeControllerBuilder()
+            .setImageRequest(request)
+            .setOldController(bind.suggestionBtn.controller)
+            .build()
+
+        bind.suggestionBtn.controller = controller
+    }
+
+    private fun setUpSuggestionRecyclerview() {
+        val layoutManager = LinearLayoutManager(this@ProfileA)
+        layoutManager.orientation = RecyclerView.HORIZONTAL
+        bind.rvSugesstion.setLayoutManager(layoutManager)
+
+        adapterSuggestion = SuggestionAdapter(suggestionList) { view, postion, item ->
+            if (view.id == R.id.tvFollowBtn) {
+                if (Functions.checkLoginUser(this@ProfileA)) followSuggestedUser(
+                    item.fb_id,
+                    postion
+                )
+
+            } else if (view.id == R.id.user_image) {
+                if (Functions.checkProfileOpenValidation(item.fb_id)) {
+                    val intent = Intent(view.context, ProfileA::class.java)
+                    intent.putExtra("user_id", item.fb_id)
+                    intent.putExtra("user_name", item.username)
+                    intent.putExtra("user_pic", item.profile_pic)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
+                }
+            } else if (view.id == R.id.ivCross) {
+                suggestionList.removeAt(postion)
+                adapterSuggestion!!.notifyDataSetChanged()
+            }
+        }
+
+        bind.rvSugesstion.adapter = adapterSuggestion
+    }
+
+    public override fun onResume() {
+        super.onResume()
+        if (isRunFirstTime) {
+            callApiForGetAllvideos()
+        }
     }
 
 
-    public void parseData(String responce) {
-
+    private fun callApiForGetAllvideos() {
+        if (intent == null) {
+            userId = Functions.getSharedPreference(this).getString(Variables.U_ID, "0")
+        }
+        val parameters = JSONObject()
         try {
-            JSONObject jsonObject = new JSONObject(responce);
-            String code = jsonObject.optString("code");
-            if (code.equals("200")) {
-                JSONObject msg = jsonObject.optJSONObject("msg");
-                JSONObject userObj = msg.optJSONObject("User");
-                UserModel userDetailModel = DataParsing.getUserDataModel(userObj);
+            if (Functions.getSharedPreference(this)
+                    .getBoolean(Variables.IS_LOGIN, false) && userId != null
+            ) {
+                parameters.put(
+                    "user_id",
+                    Functions.getSharedPreference(this).getString(Variables.U_ID, "")
+                )
+                parameters.put("other_user_id", userId)
+            } else if (userId != null) {
+                parameters.put("user_id", userId)
+            } else {
+                if (Functions.getSharedPreference(this).getBoolean(Variables.IS_LOGIN, false)) {
+                    parameters.put(
+                        "user_id",
+                        Functions.getSharedPreference(this).getString(Variables.U_ID, "")
+                    )
+                }
+                parameters.put("username", userName)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
+        VolleyRequest.JsonPostRequest(
+            this@ProfileA,
+            ApiLinks.showUserDetail,
+            parameters,
+            Functions.getHeaders(this)
+        ) { resp ->
+            Functions.checkStatus(this@ProfileA, resp)
+            isRunFirstTime = true
+            parseData(resp)
+        }
+    }
 
+    fun parseData(response: String?) {
+        try {
+            val jsonObject = JSONObject(response)
+            val code = jsonObject.optString("code")
+            if (code == "200") {
+                val msg = jsonObject.optJSONObject("msg")
+                val userObj = msg.optJSONObject("User")
+                val userDetailModel = DataParsing.getUserDataModel(userObj)
                 try {
-                    JSONArray storyArray = userObj.getJSONArray("story");
-                    storyDataList.clear();
-                    StoryModel storyItem = new StoryModel();
-                    storyItem.setUserModel(userDetailModel);
-                    ArrayList<StoryVideoModel> storyVideoList = new ArrayList<>();
-                    for (int i = 0; i < storyArray.length(); i++) {
-                        JSONObject itemObj = storyArray.getJSONObject(i);
-                        StoryVideoModel storyVideoItem = DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"));
-                        storyVideoList.add(storyVideoItem);
-                    }
-                    storyItem.setVideoList(storyVideoList);
-                    if (storyVideoList.size() > 0) {
-                        storyDataList.add(storyItem);
+                    val storyArray = userObj.getJSONArray("story")
+                    storyDataList.clear()
+                    val storyItem = StoryModel()
+                    storyItem.userModel = userDetailModel
+                    val storyVideoList = ArrayList<StoryVideoModel>()
 
-                        circleDivisionView.setVisibility(View.VISIBLE);
-                        circleDivisionView.setCounts(storyVideoList.size());
+                    for (i in 0 until storyArray.length()) {
+                        val itemObj = storyArray.getJSONObject(i)
+                        val storyVideoItem =
+                            DataParsing.getVideoDataModel(itemObj.optJSONObject("Video"))
+                        storyVideoList.add(storyVideoItem)
+                    }
+
+                    storyItem.videoList = storyVideoList
+                    if (storyVideoList.size > 0) {
+                        storyDataList.add(storyItem)
+                        bind.circleStatusBar!!.visibility = View.VISIBLE
+                        bind.circleStatusBar!!.counts = storyVideoList.size
                     } else {
-                        circleDivisionView.setVisibility(View.GONE);
+                        bind.circleStatusBar!!.visibility = View.GONE
                     }
-                } catch (Exception e) {
-                    Log.d(Constants.TAG_, "Exception: " + e);
+                } catch (e: Exception) {
+                    Log.d(Constants.TAG_, "Exception: $e")
                 }
 
-
-                JSONObject push_notification_setting = msg.optJSONObject("PushNotification");
-                JSONObject privacy_policy_setting = msg.optJSONObject("PrivacySetting");
-
+                val push_notification_setting = msg.optJSONObject("PushNotification")
+                val privacy_policy_setting = msg.optJSONObject("PrivacySetting")
                 if (userId == null) {
-                    userId = userDetailModel.getId();
-                    setupTabIcons();
+                    userId = userDetailModel.id
+                    setupTabIcons()
                 }
 
-                String first_name = userDetailModel.getFirstName();
-                String last_name = userDetailModel.getLastName();
-
-                if (first_name.equalsIgnoreCase("") && last_name.equalsIgnoreCase("")) {
-                    username.setText(userDetailModel.getUsername());
+                val first_name = userDetailModel.firstName
+                val last_name = userDetailModel.lastName
+                if (first_name.equals("", ignoreCase = true) && last_name.equals("", ignoreCase = true)) {
+                    bind.username.text = userDetailModel.username
                 } else {
-                    username.setText(first_name + " " + last_name);
+                    bind.username.text = "$first_name $last_name"
                 }
 
-                username2Txt.setText(Functions.showUsername(userDetailModel.getUsername()));
+                bind.username2Txt.text = Functions.showUsername(userDetailModel.username)
+                picUrl = userDetailModel.profilePic
+                profileGif = userDetailModel.profileGif
+                userPic = userDetailModel.profilePic
+                fullName = "$first_name $last_name"
+                buttonStatus = userDetailModel.button.lowercase(Locale.getDefault())
 
-                picUrl = userDetailModel.getProfilePic();
-                profileGif = userDetailModel.getProfileGif();
-                userPic = userDetailModel.getProfilePic();
-                fullName = first_name + " " + last_name;
-                buttonStatus = userDetailModel.getButton().toLowerCase();
-
-                if (profileGif.equals(Constants.BASE_URL)) {
-                    imageView.setController(Functions.frescoImageLoad(picUrl, imageView, false));
+                if (profileGif == Constants.BASE_URL) {
+                    bind.userImage.controller = Functions.frescoImageLoad(picUrl, bind.userImage, false)
                 } else {
-                    imageView.setController(Functions.frescoImageLoad(profileGif, R.drawable.ic_user_icon, imageView, true));
+                    bind.userImage.controller = Functions.frescoImageLoad(
+                        profileGif,
+                        R.drawable.ic_user_icon,
+                        bind.userImage,
+                        true
+                    )
                 }
 
-                if (TextUtils.isEmpty(userDetailModel.getBio())) {
-                    tvBio.setVisibility(View.GONE);
+                if (TextUtils.isEmpty(userDetailModel.bio)) {
+                    bind.tvBio.visibility = View.GONE
                 } else {
-                    tvBio.setVisibility(View.VISIBLE);
-                    tvBio.setText(userDetailModel.getBio());
+                    bind.tvBio.visibility = View.VISIBLE
+                    bind.tvBio.text = userDetailModel.bio
                 }
 
-                if (TextUtils.isEmpty(userDetailModel.getWebsite())) {
-                    tabLink.setVisibility(View.GONE);
+                if (TextUtils.isEmpty(userDetailModel.website)) {
+                    bind.tabLink.visibility = View.GONE
                 } else {
-                    tabLink.setVisibility(View.VISIBLE);
-                    tvLink.setText(userDetailModel.getWebsite());
+                    bind.tabLink.visibility = View.VISIBLE
+                    bind.tvLink.text = userDetailModel.website
                 }
 
-
-                followingCount = userDetailModel.getFollowingCount();
-                followerCount = userDetailModel.getFollowersCount();
-                totalLikes = userDetailModel.getLikesCount();
-                isUserAlreadyBlock = userDetailModel.getBlock();
-                blockByUserId = userDetailModel.getBlockByUser();
-                notificationType = userDetailModel.getNotification();
-                setUpNotificationIcon(notificationType);
-
+                followingCount = userDetailModel.followingCount
+                followerCount = userDetailModel.followersCount
+                totalLikes = userDetailModel.likesCount
+                isUserAlreadyBlock = userDetailModel.block
+                blockByUserId = userDetailModel.blockByUser
+                notificationType = userDetailModel.notification
+                setUpNotificationIcon(notificationType)
 
                 if (fragmentUserVides != null) {
                     if (msg.has("Playlist")) {
-                        JSONArray playlistArray = msg.getJSONArray("Playlist");
-                        fragmentUserVides.updateUserPlaylist(playlistArray, userDetailModel.getVerified(), new FragmentCallBack() {
-                            @Override
-                            public void onResponce(Bundle bundle) {
-                                if (bundle.getBoolean("isShow", false)) {
-                                    callApiForGetAllvideos();
-                                }
+                        val playlistArray = msg.getJSONArray("Playlist")
+                        fragmentUserVides!!.updateUserPlaylist(
+                            playlistArray,
+                            userDetailModel.verified
+                        ) { bundle ->
+                            if (bundle.getBoolean("isShow", false)) {
+                                callApiForGetAllvideos()
                             }
-                        });
+                        }
                     }
                 }
 
+                val pushNotificationSetting_model = PushNotificationSettingModel()
+                pushNotificationSetting_model.comments =
+                    push_notification_setting.optString("comments")
+                pushNotificationSetting_model.likes = push_notification_setting.optString("likes")
+                pushNotificationSetting_model.newfollowers =
+                    push_notification_setting.optString("new_followers")
+                pushNotificationSetting_model.mentions =
+                    push_notification_setting.optString("mentions")
+                pushNotificationSetting_model.directmessage =
+                    push_notification_setting.optString("direct_messages")
+                pushNotificationSetting_model.videoupdates =
+                    push_notification_setting.optString("video_updates")
 
-                PushNotificationSettingModel pushNotificationSetting_model = new PushNotificationSettingModel();
-                pushNotificationSetting_model.setComments(push_notification_setting.optString("comments"));
-                pushNotificationSetting_model.setLikes(push_notification_setting.optString("likes"));
-                pushNotificationSetting_model.setNewfollowers(push_notification_setting.optString("new_followers"));
-                pushNotificationSetting_model.setMentions(push_notification_setting.optString("mentions"));
-                pushNotificationSetting_model.setDirectmessage(push_notification_setting.optString("direct_messages"));
-                pushNotificationSetting_model.setVideoupdates(push_notification_setting.optString("video_updates"));
+                val privacyPolicySetting_model = PrivacyPolicySettingModel()
+                privacyPolicySetting_model.videos_download =
+                    privacy_policy_setting.optString("videos_download")
+                privacyPolicySetting_model.direct_message =
+                    privacy_policy_setting.optString("direct_message")
+                privacyPolicySetting_model.duet = privacy_policy_setting.optString("duet")
+                privacyPolicySetting_model.liked_videos =
+                    privacy_policy_setting.optString("liked_videos")
+                privacyPolicySetting_model.video_comment =
+                    privacy_policy_setting.optString("video_comment")
+
+                isLikeVideoShow =
+                    !privacyPolicySetting_model.liked_videos.equals("only_me", ignoreCase = true)
+                Log.d(Constants.TAG_, "isUserAlreadyBlock:: $isUserAlreadyBlock")
 
 
-                PrivacyPolicySettingModel privacyPolicySetting_model = new PrivacyPolicySettingModel();
-                privacyPolicySetting_model.setVideos_download(privacy_policy_setting.optString("videos_download"));
-                privacyPolicySetting_model.setDirect_message(privacy_policy_setting.optString("direct_message"));
-                privacyPolicySetting_model.setDuet(privacy_policy_setting.optString("duet"));
-                privacyPolicySetting_model.setLiked_videos(privacy_policy_setting.optString("liked_videos"));
-                privacyPolicySetting_model.setVideo_comment(privacy_policy_setting.optString("video_comment"));
-
-
-                isLikeVideoShow = !privacyPolicySetting_model.getLiked_videos().equalsIgnoreCase("only_me");
-
-                Log.d(Constants.TAG_, "isUserAlreadyBlock:: " + isUserAlreadyBlock);
                 //perform block functionality
-                if (isUserAlreadyBlock.equals("1")) {
-                    notificationBtn.setVisibility(View.GONE);
-                    tabFollowOtherUser.setVisibility(View.GONE);
-                    followCountTxt.setText(Functions.getSuffix("0"));
-                    fansCountTxt.setText(Functions.getSuffix("0"));
-                    heartCountTxt.setText(Functions.getSuffix("0"));
-                    Log.d(Constants.TAG_, "isUserAlreadyBlock:: " + isUserAlreadyBlock);
+                if (isUserAlreadyBlock == "1") {
+                    bind.notificationBtn.visibility = View.GONE
+                    bind.tabFollowOtherUser.visibility = View.GONE
+                    bind.followCountTxt.text = Functions.getSuffix("0")
+                    bind.fanCountTxt.text = Functions.getSuffix("0")
+                    bind.heartCountTxt.text = Functions.getSuffix("0")
+                    Log.d(Constants.TAG_, "isUserAlreadyBlock:: $isUserAlreadyBlock")
+
                 } else {
-                    notificationBtn.setVisibility(View.VISIBLE);
-                    tabFollowOtherUser.setVisibility(View.VISIBLE);
-                    followCountTxt.setText(Functions.getSuffix(followingCount));
-                    fansCountTxt.setText(Functions.getSuffix(followerCount));
-                    heartCountTxt.setText(Functions.getSuffix(totalLikes));
+                    bind.notificationBtn.visibility = View.VISIBLE
+                    bind.tabFollowOtherUser.visibility = View.VISIBLE
+                    bind.followCountTxt.text = Functions.getSuffix(followingCount)
+                    bind.fanCountTxt.text = Functions.getSuffix(followerCount)
+                    bind.heartCountTxt.text = Functions.getSuffix(totalLikes)
                 }
 
+                fragmentLikesVides!!.updateLikeVideoState(isLikeVideoShow)
+                fragmentLikesVides!!.updateUserData(
+                    userId,
+                    Functions.getUserName(this),
+                    isUserAlreadyBlock
+                )
 
-                fragmentLikesVides.updateLikeVideoState(isLikeVideoShow);
-                fragmentLikesVides.updateUserData(userId, Functions.getUserName(context), isUserAlreadyBlock);
-                fragmentUserVides.updateUserData(userId, Functions.getUserName(context), isUserAlreadyBlock);
+                fragmentUserVides!!.updateUserData(
+                    userId,
+                    Functions.getUserName(this),
+                    isUserAlreadyBlock
+                )
 
+                isDirectMessage = Functions.isShowContentPrivacy(
+                    this, privacyPolicySetting_model.direct_message,
+                    userDetailModel.button.equals("friends", ignoreCase = true)
+                )
 
-                isDirectMessage = Functions.isShowContentPrivacy(context, privacyPolicySetting_model.getDirect_message(),
-                        userDetailModel.getButton().equalsIgnoreCase("friends"));
+                val follow_status = userDetailModel.button.lowercase(Locale.getDefault())
+                if (follow_status.equals("following", ignoreCase = true)) {
+                    bind.unFriendBtn.visibility = View.VISIBLE
+                    bind.tvFollowBtn.visibility = View.GONE
 
-                String follow_status = userDetailModel.getButton().toLowerCase();
+                } else if (follow_status.equals("friends", ignoreCase = true)) {
+                    bind.unFriendBtn.visibility = View.VISIBLE
+                    bind.tvFollowBtn.visibility = View.GONE
 
-                if (follow_status.equalsIgnoreCase("following")) {
-                    unFriendBtn.setVisibility(View.VISIBLE);
-                    tvFollowBtn.setVisibility(View.GONE);
-                } else if (follow_status.equalsIgnoreCase("friends")) {
-                    unFriendBtn.setVisibility(View.VISIBLE);
-                    tvFollowBtn.setVisibility(View.GONE);
-                } else if (follow_status.equalsIgnoreCase("follow back")) {
-                    unFriendBtn.setVisibility(View.GONE);
-                    tvFollowBtn.setVisibility(View.VISIBLE);
+                } else if (follow_status.equals("follow back", ignoreCase = true)) {
+                    bind.unFriendBtn.visibility = View.GONE
+                    bind.tvFollowBtn.visibility = View.VISIBLE
                 } else {
-                    unFriendBtn.setVisibility(View.GONE);
-                    tvFollowBtn.setVisibility(View.VISIBLE);
+                    bind.unFriendBtn.visibility = View.GONE
+                    bind.tvFollowBtn.visibility = View.VISIBLE
                 }
 
-
-                String verified = userDetailModel.getVerified();
-                if (verified != null && verified.equalsIgnoreCase("1")) {
-                    findViewById(R.id.varified_btn).setVisibility(View.VISIBLE);
+                val verified = userDetailModel.verified
+                if (verified != null && verified.equals("1", ignoreCase = true)) {
+                    findViewById<View>(R.id.varified_btn).visibility = View.VISIBLE
                 }
-
 
             } else {
-                Functions.showToast(context, jsonObject.optString("msg"));
+                Functions.showToast(this, jsonObject.optString("msg"))
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
     }
 
-
-    private void openBlockUserDialog() {
-        JSONObject params = new JSONObject();
+    private fun openBlockUserDialog() {
+        val params = JSONObject()
         try {
-            params.put("user_id",
-                    Functions.getSharedPreference(ProfileA.this).getString(Variables.U_ID, ""));
-            params.put("block_user_id", userId);
-        } catch (Exception e) {
-            e.printStackTrace();
+            params.put(
+                "user_id",
+                Functions.getSharedPreference(this@ProfileA).getString(Variables.U_ID, "")
+            )
+            params.put("block_user_id", userId)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
-
-        VolleyRequest.JsonPostRequest(ProfileA.this, ApiLinks.blockUser, params, Functions.getHeaders(this), new Callback() {
-            @Override
-            public void onResponce(String resp) {
-                Functions.checkStatus(ProfileA.this, resp);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(resp);
-                    String code = jsonObject.optString("code");
-                    if (code.equals("200")) {
-                        JSONObject msgObj = jsonObject.getJSONObject("msg");
-                        if (msgObj.has("BlockUser")) {
-                            Functions.showToast(ProfileA.this, getString(R.string.user_blocked));
-                            tvBlockUser.setText(R.string.unblock_user);
-                            isUserAlreadyBlock = "1";
-                        } else {
-                            isUserAlreadyBlock = "0";
-                        }
+        VolleyRequest.JsonPostRequest(
+            this@ProfileA,
+            ApiLinks.blockUser,
+            params,
+            Functions.getHeaders(this)
+        ) { resp ->
+            Functions.checkStatus(this@ProfileA, resp)
+            try {
+                val jsonObject = JSONObject(resp)
+                val code = jsonObject.optString("code")
+                isUserAlreadyBlock = if (code == "200") {
+                    val msgObj = jsonObject.getJSONObject("msg")
+                    if (msgObj.has("BlockUser")) {
+                        Functions.showToast(this@ProfileA, getString(R.string.user_blocked))
+                        "1"
                     } else {
-                        isUserAlreadyBlock = "0";
+                        "0"
                     }
-                    callApiForGetAllvideos();
-                } catch (Exception e) {
-                    Log.d(Constants.TAG_, "Exception: " + e);
+                } else {
+                    "0"
                 }
+                callApiForGetAllvideos()
+            } catch (e: Exception) {
+                Log.d(Constants.TAG_, "Exception: $e")
             }
-        });
-
+        }
     }
 
+    private fun shareProfile() {
+        var fromSetting = false
+        fromSetting = userId.equals(
+            Functions.getSharedPreference(this@ProfileA).getString(Variables.U_ID, ""),
+            ignoreCase = true
+        )
+        val fragment = ShareUserProfileF(
+            userId,
+            userName,
+            fullName,
+            userPic,
+            buttonStatus,
+            isDirectMessage,
+            fromSetting
+        ) { bundle ->
+            if (bundle.getBoolean("isShow", false)) {
+                callApiForGetAllvideos()
+            }
+        }
+        fragment.show(supportFragmentManager, "")
+    }
 
-    private void shareProfile() {
-        boolean fromSetting = false;
-        fromSetting = userId.equalsIgnoreCase(Functions.getSharedPreference(ProfileA.this).getString(Variables.U_ID, ""));
-
-        final ShareUserProfileF fragment = new ShareUserProfileF(userId, userName, fullName, userPic, buttonStatus, isDirectMessage, fromSetting, new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow", false)) {
-                    callApiForGetAllvideos();
+    private fun followSuggestedUser(userId: String, position: Int) {
+        Functions.callApiForFollowUnFollow(this@ProfileA,
+            Functions.getSharedPreference(this).getString(Variables.U_ID, ""),
+            userId,
+            object : APICallBack {
+                override fun arrayData(arrayList: ArrayList<*>?) {}
+                override fun onSuccess(responce: String) {
+                    suggestionList.removeAt(position)
+                    adapterSuggestion!!.notifyDataSetChanged()
+                    callApiForGetAllvideos()
                 }
-            }
-        });
-        fragment.show(getSupportFragmentManager(), "");
 
+                override fun onFail(responce: String) {}
+            })
     }
 
-
-    private void followSuggestedUser(String userId, int position) {
-        Functions.callApiForFollowUnFollow(ProfileA.this,
-                Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
-                userId,
-                new APICallBack() {
-                    @Override
-                    public void arrayData(ArrayList arrayList) {
-                    }
-
-                    @Override
-                    public void onSuccess(String responce) {
-
-                        suggestionList.remove(position);
-                        adapterSuggestion.notifyDataSetChanged();
-                        callApiForGetAllvideos();
-                    }
-
-                    @Override
-                    public void onFail(String responce) {
-
-                    }
-
-                });
-
-    }
-
-
-    private void followUnFollowUser() {
-        Functions.callApiForFollowUnFollow(ProfileA.this,
-                Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
-                userId,
-                new APICallBack() {
-                    @Override
-                    public void arrayData(ArrayList arrayList) {
-                    }
-
-                    @Override
-                    public void onSuccess(String responce) {
-
-                        callApiForGetAllvideos();
-                    }
-
-                    @Override
-                    public void onFail(String responce) {
-
-                    }
-
-                });
-
-    }
-
-
-    public void openWebUrl(String title, String url) {
-        Intent intent = new Intent(ProfileA.this, WebviewA.class);
-        intent.putExtra("url", url);
-        intent.putExtra("title", title);
-        startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-    }
-
-    private void openManageMultipleAccounts() {
-        ManageAccountsF f = new ManageAccountsF(new FragmentCallBack() {
-            @Override
-            public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow", false)) {
-                    Functions.hideSoftKeyboard(ProfileA.this);
-                    Intent intent = new Intent(ProfileA.this, LoginA.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
+    private fun followUnFollowUser() {
+        Functions.callApiForFollowUnFollow(this@ProfileA,
+            Functions.getSharedPreference(this).getString(Variables.U_ID, ""),
+            userId,
+            object : APICallBack {
+                override fun arrayData(arrayList: ArrayList<*>?) {}
+                override fun onSuccess(responce: String) {
+                    callApiForGetAllvideos()
                 }
-            }
-        });
-        f.show(getSupportFragmentManager(), "");
+
+                override fun onFail(responce: String) {}
+            })
     }
 
+    fun openWebUrl(title: String?, url: String?) {
+        val intent = Intent(this@ProfileA, WebviewA::class.java)
+        intent.putExtra("url", url)
+        intent.putExtra("title", title)
+        startActivity(intent)
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
+    }
+
+    private fun openManageMultipleAccounts() {
+        val f = ManageAccountsF { bundle ->
+            if (bundle.getBoolean("isShow", false)) {
+                Functions.hideSoftKeyboard(this@ProfileA)
+                val intent = Intent(this@ProfileA, LoginA::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
+            }
+        }
+        f.show(supportFragmentManager, "")
+    }
 
     // open the following screen
-    private void openFollowing() {
-
-        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
-        intent.putExtra("id", userId);
-        intent.putExtra("from_where", "following");
-        intent.putExtra("userName", userName);
-        intent.putExtra("followingCount", followingCount);
-        intent.putExtra("followerCount", followerCount);
-        resultFollowCallback.launch(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
-
+    private fun openFollowing() {
+        val intent = Intent(this@ProfileA, FollowsMainTabA::class.java)
+        intent.putExtra("id", userId)
+        intent.putExtra("from_where", "following")
+        intent.putExtra("userName", userName)
+        intent.putExtra("followingCount", followingCount)
+        intent.putExtra("followerCount", followerCount)
+        resultFollowCallback.launch(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     // open the followers screen
-    private void openFollowers() {
-
-        Intent intent = new Intent(ProfileA.this, FollowsMainTabA.class);
-        intent.putExtra("id", userId);
-        intent.putExtra("from_where", "fan");
-        intent.putExtra("userName", userName);
-        intent.putExtra("followingCount", followingCount);
-        intent.putExtra("followerCount", followerCount);
-        resultFollowCallback.launch(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
+    private fun openFollowers() {
+        val intent = Intent(this@ProfileA, FollowsMainTabA::class.java)
+        intent.putExtra("id", userId)
+        intent.putExtra("from_where", "fan")
+        intent.putExtra("userName", userName)
+        intent.putExtra("followingCount", followingCount)
+        intent.putExtra("followerCount", followerCount)
+        resultFollowCallback.launch(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-
-    public void openStoryView() {
-        Intent myIntent = new Intent(ProfileA.this, ViewStoryA.class);
-        myIntent.putExtra("storyList", storyDataList); //Optional parameters
-        myIntent.putExtra("position", 0); //Optional parameters
-        startActivity(myIntent);
-        overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
+    private fun openStoryView() {
+        val myIntent = Intent(this@ProfileA, ViewStoryA::class.java)
+        myIntent.putExtra("storyList", storyDataList) //Optional parameters
+        myIntent.putExtra("position", 0) //Optional parameters
+        startActivity(myIntent)
+        overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
     }
 
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra("isShow", true);
-        setResult(RESULT_OK, intent);
-        super.onBackPressed();
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("isShow", true)
+        setResult(RESULT_OK, intent)
+        super.onBackPressed()
     }
-
 }

@@ -244,152 +244,16 @@ class ProfileTabF : Fragment() {
                                     AnimationUtils.loadAnimation(context, R.anim.up_and_down_animation)
                                 bind.createPopupLayout.startAnimation(aniRotate)
                             }
-
-//                            image.setImageDrawable(
-//                                ContextCompat.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_my_video_select
-//                                )
-//                            )
-//
-//                            image.setColorFilter(
-//                                ContextCompat.getColor(requireContext(), R.color.black),
-//                                PorterDuff.Mode.SRC_IN
-//                            )
                         }
 
-                        1 -> {
+                        1, 2, 3, 4 -> {
                             bind.createPopupLayout.clearAnimation()
                             bind.createPopupLayout.visibility = View.GONE
-
-//                            image.setImageDrawable(
-//                                ContextCompat.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_liked_video_color
-//                                )
-//                            )
-//                            image.setColorFilter(
-//                                ContextCompat.getColor(requireContext(), R.color.black),
-//                                PorterDuff.Mode.SRC_IN
-//                            )
-                        }
-
-                        2 -> {
-                            bind.createPopupLayout.clearAnimation()
-                            bind.createPopupLayout.visibility = View.GONE
-
-//                            image.setImageDrawable(
-//                                ContextCompat.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_repost_gray
-//                                )
-//                            )
-//                            image.setColorFilter(
-//                                ContextCompat.getColor(requireContext(), R.color.black),
-//                                PorterDuff.Mode.SRC_IN
-//                            )
-                        }
-
-                        3 -> {
-                            bind.createPopupLayout.clearAnimation()
-                            bind.createPopupLayout.visibility = View.GONE
-
-//                            image.setImageDrawable(
-//                                ContextCompat.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_fav_black
-//                                )
-//                            )
-//                            image.setColorFilter(
-//                                ContextCompat.getColor(requireContext(), R.color.black),
-//                                PorterDuff.Mode.SRC_IN
-//                            )
-                        }
-
-                        4 -> {
-                            bind.createPopupLayout.clearAnimation()
-                            bind.createPopupLayout.visibility = View.GONE
-
-//                            image.setImageDrawable(
-//                                ContextCompat.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_lock_black
-//                                )
-//                            )
-//                            image.setColorFilter(
-//                                ContextCompat.getColor(requireContext(), R.color.black),
-//                                PorterDuff.Mode.SRC_IN
-//                            )
                         }
                     }
-
-                    tab.setCustomView(bottomTabsBinding.root)
                 }
 
-                override fun onTabUnselected(tab: TabLayout.Tab) {
-                    /*
-                    when (tab.position) {
-                        0 -> {
-                            tabBinding.image.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_my_video_gray
-                                )
-                            )
-                            tabBinding.image.setColorFilter(
-                                ContextCompat.getColor(requireContext(), R.color.darkgray),
-                                PorterDuff.Mode.SRC_IN
-                            )
-                        }
-
-                        1 -> {
-                            tabBinding.image.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_liked_video_gray
-                                )
-                            )
-                            tabBinding.image.setColorFilter(
-                                ContextCompat.getColor(requireContext(), R.color.darkgray),
-                                PorterDuff.Mode.SRC_IN
-                            )
-                        }
-
-                        2 -> {
-                            tabBinding.image.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_repost_gray
-                                )
-                            )
-                            tabBinding.image.setColorFilter(
-                                ContextCompat.getColor(requireContext(), R.color.darkgray),
-                                PorterDuff.Mode.SRC_IN
-                            )
-                        }
-
-                        3 -> {
-                            tabBinding.image.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_fav_gray
-                                )
-                            )
-                            tabBinding.image.setColorFilter(
-                                ContextCompat.getColor(requireContext(), R.color.darkgray),
-                                PorterDuff.Mode.SRC_IN
-                            )
-                        }
-
-                        4 -> {
-                            tabBinding.image.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_lock_gray))
-                            tabBinding.image.setColorFilter(ContextCompat.getColor(requireContext(), R.color.darkgray), PorterDuff.Mode.SRC_IN)
-                        }
-                    }
-                    */
-
-                    tab.setCustomView(bottomTabsBinding.root)
-                }
+                override fun onTabUnselected(tab: TabLayout.Tab) {}
 
                 override fun onTabReselected(tab: TabLayout.Tab) {}
             })
@@ -576,7 +440,7 @@ class ProfileTabF : Fragment() {
 
     private fun showMyLikesCounts() {
         val dialog = Dialog(requireContext())
-        val dialogBinding: ShowLikesAlertPopupDialogBinding = ShowLikesAlertPopupDialogBinding.inflate(layoutInflater)
+        val dialogBinding = ShowLikesAlertPopupDialogBinding.inflate(layoutInflater)
         dialog.setCancelable(false)
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
