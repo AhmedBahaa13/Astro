@@ -1,6 +1,7 @@
 package com.uni.astro.activitesfragments.profile;
 
 import com.uni.astro.activitesfragments.profile.settings.AppThemA;
+import com.uni.astro.activitesfragments.profile.settings.CloseFriendsA;
 import com.uni.astro.activitesfragments.profile.settings.CreatorToolsA;
 import com.uni.astro.simpleclasses.AppCompatLocaleActivity;
 
@@ -95,6 +96,8 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
         findViewById(R.id.tabDraftVideo).setOnClickListener(this);
         findViewById(R.id.tabDarkmode).setOnClickListener(this);
         findViewById(R.id.referalLayout).setOnClickListener(this);
+        findViewById(R.id.tabCloseFriends).setOnClickListener(this);
+
         tabVerifyProfile=findViewById(R.id.tabVerifyProfile);
         tabVerifyProfile.setOnClickListener(this);
         tvLanguage=findViewById(R.id.tvLanguage);
@@ -226,6 +229,12 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
             case R.id.tabLogout:
             {
                 logoutProceed();
+            }
+            break;
+
+            case R.id.tabCloseFriends:
+            {
+                openCloseFriends();
             }
             break;
         }
@@ -417,7 +426,11 @@ public class SettingAndPrivacyA extends AppCompatLocaleActivity implements View.
     }
 
 
-
+    private void openCloseFriends(){
+        Intent intent = new Intent(this, CloseFriendsA.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+    }
 
 
     private void logoutProceed() {

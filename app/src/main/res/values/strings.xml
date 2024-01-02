@@ -24,7 +24,6 @@
     <string name="share_room_endpoint_second" translatable="false">/clubhouse/room/</string>
 
 
-
     <string name="request_verification">Request Verification</string>
     <string name="upper_body_below">Submitting a request for verification \ndoes not guarantee that your account will be verified</string>
 
@@ -269,6 +268,7 @@
     <string name="setting_and_privacy">Settings and privacy</string>
     <string name="account">Account</string>
     <string name="manage_account">Manage Account</string>
+    <string name="close_friends">Close Friends</string>
     <string name="privacy">Privacy</string>
     <string name="balance">Balance</string>
     <string name="qr_code">QR Code</string>
@@ -298,6 +298,7 @@
          <b>·</b> Your account will be deactivated for 30 days. During deactivation, your account wont\'t be visible to public. After 30 days, your account will be then deleted permanently.  \n
          <b>·</b> Do you want to continue?  \n
    </string>
+    <string name="user_name" translatable="false">%s %s</string>
     <string name="continue_">Continue</string>
     <string name="update_email">Update Email</string>
     <string name="update_phone">Update Phone No</string>

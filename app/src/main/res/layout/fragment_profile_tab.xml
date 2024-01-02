@@ -37,7 +37,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:paddingHorizontal="@dimen/_4sdp"
-                    android:src="@drawable/ic_normal_notification"
+                    android:src="@drawable/ic_notification"
                     app:tint="@color/black" />
 
                 <RelativeLayout
@@ -159,13 +159,13 @@
                 android:paddingEnd="@dimen/_8sdp">
 
                 <TextView
-                    android:id="@+id/username"
+                    android:id="@+id/username2_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text=""
+                    tools:text="\@Encept"
+                    android:fontFamily="@font/baloo2"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_13sdp"
+                    android:textSize="@dimen/_11sdp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -188,11 +188,11 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="@dimen/_26sdp"
+                    android:layout_width="@dimen/_25sdp"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:paddingHorizontal="@dimen/_4sdp"
-                    android:src="@drawable/ic_notification_gray"
+                    android:src="@drawable/ic_chat"
                     app:tint="@color/black" />
 
                 <RelativeLayout
@@ -232,26 +232,18 @@
                         android:textSize="@dimen/_8sdp"
                         android:textStyle="bold"
                         android:visibility="gone" />
-
-
                 </RelativeLayout>
-
-
             </RelativeLayout>
 
             <ImageView
                 android:id="@+id/message_btn"
-                android:layout_width="@dimen/_22sdp"
+                android:layout_width="@dimen/_26sdp"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
-                android:rotation="90"
-                android:src="@drawable/ic_black_dots"
+                android:src="@drawable/ic_setting"
                 app:tint="@color/black" />
-
-
-
         </RelativeLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -322,31 +314,36 @@
                                     app:strokeLineColor="@color/appColor"
                                     app:counts="2"
                                     android:id="@+id/circleStatusBar"/>
+                            </RelativeLayout>
 
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_6sdp"
+                                android:orientation="horizontal"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/username"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    tools:text="Karim Abdallah"
+                                    android:fontFamily="@font/baloo"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_13sdp"
+                                    android:textStyle="bold" />
 
                                 <ImageView
                                     android:id="@+id/varified_btn"
-                                    android:layout_width="@dimen/_24sdp"
-                                    android:layout_height="@dimen/_24sdp"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_margin="@dimen/_2sdp"
+                                    android:layout_width="@dimen/_15sdp"
+                                    android:layout_height="@dimen/_15sdp"
+                                    android:layout_marginStart="@dimen/_4sdp"
                                     android:scaleType="fitCenter"
                                     android:src="@drawable/ic_verified"
-                                    android:visibility="gone" />
-
-                            </RelativeLayout>
-
-                            <TextView
-                                android:layout_marginTop="@dimen/_6sdp"
-                                android:id="@+id/username2_txt"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                tools:text="Encept Ltd"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_11sdp"
-                                android:textStyle="bold" />
-
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -394,6 +391,7 @@
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
                                         android:text="0"
+                                        android:fontFamily="@font/baloo"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_13sdp"
                                         android:textStyle="bold" />
@@ -406,6 +404,7 @@
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
                                         android:text="@string/following"
+                                        android:fontFamily="@font/baloo2"
                                         android:textColor="@color/darkgray"
                                         android:textSize="@dimen/_10sdp"
                                         android:textStyle="bold" />
@@ -421,10 +420,7 @@
                                         android:background="@color/darkgray"
                                         android:layout_width="@dimen/_1sdp"
                                         android:layout_height="@dimen/_22sdp"
-                                        android:layout_centerInParent="true"
-                                        />
-
-
+                                        android:layout_centerInParent="true" />
                                 </RelativeLayout>
 
                                 <LinearLayout
@@ -442,6 +438,7 @@
                                         android:paddingTop="@dimen/_2sdp"
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
+                                        android:fontFamily="@font/baloo"
                                         android:text="0"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_13sdp"
@@ -455,6 +452,7 @@
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
                                         android:text="@string/followers"
+                                        android:fontFamily="@font/baloo2"
                                         android:textColor="@color/darkgray"
                                         android:textSize="@dimen/_10sdp"
                                         android:textStyle="bold" />
@@ -470,12 +468,8 @@
                                         android:background="@color/darkgray"
                                         android:layout_width="@dimen/_1sdp"
                                         android:layout_height="@dimen/_22sdp"
-                                        android:layout_centerInParent="true"
-                                        />
-
-
+                                        android:layout_centerInParent="true" />
                                 </RelativeLayout>
-
 
 
                                 <LinearLayout
@@ -493,6 +487,7 @@
                                         android:paddingTop="@dimen/_2sdp"
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
+                                        android:fontFamily="@font/baloo"
                                         android:text="0"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_13sdp"
@@ -506,6 +501,7 @@
                                         android:paddingEnd="@dimen/_12sdp"
                                         android:paddingBottom="@dimen/_2sdp"
                                         android:text="@string/likes"
+                                        android:fontFamily="@font/baloo2"
                                         android:textColor="@color/darkgray"
                                         android:textSize="@dimen/_10sdp"
                                         android:textStyle="bold" />
@@ -523,34 +519,64 @@
                                 android:layout_marginTop="@dimen/_15sdp"
                                 android:orientation="horizontal">
 
-                                <TextView
+
+
+                                <LinearLayout
                                     android:id="@+id/edit_profile_btn"
                                     android:layout_width="@dimen/_110sdp"
                                     android:layout_height="@dimen/_34sdp"
                                     android:background="@drawable/button_rounded_gray_strok_background"
-                                    android:includeFontPadding="false"
-                                    android:gravity="center"
-                                    android:text="@string/edit_profile"
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_13sdp"
-                                    android:textStyle="bold"
-                                    android:visibility="visible" />
+                                    android:orientation="horizontal"
+                                    android:gravity="center">
 
-                                <TextView
-                                    android:layout_marginStart="@dimen/_8sdp"
+                                    <ImageView
+                                        android:layout_width="@dimen/_17sdp"
+                                        android:layout_height="@dimen/_17sdp"
+                                        android:layout_marginEnd="4dp"
+                                        android:src="@drawable/ic_edit"
+                                        tools:ignore="ContentDescription" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:includeFontPadding="false"
+                                        android:gravity="center"
+                                        android:text="@string/edit_profile"
+                                        android:fontFamily="@font/baloo2"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/_13sdp"
+                                        android:textStyle="bold"
+                                        android:visibility="visible" />
+                                </LinearLayout>
+
+                                <LinearLayout
                                     android:id="@+id/add_friends_btn"
                                     android:layout_width="@dimen/_110sdp"
                                     android:layout_height="@dimen/_34sdp"
+                                    android:layout_marginStart="@dimen/_8sdp"
                                     android:background="@drawable/button_rounded_gray_strok_background"
-                                    android:includeFontPadding="false"
-                                    android:gravity="center"
-                                    android:text="@string/add_friends"
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_13sdp"
-                                    android:textStyle="bold"
-                                    android:visibility="visible" />
+                                    android:orientation="horizontal"
+                                    android:gravity="center">
 
+                                    <ImageView
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:layout_height="@dimen/_14sdp"
+                                        android:layout_marginEnd="4dp"
+                                        android:src="@drawable/ic_add_friend2"
+                                        tools:ignore="ContentDescription" />
 
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:includeFontPadding="false"
+                                        android:gravity="center"
+                                        android:text="@string/add_friends"
+                                        android:fontFamily="@font/baloo2"
+                                        android:textColor="@color/black"
+                                        android:textSize="@dimen/_13sdp"
+                                        android:textStyle="bold"
+                                        android:visibility="visible" />
+                                </LinearLayout>
                             </LinearLayout>
 
 

@@ -1,6 +1,7 @@
 package com.uni.astro.activitesfragments;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,44 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import com.adcolony.sdk.AdColony;
-import com.adcolony.sdk.AdColonyAdOptions;
-import com.adcolony.sdk.AdColonyInterstitial;
-import com.adcolony.sdk.AdColonyInterstitialListener;
-import com.adcolony.sdk.AdColonyZone;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.uni.astro.activitesfragments.livestreaming.activities.LiveUsersA;
-import com.uni.astro.activitesfragments.profile.ProfileA;
-import com.uni.astro.adapters.HomeSuggestionAdapter;
-import com.uni.astro.adapters.ViewPagerStatAdapter;
-import com.uni.astro.Constants;
-import com.uni.astro.mainmenu.MainMenuActivity;
-import com.uni.astro.simpleclasses.DebounceClickHandler;
-import com.uni.astro.simpleclasses.VerticalViewPager;
-import com.volley.plus.interfaces.APICallBack;
-import com.uni.astro.interfaces.AdapterClickListener;
-import com.uni.astro.models.FollowingModel;
-import com.uni.astro.models.HomeModel;
-import com.uni.astro.models.UserModel;
-import com.uni.astro.services.UploadService;
-import com.uni.astro.apiclasses.ApiLinks;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.volley.plus.interfaces.Callback;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -58,32 +21,91 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
+
+import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyAdOptions;
+import com.adcolony.sdk.AdColonyInterstitial;
+import com.adcolony.sdk.AdColonyInterstitialListener;
+import com.adcolony.sdk.AdColonyZone;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.uni.astro.Constants;
 import com.uni.astro.R;
+import com.uni.astro.activitesfragments.livestreaming.activities.LiveUsersA;
+import com.uni.astro.activitesfragments.profile.ProfileA;
+import com.uni.astro.adapters.HomeSuggestionAdapter;
+import com.uni.astro.adapters.ViewPagerStatAdapter;
+import com.uni.astro.apiclasses.ApiLinks;
+import com.uni.astro.interfaces.AdapterClickListener;
 import com.uni.astro.interfaces.FragmentCallBack;
+import com.uni.astro.mainmenu.MainMenuActivity;
+import com.uni.astro.models.FollowingModel;
+import com.uni.astro.models.HomeModel;
+import com.uni.astro.models.UserModel;
+import com.uni.astro.services.UploadService;
 import com.uni.astro.simpleclasses.DataParsing;
+import com.uni.astro.simpleclasses.DebounceClickHandler;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
-import com.google.android.gms.ads.AdRequest;
+import com.uni.astro.simpleclasses.VerticalViewPager;
+import com.volley.plus.VPackages.VolleyRequest;
+import com.volley.plus.interfaces.APICallBack;
+import com.volley.plus.interfaces.Callback;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
+
 import io.paperdb.Paper;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 
 // this is the main view which is show all  the video in list
 public class HomeF extends Fragment implements FragmentCallBack {
 
+    private static final int callbackVideoLisCode = 3292;
+    private static ProgressBar progressBar;
+    private static TextView tvProgressCount;
+
+    public static FragmentCallBack uploadingCallback = new FragmentCallBack() {
+        @Override
+        public void onResponce(Bundle bundle) {
+            if (bundle.getBoolean("isShow")) {
+                int currentProgress = bundle.getInt("currentpercent", 0);
+                if (progressBar != null && tvProgressCount != null) {
+
+                    progressBar.setProgress(currentProgress);
+                    tvProgressCount.setText(currentProgress + "%");
+                }
+            }
+        }
+    };
+
+    private static boolean isInterstitialLoaded;
+    protected VerticalViewPager menuPager;
     View view;
     Context context;
-    ArrayList<HomeModel> dataList=new ArrayList<>();
+    ArrayList<HomeModel> dataList = new ArrayList<>();
     SwipeRefreshLayout swiperefresh;
     TextView followingBtn, relatedBtn, liveUsers;
     String type = "related";
@@ -92,11 +114,39 @@ public class HomeF extends Fragment implements FragmentCallBack {
     RelativeLayout tabPlaylist;
     View tabSneekbarView;
     TextView tvPlaylistTitle;
+    int page_count = 0;
+    boolean isApiRuning = false;
+    Handler handler;
+    FrameLayout tabNoFollower;
+    RelativeLayout uploadVideoLayout;
+    ImageView uploadingThumb;
+    UploadingVideoBroadCast mReceiver;
+    int oldSwipeValue = 0;
+    ViewPagerStatAdapter pagerSatetAdapter;
 
-    public HomeF() {
 
-    }
+    // set the fragments for all the videos list
+    ActivityResultLauncher<Intent> resultInfoAgainCallback = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+            Intent data = result.getData();
+            if (data.getBooleanExtra("isShow", false)) {
 
+            }
+        }
+    });
+
+    ArrayList<FollowingModel> suggestionList = new ArrayList<>();
+    InterstitialAd mInterstitialAd;
+    // this will call when go to the home tab From other tab.
+    // this is very important when for video play and pause when the focus is changes
+    boolean is_visible_to_user;
+    private InfiniteScrollAdapter<?> infiniteAdapter;
+    private AdColonyInterstitial interstitialAdColony;
+    private AdColonyInterstitialListener interstitialListener;
+    private AdColonyAdOptions interstitialAdOptions;
+
+
+    public HomeF() { }
 
     public static HomeF newInstance() {
         HomeF fragment = new HomeF();
@@ -105,83 +155,34 @@ public class HomeF extends Fragment implements FragmentCallBack {
         return fragment;
     }
 
-
-    int page_count = 0;
-    boolean isApiRuning = false;
-    Handler handler;
-    FrameLayout tabNoFollower;
-    RelativeLayout uploadVideoLayout;
-    ImageView uploadingThumb;
-    private static ProgressBar progressBar;
-    private static TextView tvProgressCount;
-    UploadingVideoBroadCast mReceiver;
-
     @Override
     public void onResponce(Bundle bundle) {
         if (bundle != null && bundle.get("action").equals("showad")) {
             showCustomAd();
         } else if (bundle != null && bundle.get("action").equals("hidead")) {
             hideCustomad();
-        }
-        else if (bundle != null && bundle.get("action").equals("removeList")) {
+        } else if (bundle != null && bundle.get("action").equals("removeList")) {
             pagerSatetAdapter.removeFragment(menuPager.getCurrentItem());
             dataList.remove(menuPager.getCurrentItem());
         }
     }
 
-    private class UploadingVideoBroadCast extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (Functions.isMyServiceRunning(context, UploadService.class)) {
-                uploadVideoLayout.setVisibility(View.VISIBLE);
-                Bitmap bitmap = Functions.base64ToBitmap(Functions.getSharedPreference(context).getString(Variables.UPLOADING_VIDEO_THUMB, ""));
-                if (bitmap != null)
-                    uploadingThumb.setImageBitmap(bitmap);
-
-            } else {
-                uploadVideoLayout.setVisibility(View.GONE);
-            }
-
-        }
-    }
-
-
-    public static FragmentCallBack uploadingCallback=new FragmentCallBack() {
-        @Override
-        public void onResponce(Bundle bundle) {
-            if (bundle.getBoolean("isShow"))
-            {
-                int currentProgress=bundle.getInt("currentpercent",0);
-                if (progressBar!=null && tvProgressCount!=null)
-                {
-
-                    progressBar.setProgress(currentProgress);
-                    tvProgressCount.setText(currentProgress+"%");
-                }
-            }
-        }
-    };
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
         context = getContext();
-        oldSwipeValue = Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter,Constants.SHOW_AD_ON_EVERY) ;
+        oldSwipeValue = Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter, Constants.SHOW_AD_ON_EVERY);
 
         handler = new Handler(Looper.getMainLooper());
-        tvProgressCount=view.findViewById(R.id.tvProgressCount);
-        progressBar=view.findViewById(R.id.progressBar);
+        tvProgressCount = view.findViewById(R.id.tvProgressCount);
+        progressBar = view.findViewById(R.id.progressBar);
         followingBtn = view.findViewById(R.id.following_btn);
         relatedBtn = view.findViewById(R.id.related_btn);
-        tabNoFollower=view.findViewById(R.id.tabNoFollower);
-        tvPlaylistTitle=view.findViewById(R.id.tvPlaylistTitle);
-        tabSneekbarView=view.findViewById(R.id.tabSneekbarView);
-        tabPlaylist=view.findViewById(R.id.tabPlaylist);
+        tabNoFollower = view.findViewById(R.id.tabNoFollower);
+        tvPlaylistTitle = view.findViewById(R.id.tvPlaylistTitle);
+        tabSneekbarView = view.findViewById(R.id.tabSneekbarView);
+        tabPlaylist = view.findViewById(R.id.tabPlaylist);
         liveUsers = view.findViewById(R.id.live_users);
         swiperefresh = view.findViewById(R.id.swiperefresh);
 
@@ -190,41 +191,44 @@ public class HomeF extends Fragment implements FragmentCallBack {
             @Override
             public void onClick(View view) {
                 onPause();
-                Intent intent=new Intent(view.getContext(), LiveUsersA.class);
+                Intent intent = new Intent(view.getContext(), LiveUsersA.class);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
             }
         }));
+
         tabPlaylist.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openPlaylist();
             }
         }));
+
         followingBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Functions.checkLoginUser(getActivity())) {
                     type = "following";
                     swiperefresh.setRefreshing(true);
-                    relatedBtn.setTextColor(ContextCompat.getColor(context,R.color.graycolor2));
-                    followingBtn.setTextColor(ContextCompat.getColor(context,R.color.whiteColor));
+                    relatedBtn.setTextColor(ContextCompat.getColor(context, R.color.graycolor2));
+                    followingBtn.setTextColor(ContextCompat.getColor(context, R.color.whiteColor));
                     page_count = 0;
-                    oldSwipeValue =  Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter,Constants.SHOW_AD_ON_EVERY);
+                    oldSwipeValue = Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter, Constants.SHOW_AD_ON_EVERY);
                     dataList.clear();
                     callVideoApi();
                 }
             }
         }));
+
         relatedBtn.setOnClickListener(new DebounceClickHandler(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 type = "related";
                 swiperefresh.setRefreshing(true);
-                relatedBtn.setTextColor(ContextCompat.getColor(context,R.color.whiteColor));
-                followingBtn.setTextColor(ContextCompat.getColor(context,R.color.graycolor2));
+                relatedBtn.setTextColor(ContextCompat.getColor(context, R.color.whiteColor));
+                followingBtn.setTextColor(ContextCompat.getColor(context, R.color.graycolor2));
                 page_count = 0;
-                oldSwipeValue =  Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter,Constants.SHOW_AD_ON_EVERY);
+                oldSwipeValue = Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter, Constants.SHOW_AD_ON_EVERY);
                 dataList.clear();
                 callVideoApi();
             }
@@ -236,15 +240,15 @@ public class HomeF extends Fragment implements FragmentCallBack {
             @Override
             public void onRefresh() {
                 page_count = 0;
-                oldSwipeValue =  Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter,Constants.SHOW_AD_ON_EVERY);
+                oldSwipeValue = Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter, Constants.SHOW_AD_ON_EVERY);
                 dataList.clear();
                 callVideoApi();
             }
         });
 
 
-        if (!Functions.getSettingsPreference(context).getString(Variables.AddType,"none").equalsIgnoreCase("none")){
-            if( Functions.getSettingsPreference(context).getString(Variables.AddType,"").equalsIgnoreCase("adcolony")){
+        if (!Functions.getSettingsPreference(context).getString(Variables.AddType, "none").equalsIgnoreCase("none")) {
+            if (Functions.getSettingsPreference(context).getString(Variables.AddType, "").equalsIgnoreCase("adcolony")) {
                 initInterstitialAdColonyAd();
             }
 
@@ -256,15 +260,12 @@ public class HomeF extends Fragment implements FragmentCallBack {
         getActivity().registerReceiver(mReceiver, new IntentFilter("uploadVideo"));
 
 
-
         if (Functions.isMyServiceRunning(context, UploadService.class)) {
             uploadVideoLayout.setVisibility(View.VISIBLE);
             Bitmap bitmap = Functions.base64ToBitmap(Functions.getSharedPreference(context).getString(Variables.UPLOADING_VIDEO_THUMB, ""));
             if (bitmap != null)
                 uploadingThumb.setImageBitmap(bitmap);
-        }
-        else
-        {
+        } else {
             uploadVideoLayout.setVisibility(View.GONE);
         }
 
@@ -275,33 +276,22 @@ public class HomeF extends Fragment implements FragmentCallBack {
         return view;
     }
 
-
-    // set the fragments for all the videos list
-
-    int oldSwipeValue = 0;
-    protected VerticalViewPager menuPager;
-    ViewPagerStatAdapter pagerSatetAdapter;
-
-
     public void setTabs(boolean isFirstTime) {
         dataList.clear();
-        if (isFirstTime)
-        {
+        if (isFirstTime) {
             try {
-                if (Paper.book(Variables.PromoAds).contains(Variables.PromoAdsModel))
-                {
-                    HomeModel item=Paper.book(Variables.PromoAds).read(Variables.PromoAdsModel);
+                if (Paper.book(Variables.PromoAds).contains(Variables.PromoAdsModel)) {
+                    HomeModel item = Paper.book(Variables.PromoAds).read(Variables.PromoAdsModel);
                     dataList.add(item);
                 }
-            }catch (Exception e)
-            {
-                Log.d(Constants.TAG_,"Exception: "+e);
+            } catch (Exception e) {
+                Log.d(Constants.TAG_, "Exception: " + e);
             }
         }
 
 
-        pagerSatetAdapter = new ViewPagerStatAdapter(getChildFragmentManager(),menuPager,isFirstTime,this::onResponce);
-        menuPager =  view.findViewById(R.id.viewpager);
+        pagerSatetAdapter = new ViewPagerStatAdapter(getChildFragmentManager(), menuPager, isFirstTime, this::onResponce);
+        menuPager = view.findViewById(R.id.viewpager);
         menuPager.setAdapter(pagerSatetAdapter);
         menuPager.setOffscreenPageLimit(1);
         menuPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -312,15 +302,8 @@ public class HomeF extends Fragment implements FragmentCallBack {
 
             @Override
             public void onPageSelected(int position) {
-                if (position==0)
-                {
-                    swiperefresh.setEnabled(true);
-                }
-                else
-                {
-                    swiperefresh.setEnabled(false);
-                }
-                if (position == 0 && (pagerSatetAdapter !=null && pagerSatetAdapter.getCount()>0)) {
+                swiperefresh.setEnabled(position == 0);
+                if (position == 0 && (pagerSatetAdapter != null && pagerSatetAdapter.getCount() > 0)) {
                     VideosListF fragment = (VideosListF) pagerSatetAdapter.getItem(menuPager.getCurrentItem());
                     fragment.setData();
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -335,27 +318,25 @@ public class HomeF extends Fragment implements FragmentCallBack {
                 updatePlaylistView();
 
 
-                if (dataList.size() > 5 && (dataList.size() -5) == (position+1)) {
-                    if(!isApiRuning) {
+                if (dataList.size() > 5 && (dataList.size() - 5) == (position + 1)) {
+                    if (!isApiRuning) {
                         page_count++;
                         callVideoApi();
                     }
                 }
 
 
-                if ((position+1)==oldSwipeValue) {
+                if ((position + 1) == oldSwipeValue) {
 
-                    oldSwipeValue=(position+1)+ Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter,Constants.SHOW_AD_ON_EVERY);
+                    oldSwipeValue = (position + 1) + Functions.getSettingsPreference(context).getInt(Variables.ShowAdvertAfter, Constants.SHOW_AD_ON_EVERY);
 
-                    if (!Functions.getSettingsPreference(context).getString(Variables.AddType,"none").equalsIgnoreCase("none")){
-
-                        if( Functions.getSettingsPreference(context).getString(Variables.AddType,"").equalsIgnoreCase("admob")){
+                    if (!Functions.getSettingsPreference(context).getString(Variables.AddType, "none").equalsIgnoreCase("none")) {
+                        if (Functions.getSettingsPreference(context).getString(Variables.AddType, "").equalsIgnoreCase("admob")) {
                             initGoogleAdd();
-                        }
-                        else if( Functions.getSettingsPreference(context).getString(Variables.AddType,"").equalsIgnoreCase("adcolony")){
+
+                        } else if (Functions.getSettingsPreference(context).getString(Variables.AddType, "").equalsIgnoreCase("adcolony")) {
                             showAdColonyAdd();
                         }
-
                     }
                 }
             }
@@ -365,41 +346,35 @@ public class HomeF extends Fragment implements FragmentCallBack {
 
             }
         });
-
     }
 
     private void updatePlaylistView() {
         try {
-            if (dataList.get(menuPager.getCurrentItem()).playlistId.equals("0"))
-            {
+            if (dataList.get(menuPager.getCurrentItem()).playlistId.equals("0")) {
                 tabPlaylist.setVisibility(View.GONE);
                 tabSneekbarView.setVisibility(View.GONE);
-            }
-            else
-            {
-                tvPlaylistTitle.setText(context.getString(R.string.playlist)+" . "+dataList.get(menuPager.getCurrentItem()).playlistName);
+
+            } else {
+                tvPlaylistTitle.setText(context.getString(R.string.playlist) + " . " + dataList.get(menuPager.getCurrentItem()).playlistName);
                 tabPlaylist.setVisibility(View.VISIBLE);
                 tabSneekbarView.setVisibility(View.VISIBLE);
             }
-        }
-        catch (Exception e){
+
+        } catch (Exception e) {
             tabPlaylist.setVisibility(View.GONE);
             tabSneekbarView.setVisibility(View.GONE);
         }
     }
 
-
     private void openPlaylist() {
-        HomeModel itemUpdate=dataList.get(menuPager.getCurrentItem());
-        ShowHomePlaylistF fragment = new ShowHomePlaylistF(itemUpdate.video_id,itemUpdate.playlistId, itemUpdate.user_id, itemUpdate.playlistName, new FragmentCallBack() {
+        HomeModel itemUpdate = dataList.get(menuPager.getCurrentItem());
+        ShowHomePlaylistF fragment = new ShowHomePlaylistF(itemUpdate.video_id, itemUpdate.playlistId, itemUpdate.user_id, itemUpdate.playlistName, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
-                    if (bundle.getString("type").equalsIgnoreCase("videoPlay"))
-                    {
-                        int playlistVideoPosition=bundle.getInt("position",0);
-                        openPlaylistVideo(itemUpdate.playlistId,itemUpdate.playlistName,itemUpdate.user_id,playlistVideoPosition);
+                if (bundle.getBoolean("isShow", false)) {
+                    if (bundle.getString("type").equalsIgnoreCase("videoPlay")) {
+                        int playlistVideoPosition = bundle.getInt("position", 0);
+                        openPlaylistVideo(itemUpdate.playlistId, itemUpdate.playlistName, itemUpdate.user_id, playlistVideoPosition);
                     }
                 }
             }
@@ -408,83 +383,52 @@ public class HomeF extends Fragment implements FragmentCallBack {
     }
 
     // open the videos in full screen on click
-    private void openPlaylistVideo(String id,String playlistName,String userId,int position) {
-
+    private void openPlaylistVideo(String id, String playlistName, String userId, int position) {
         Intent intent = new Intent(getActivity(), WatchVideosA.class);
         intent.putExtra("playlist_id", id);
         intent.putExtra("position", position);
-        intent.putExtra("pageCount","0" );
-        intent.putExtra("userId",userId);
-        intent.putExtra("playlistName",playlistName);
-        intent.putExtra("whereFrom","playlistVideo");
+        intent.putExtra("pageCount", "0");
+        intent.putExtra("userId", userId);
+        intent.putExtra("playlistName", playlistName);
+        intent.putExtra("whereFrom", "playlistVideo");
         resultInfoAgainCallback.launch(intent);
     }
 
-    ActivityResultLauncher<Intent> resultInfoAgainCallback = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data.getBooleanExtra("isShow",false))
-                        {
-
-                        }
-                    }
-                }
-            });
-
-
-
-
-    ArrayList<FollowingModel> suggestionList=new ArrayList<>();
-    private InfiniteScrollAdapter<?> infiniteAdapter;
     private void setUpSuggestionRecyclerview() {
-        rvSugesstion=view.findViewById(R.id.rvSugesstion);
-
-
+        rvSugesstion = view.findViewById(R.id.rvSugesstion);
         rvSugesstion.setOrientation(DSVOrientation.HORIZONTAL);
-        adapterSuggestion=new HomeSuggestionAdapter(suggestionList, new AdapterClickListener() {
-            @Override
-            public void onItemClick(View view, int postion, Object object) {
-                FollowingModel item= (FollowingModel) object;
-                if (view.getId()==R.id.tvFollowBtn)
-                {
-                    if (Functions.checkLoginUser(getActivity()))
-                    {
-                        followSuggestedUser(item.fb_id,postion);
-                    }
 
+        adapterSuggestion = new HomeSuggestionAdapter(suggestionList, (view, postion, object) -> {
+            FollowingModel item = (FollowingModel) object;
+            if (view.getId() == R.id.tvFollowBtn) {
+                if (Functions.checkLoginUser(getActivity())) {
+                    followSuggestedUser(item.fb_id, postion);
                 }
-                else
-                if (view.getId()==R.id.user_image)
-                {
-                    if(Functions.checkProfileOpenValidation(item.fb_id)) {
-                        Intent intent = new Intent(view.getContext(), ProfileA.class);
-                        intent.putExtra("user_id", item.fb_id);
-                        intent.putExtra("user_name", item.username);
-                        intent.putExtra("user_pic", item.getProfile_pic());
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-                    }
+
+            } else if (view.getId() == R.id.user_image) {
+                if (Functions.checkProfileOpenValidation(item.fb_id)) {
+                    Intent intent = new Intent(view.getContext(), ProfileA.class);
+                    intent.putExtra("user_id", item.fb_id);
+                    intent.putExtra("user_name", item.username);
+                    intent.putExtra("user_pic", item.getProfile_pic());
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }
-                else
-                if (view.getId()==R.id.ivCross)
-                {
-                    suggestionList.remove(postion);
-                    adapterSuggestion.notifyDataSetChanged();
-                }
+
+            } else if (view.getId() == R.id.ivCross) {
+                suggestionList.remove(postion);
+                adapterSuggestion.notifyDataSetChanged();
             }
         });
+
         infiniteAdapter = InfiniteScrollAdapter.wrap(adapterSuggestion);
         rvSugesstion.setAdapter(infiniteAdapter);
         rvSugesstion.setItemTransitionTimeMillis(150);
         rvSugesstion.setItemTransformer(new ScaleTransformer.Builder()
-                .setMinScale(0.8f)
-                .build());
+            .setMinScale(0.8f)
+            .build());
 
-        if (suggestionList.isEmpty())
-        {
+        if (suggestionList.isEmpty()) {
             getSuggestionUserList();
         }
 
@@ -500,11 +444,10 @@ public class HomeF extends Fragment implements FragmentCallBack {
         }
 
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showSuggestedUsers, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showSuggestedUsers, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
-
+                Functions.checkStatus(getActivity(), resp);
                 suggestionList.clear();
 
                 try {
@@ -516,49 +459,37 @@ public class HomeF extends Fragment implements FragmentCallBack {
 
                             JSONObject object = msgArray.optJSONObject(i);
                             JSONArray videoArray = object.getJSONArray("Video");
-                            UserModel userDetailModel= DataParsing.getUserDataModel(object.optJSONObject("User"));
+                            UserModel userDetailModel = DataParsing.getUserDataModel(object.optJSONObject("User"));
 
                             FollowingModel item = new FollowingModel();
                             item.fb_id = userDetailModel.getId();
                             item.first_name = userDetailModel.getFirstName();
-                            item.last_name =userDetailModel.getLastName();
+                            item.last_name = userDetailModel.getLastName();
                             item.bio = userDetailModel.getBio();
                             item.username = userDetailModel.getUsername();
 
                             item.setProfile_pic(userDetailModel.getProfilePic());
-
                             item.follow_status_button = "follow";
 
-                            if (videoArray.length()>0)
-                            {
+                            if (videoArray.length() > 0) {
                                 item.setGifLink(videoArray.getJSONObject(0).optString("gif"));
-                            }
-                            else
-                            {
+                            } else {
                                 item.setGifLink("");
                             }
-
 
                             suggestionList.add(item);
                             adapterSuggestion.notifyDataSetChanged();
                         }
 
-                        if (suggestionList.isEmpty())
-                        {
+                        if (suggestionList.isEmpty()) {
                             view.findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
+                        } else {
                             view.findViewById(R.id.tvNoSuggestionFound).setVisibility(View.GONE);
                         }
 
                     } else {
                         view.findViewById(R.id.tvNoSuggestionFound).setVisibility(View.VISIBLE);
                     }
-
-
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -566,18 +497,16 @@ public class HomeF extends Fragment implements FragmentCallBack {
         });
     }
 
-    private void followSuggestedUser(String userId,int position) {
+    private void followSuggestedUser(String userId, int position) {
         Functions.callApiForFollowUnFollow(getActivity(),
                 Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
                 userId,
                 new APICallBack() {
                     @Override
-                    public void arrayData(ArrayList arrayList) {
-                    }
+                    public void arrayData(ArrayList arrayList) { }
 
                     @Override
                     public void onSuccess(String responce) {
-
                         suggestionList.remove(position);
                         adapterSuggestion.notifyDataSetChanged();
                         callVideoApi();
@@ -587,95 +516,74 @@ public class HomeF extends Fragment implements FragmentCallBack {
                     public void onFail(String responce) {
 
                     }
-
                 });
-
     }
-
 
     @Override
     public void onPause() {
         super.onPause();
-
-        if(pagerSatetAdapter !=null && pagerSatetAdapter.getCount()>0) {
-
+        if (pagerSatetAdapter != null && pagerSatetAdapter.getCount() > 0) {
             VideosListF fragment = (VideosListF) pagerSatetAdapter.getItem(menuPager.getCurrentItem());
             fragment.mainMenuVisibility(false);
         }
-
     }
 
     public void callVideoApi() {
         isApiRuning = true;
         if (type.equalsIgnoreCase("following")) {
-
             callApiForGetFollowingvideos();
-        }
-        else {
 
+        } else {
             callApiForGetAllvideos();
         }
     }
-
 
     // api for get the videos list from server
     private void callApiForGetAllvideos() {
         JSONObject parameters = new JSONObject();
         try {
-
             if (Functions.getSharedPreference(context).getString(Variables.U_ID, null) != null) {
                 parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, "0"));
             }
             parameters.put("device_id", Functions.getSharedPreference(context).getString(Variables.DEVICE_ID, "0"));
-            parameters.put("starting_point", "" + page_count);
+            parameters.put("starting_point", String.valueOf(page_count));
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showRelatedVideos, parameters, Functions.getHeaders(getActivity()),new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showRelatedVideos, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 swiperefresh.setRefreshing(false);
                 parseData(resp);
             }
         });
-
-
     }
 
     // call the api for get the api list of the follower user list
     private void callApiForGetFollowingvideos() {
-
         JSONObject parameters = new JSONObject();
         try {
-
             if (Functions.getSharedPreference(context).getString(Variables.U_ID, null) != null)
                 parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, "0"));
 
             parameters.put("device_id", Functions.getSharedPreference(context).getString(Variables.DEVICE_ID, "0"));
-            parameters.put("starting_point", "" + page_count);
-
-        }
-
-        catch (Exception e) {
+            parameters.put("starting_point", String.valueOf(page_count));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showFollowingVideos, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showFollowingVideos, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 swiperefresh.setRefreshing(false);
                 parseData(resp);
             }
         });
-
-
     }
-
 
     // parse the list of the videos
     public void parseData(String responce) {
@@ -698,37 +606,33 @@ public class HomeF extends Fragment implements FragmentCallBack {
 
                     HomeModel item = Functions.parseVideoData(user, sound, video, userPrivacy, pushNotification);
 
-                    if (item.username!=null && !(item.username.equals("null")))
-                    {
-                          if (Constants.IS_DEMO_APP) {
-                        if (i < Constants.DEMO_APP_VIDEOS_COUNT)
+                    if (item.username != null && !(item.username.equals("null"))) {
+                        if (Constants.IS_DEMO_APP) {
+                            if (i < Constants.DEMO_APP_VIDEOS_COUNT)
+                                temp_list.add(item);
+                        } else {
                             temp_list.add(item);
+                        }
                     }
-                    else {
-                        temp_list.add(item);
-                    }
-
-                    }
-
-
-
                 }
 
                 Collections.shuffle(temp_list);
 
-
-                if(dataList.isEmpty()){
+                if (dataList.isEmpty()) {
                     setTabs(false);
                 }
+
                 dataList.addAll(temp_list);
 
                 for (HomeModel item : temp_list) {
-                    pagerSatetAdapter.addFragment(new VideosListF(false,item,menuPager, this,R.id.mainMenuFragment));
+                    pagerSatetAdapter.addFragment(new VideosListF(false, item, menuPager, this, R.id.mainMenuFragment));
                 }
+
                 pagerSatetAdapter.refreshStateSet(false);
                 pagerSatetAdapter.notifyDataSetChanged();
-                if (!(swiperefresh.isEnabled()))
-                {swiperefresh.setEnabled(false);}
+                if (!(swiperefresh.isEnabled())) {
+                    swiperefresh.setEnabled(false);
+                }
 
                 tabNoFollower.setVisibility(View.GONE);
                 menuPager.setVisibility(View.VISIBLE);
@@ -745,61 +649,51 @@ public class HomeF extends Fragment implements FragmentCallBack {
                 }
             }
         } catch (Exception e) {
-            Log.d(Constants.TAG_,"Exception: showRelatedVideos "+e);
+            Log.d(Constants.TAG_, "Exception: showRelatedVideos " + e);
 
-            if(page_count>0)
+            if (page_count > 0)
                 page_count--;
 
         } finally {
             isApiRuning = false;
             updatePlaylistView();
         }
-
     }
 
-    private static int callbackVideoLisCode=3292;
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==callbackVideoLisCode)
-        {
-            Bundle bundle=new Bundle();
-            bundle.putBoolean("isShow",true);
+        if (requestCode == callbackVideoLisCode) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isShow", true);
             VideosListF.videoListCallback.onResponce(bundle);
         }
     }
 
-
     public void showCustomAd() {
-        if(is_visible_to_user && (type!=null && type.equalsIgnoreCase("related"))) {
+        if (is_visible_to_user && (type != null && type.equalsIgnoreCase("related"))) {
 
             view.findViewById(R.id.top_btn_layout).setVisibility(View.GONE);
 
             if (MainMenuActivity.tabLayout != null)
                 MainMenuActivity.tabLayout.setVisibility(View.GONE);
-
         }
     }
 
     public void hideCustomad() {
-
         if (MainMenuActivity.tabLayout != null) {
             MainMenuActivity.tabLayout.setVisibility(View.VISIBLE);
         }
 
         view.findViewById(R.id.top_btn_layout).setVisibility(View.VISIBLE);
 
-        if(MainMenuActivity.mainMenuActivity!=null)
+        if (MainMenuActivity.mainMenuActivity != null)
             MainMenuActivity.mainMenuActivity.setRoomListerner();
-
-
     }
 
-
-    InterstitialAd mInterstitialAd;
     public void initGoogleAdd() {
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(context,context.getString(R.string.my_Interstitial_Add), adRequest,
+        InterstitialAd.load(context, context.getString(R.string.my_Interstitial_Add), adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -807,7 +701,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                         // an ad is loaded.
                         mInterstitialAd = interstitialAd;
                         Log.d(Constants.TAG_, "onAdLoaded");
-                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                             @Override
                             public void onAdClicked() {
                                 // Called when a click is recorded for an ad.
@@ -820,8 +714,7 @@ public class HomeF extends Fragment implements FragmentCallBack {
                                 // Set the ad reference to null so you don't show the ad a second time.
                                 Log.d(Constants.TAG_, "Ad dismissed fullscreen content.");
                                 mInterstitialAd = null;
-                                if (getActivity()!=null)
-                                {
+                                if (getActivity() != null) {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -852,22 +745,21 @@ public class HomeF extends Fragment implements FragmentCallBack {
                                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (getActivity()!=null)
-                                        {
+                                        if (getActivity() != null) {
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     try {
                                                         VideosListF fragment = (VideosListF) pagerSatetAdapter.getItem(menuPager.getCurrentItem());
                                                         fragment.exoplayer.setPlayWhenReady(false);
+                                                    } catch (Exception e) {
+                                                        Log.d(Constants.TAG_, "Exception: " + e);
                                                     }
-                                                    catch (Exception e)
-                                                    {Log.d(Constants.TAG_,"Exception: "+e);}
                                                 }
                                             });
                                         }
                                     }
-                                },1000);
+                                }, 1000);
                             }
                         });
 
@@ -875,7 +767,6 @@ public class HomeF extends Fragment implements FragmentCallBack {
                             mInterstitialAd.show(getActivity());
                         }
                     }
-
 
 
                     @Override
@@ -889,11 +780,6 @@ public class HomeF extends Fragment implements FragmentCallBack {
                 });
     }
 
-
-    private AdColonyInterstitial interstitialAdColony;
-    private AdColonyInterstitialListener interstitialListener;
-    private AdColonyAdOptions interstitialAdOptions;
-    private static boolean isInterstitialLoaded;
     private void initInterstitialAdColonyAd() {
 
         // Set up listener for interstitial ad callbacks.
@@ -962,11 +848,6 @@ public class HomeF extends Fragment implements FragmentCallBack {
         }
     }
 
-
-
-    // this will call when go to the home tab From other tab.
-    // this is very importent when for video play and pause when the focus is changes
-    boolean is_visible_to_user;
     @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
@@ -977,23 +858,18 @@ public class HomeF extends Fragment implements FragmentCallBack {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (tabNoFollower.getVisibility()==View.VISIBLE)
-                    {
+                    if (tabNoFollower.getVisibility() == View.VISIBLE) {
                         onPause();
-                    }
-                    else
-                    {
+                    } else {
                         VideosListF fragment = (VideosListF) pagerSatetAdapter.getItem(menuPager.getCurrentItem());
                         fragment.mainMenuVisibility(is_visible_to_user);
                     }
                 }
-            },200);
+            }, 200);
 
         }
 
     }
-
-
 
     @Override
     public void onDestroy() {
@@ -1003,8 +879,20 @@ public class HomeF extends Fragment implements FragmentCallBack {
             getActivity().unregisterReceiver(mReceiver);
             mReceiver = null;
         }
-
     }
 
+    private class UploadingVideoBroadCast extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Functions.isMyServiceRunning(context, UploadService.class)) {
+                uploadVideoLayout.setVisibility(View.VISIBLE);
+                Bitmap bitmap = Functions.base64ToBitmap(Functions.getSharedPreference(context).getString(Variables.UPLOADING_VIDEO_THUMB, ""));
+                if (bitmap != null)
+                    uploadingThumb.setImageBitmap(bitmap);
 
+            } else {
+                uploadVideoLayout.setVisibility(View.GONE);
+            }
+        }
+    }
 }

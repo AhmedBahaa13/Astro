@@ -49,10 +49,8 @@ import com.uni.astro.activitesfragments.profile.models.CloseFriendModel
 import com.uni.astro.activitesfragments.profile.privatevideos.PrivateVideoF
 import com.uni.astro.activitesfragments.profile.usersstory.ViewStoryA
 import com.uni.astro.activitesfragments.profile.uservideos.UserVideoF
-import com.uni.astro.adapters.ViewPagerAdapter
 import com.uni.astro.apiclasses.ApiLinks
 import com.uni.astro.databinding.FragmentProfileTabBinding
-import com.uni.astro.databinding.ItemTabsProfileMenuBinding
 import com.uni.astro.databinding.LayoutProfileBottomTabsBinding
 import com.uni.astro.databinding.ShowLikesAlertPopupDialogBinding
 import com.uni.astro.models.InboxModel
@@ -77,16 +75,14 @@ class ProfileTabF : Fragment() {
     private lateinit var bottomTabsBinding: LayoutProfileBottomTabsBinding
 
     private val tabIcons = intArrayOf(
-        R.drawable.ic_my_video_select,
-        R.drawable.ic_liked_video_gray,
-        R.drawable.ic_repost_gray,
-        R.drawable.ic_fav_gray,
-        R.drawable.ic_lock_gray
+        R.drawable.ic_videos,
+        R.drawable.ic_like_list,
+        R.drawable.ic_repost_tab,
+        R.drawable.ic_bookmark,
+        R.drawable.ic_private
     )
 
     private var totalLikes = ""
-
-    private var adapter: ViewPagerAdapter? = null
 
     private var myVideosTab: UserVideoF? = null
     private var pushNotificationSettingModel: PushNotificationSettingModel? = null
@@ -102,7 +98,7 @@ class ProfileTabF : Fragment() {
     private var profileGif: String? = null
     private var followerCount: String? = null
     private var followingCount: String? = null
-    private var myvideoCount = 0
+    private var myVideoCount = 0
 
     private val closeFriends: List<CloseFriendModel> = ArrayList()
     private val closeFriendsPicList: MutableList<ImageView> = ArrayList()
@@ -171,9 +167,18 @@ class ProfileTabF : Fragment() {
 
             closeFriendsPicList.add(closeFriend1)
             closeFriendsPicList.add(closeFriend2)
-            Log.d(TAG_, "onCreate: " + closeFriends.size)
+            Log.d(TAG_, "CLOSE-FRIEND-SIZE: " + closeFriends.size)
 
-            closeFriend1.setOnClickListener { view: View? ->
+            if (closeFriends.isEmpty()) {
+                closeFriend1.visibility = View.GONE
+                closeFriend2.visibility = View.GONE
+
+            } else if (closeFriends.size == 1) {
+                closeFriend1.visibility = View.VISIBLE
+                closeFriend2.visibility = View.GONE
+            }
+
+            closeFriend1.setOnClickListener {
                 val intent = Intent(requireActivity(), ProfileA::class.java)
                 intent.putExtra("user_id", closeFriends[0].fb_id)
                 intent.putExtra("user_name", closeFriends[0].username)
@@ -182,7 +187,7 @@ class ProfileTabF : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
             }
 
-            closeFriend2.setOnClickListener { view: View? ->
+            closeFriend2.setOnClickListener {
                 val intent = Intent(requireActivity(), ProfileA::class.java)
                 intent.putExtra("user_id", closeFriends[1].fb_id)
                 intent.putExtra("user_name", closeFriends[1].username)
@@ -236,7 +241,7 @@ class ProfileTabF : Fragment() {
 
                     when (tab.position) {
                         0 -> {
-                            if (myvideoCount > 0) {
+                            if (myVideoCount > 0) {
                                 bind.createPopupLayout.visibility = View.GONE
                             } else {
                                 bind.createPopupLayout.visibility = View.VISIBLE
@@ -632,7 +637,7 @@ class ProfileTabF : Fragment() {
 
                 when (tab.position) {
                     0 -> {
-                        if (myvideoCount > 0) {
+                        if (myVideoCount > 0) {
                             bind.createPopupLayout.visibility = View.GONE
                         } else {
                             bind.createPopupLayout.visibility = View.VISIBLE
@@ -936,9 +941,9 @@ class ProfileTabF : Fragment() {
                 bind.followCountTxt.text = Functions.getSuffix(followingCount)
                 bind.fanCountTxt.text = Functions.getSuffix(followerCount)
                 bind.heartCountTxt.text = Functions.getSuffix(totalLikes)
-                myvideoCount = Functions.parseInterger(userDetailModel.videoCount)
+                myVideoCount = Functions.parseInterger(userDetailModel.videoCount)
 
-                if (myvideoCount != 0) {
+                if (myVideoCount != 0) {
                     bind.createPopupLayout.visibility = View.GONE
                     bind.createPopupLayout.clearAnimation()
                 } else {

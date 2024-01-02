@@ -67,7 +67,7 @@
                 android:layout_toStartOf="@+id/menu_btn"
                 android:background="@color/transparent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_normal_notification"
+                android:src="@drawable/ic_notification"
                 app:tint="@color/black" />
 
 

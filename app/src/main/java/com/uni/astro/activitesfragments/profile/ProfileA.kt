@@ -70,8 +70,8 @@ class ProfileA : AppCompatLocaleActivity() {
     private lateinit var bottomTabsBind: LayoutOtherProfileBottomTabsBinding
 
     private val tabIcons = intArrayOf(
-        R.drawable.ic_my_video_select,
-        R.drawable.ic_liked_video_gray
+        R.drawable.ic_videos,
+        R.drawable.ic_like_list
     )
 
     private var isdataload = false

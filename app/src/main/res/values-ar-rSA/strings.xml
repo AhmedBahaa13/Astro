@@ -237,6 +237,7 @@
     <string name="setting_and_privacy">الإعدادات و الخصوصية</string>
     <string name="account">الحساب</string>
     <string name="manage_account">إدارة الحساب</string>
+    <string name="close_friends">إداره الأصدقاء المقربين</string>
     <string name="privacy">الخصوصية</string>
     <string name="balance">الرصيد</string>
     <string name="qr_code">رمز المسح الضوئي QR</string>
