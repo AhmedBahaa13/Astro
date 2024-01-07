@@ -67,7 +67,7 @@
     <string name="favourites">Favourites</string>
     <string name="live_users">Live Users</string>
     <string name="no_other_user_is_live_at_that_time_n_click_of_go_live_for_live_video_streaming">No other user is live at that time.\n click of \'Go Live\' for live video streaming.</string>
-    <string name="notifications">Notifications</string>
+    <string name="notifications">notification</string>
     <string name="enter_4_digit_code">Enter 4 digit Code</string>
     <string name="your_code_was_sent_to">Your code was sent to</string>
     <string name="reset">Reset</string>
