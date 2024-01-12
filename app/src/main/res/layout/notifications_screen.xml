@@ -87,23 +87,22 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
         android:fontFamily="@font/baloo2"
-        tools:text="name"
         android:textColor="@color/black"
         android:textSize="15sp"
         android:textStyle="normal"
         ads:layout_constraintEnd_toEndOf="@+id/image_friend"
         ads:layout_constraintStart_toStartOf="@+id/image_friend"
-        ads:layout_constraintTop_toBottomOf="@+id/image_friend" />
+        ads:layout_constraintTop_toBottomOf="@+id/image_friend"
+        tools:text="name" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_19sdp"
-        ads:layout_constraintTop_toBottomOf="@id/image_add"
-        ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toBottomOf="@id/image_add"
         tools:itemCount="5"
-        tools:listitem="@layout/notification_item_screen"
-        />
+        tools:listitem="@layout/kamel_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>
