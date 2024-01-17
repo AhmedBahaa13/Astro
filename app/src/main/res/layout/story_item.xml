@@ -2,17 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@color/white">
 
     <ImageView
         android:id="@+id/image_friend"
         android:layout_width="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
         android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
         android:contentDescription="@string/profile_picture"
         android:src="@drawable/profile"
+        ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
         ads:layout_constraintTop_toTopOf="parent" />
 
@@ -21,7 +22,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
         android:fontFamily="@font/baloo2"
         android:textColor="@color/black"
         android:textSize="15sp"
