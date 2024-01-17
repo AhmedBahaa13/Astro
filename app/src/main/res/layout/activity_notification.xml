@@ -12,59 +12,80 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/d_bottom_gray_line"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_18sdp"
+            android:gravity="center"
             android:paddingStart="@dimen/_12sdp"
             android:paddingEnd="@dimen/_12sdp">
+
 
             <TextView
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:fontFamily="@font/baloo"
                 android:text="@string/notifications"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_13sdp"
-                android:textStyle="bold" />
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/image_send"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:contentDescription="@string/send"
+                android:src="@drawable/send"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
             android:layout_above="@+id/bannerad"
-            android:layout_below="@+id/toolbar">
+            android:layout_below="@+id/toolbar"
+            android:layout_centerHorizontal="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <RelativeLayout
-                    android:paddingHorizontal="@dimen/_12sdp"
                     android:id="@+id/storyViewStart"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_80sdp">
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:paddingHorizontal="@dimen/_12sdp">
 
 
                     <LinearLayout
-                        android:layout_alignParentStart="true"
                         android:id="@+id/tabCreateStory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:orientation="vertical">
 
                         <RelativeLayout
                             android:layout_width="@dimen/_50sdp"
@@ -102,52 +123,51 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/create"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_10sdp"
-                            android:textStyle="normal"
                             android:gravity="center"
                             android:minLines="2"
                             android:paddingHorizontal="@dimen/_2sdp"
-                            />
+                            android:text="@string/create"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="normal" />
 
                     </LinearLayout>
 
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:visibility="gone"
-                        android:layout_marginStart="@dimen/_6sdp"
                         android:id="@+id/storyRecyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentBottom="true"
+                        android:layout_marginStart="@dimen/_6sdp"
                         android:layout_toEndOf="@+id/tabCreateStory"
-                        android:overScrollMode="never" />
+                        android:overScrollMode="never"
+                        android:visibility="gone" />
 
 
                 </RelativeLayout>
 
 
                 <RelativeLayout
-                    android:layout_below="@+id/storyViewStart"
-                    android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/storyViewStart"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true">
 
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/dataContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_above="@+id/load_more_progress"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recylerview"
@@ -157,27 +177,25 @@
                     </LinearLayout>
 
 
-
-
-
                     <RelativeLayout
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
                         android:id="@+id/no_data_layout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
                         android:background="@color/white"
                         android:paddingStart="@dimen/_12sdp"
                         android:paddingEnd="@dimen/_12sdp"
                         android:visibility="gone">
+
                         <TextView
                             android:id="@+id/whoops"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
                             android:layout_centerHorizontal="true"
                             android:text="@string/whoops"
-                            android:layout_centerInParent="true"
                             android:textColor="@color/dimgray"
                             android:textSize="@dimen/_15sdp" />
 
@@ -197,11 +215,11 @@
 
 
                     <ProgressBar
-                        android:layout_alignParentBottom="true"
                         android:id="@+id/load_more_progress"
                         style="?android:attr/progressBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:theme="@style/ProgressbarStyle"
                         android:visibility="gone" />
@@ -216,35 +234,34 @@
             </RelativeLayout>
 
 
-
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
         <RelativeLayout
+            android:id="@+id/bannerMainLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bannerMainLayout"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginBottom="@dimen/_4sdp"
-            android:layout_alignParentBottom="true">
+            android:layout_marginBottom="@dimen/_4sdp">
 
             <LinearLayout
                 android:id="@+id/banneradColony"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp"
-                android:visibility="gone"
-                android:layout_centerHorizontal="true"/>
+                android:visibility="gone" />
 
             <com.google.android.gms.ads.AdView
                 android:id="@+id/banneradGoogle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                ads:adSize="BANNER"
                 android:visibility="gone"
+                ads:adSize="BANNER"
                 ads:adUnitId="@string/banner_ad" />
 
         </RelativeLayout>
