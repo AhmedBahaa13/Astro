@@ -8,15 +8,14 @@
     android:background="@color/white">
 
 
-
     <RelativeLayout
-        android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/_12sdp"
-        android:layout_marginEnd="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
         android:layout_marginBottom="@dimen/_8sdp">
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -80,9 +79,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_4sdp"
+                    android:gravity="start|center_vertical"
                     android:maxLines="2"
                     android:text="@string/user_name_upload_a_video"
-                    android:gravity="start|center_vertical"
                     android:textAlignment="viewStart"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10sdp" />
@@ -91,42 +90,42 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:visibility="gone"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:id="@+id/rightView"
                 android:layout_width="@dimen/_55sdp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone">
 
                 <LinearLayout
-                    android:visibility="visible"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/btnAcceptRequest"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_22sdp"
                         android:background="@drawable/button_rounded_background_green"
-                        android:text="@string/accept"
                         android:gravity="center"
+                        android:text="@string/accept"
                         android:textColor="@color/whiteColor"
                         android:textSize="@dimen/_10sdp"
                         android:textStyle="bold" />
 
 
                     <TextView
-                        android:layout_marginTop="@dimen/_4sdp"
                         android:id="@+id/btnDeleteRequest"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_22sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:background="@drawable/button_rounded_background_red"
-                        android:text="@string/delete"
                         android:gravity="center"
+                        android:text="@string/delete"
                         android:textColor="@color/whiteColor"
                         android:textSize="@dimen/_10sdp"
                         android:textStyle="bold" />
@@ -134,32 +133,32 @@
                 </LinearLayout>
 
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/watch_btn"
-                    android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_28sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/button_rounded_background"
+                    android:gravity="center"
                     android:text="@string/watch"
                     android:textColor="@color/whiteColor"
                     android:textSize="@dimen/_10sdp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/follow_btn"
-                    android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_28sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/button_rounded_background"
+                    android:gravity="center"
                     android:text="@string/follow_back"
                     android:textColor="@color/whiteColor"
                     android:textSize="@dimen/_8sdp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
@@ -170,8 +169,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:background="@color/dimgray"
         android:orientation="vertical" />
 

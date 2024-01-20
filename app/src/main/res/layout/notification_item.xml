@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:fontFamily="@font/baloo"
+        android:textColor="#FFDCE6ED"
+        android:textSize="12sp"
+        ads:layout_constraintBottom_toBottomOf="@+id/view"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toTopOf="@+id/view"
+        tools:text="12:00" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:background="#FFE5E5E5"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toTopOf="parent"
+        ads:layout_constraintWidth_percent="0.6" />
+
+    <ImageView
+        android:id="@+id/image_friend_profile"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:contentDescription="@string/profile_picture"
+        android:src="@drawable/profile"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:fontFamily="@font/baloo2"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        ads:layout_constraintStart_toEndOf="@+id/image_friend_profile"
+        ads:layout_constraintTop_toTopOf="@+id/image_friend_profile"
+        tools:text="name" />
+
+    <TextView
+        android:id="@+id/text_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:fontFamily="@font/baloo2"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        ads:layout_constraintStart_toEndOf="@+id/image_friend_profile"
+        ads:layout_constraintTop_toBottomOf="@id/text_name"
+        tools:text="love"
+        tools:textColor="#FFF24060" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:fontFamily="@font/baloo2"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        ads:layout_constraintStart_toEndOf="@+id/text_status"
+        ads:layout_constraintTop_toBottomOf="@id/text_name"
+        tools:text="love"
+        tools:textColor="#6F7C84" />
+
+    <ImageView
+        android:id="@+id/image_state"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_22sdp"
+        android:contentDescription="@string/send"
+        tools:src="@drawable/love"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
