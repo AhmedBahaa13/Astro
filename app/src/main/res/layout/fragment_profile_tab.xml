@@ -99,7 +99,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:paddingHorizontal="@dimen/_4sdp"
-                    android:src="@drawable/ic_view_profile"
+                    android:src="@drawable/ic_earth"
                     app:tint="@color/black" />
 
                 <RelativeLayout
@@ -283,15 +283,15 @@
                             android:orientation="vertical">
 
                             <RelativeLayout
-                                android:layout_width="@dimen/_85sdp"
-                                android:layout_height="@dimen/_85sdp"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_120sdp"
                                 android:layout_marginTop="@dimen/_22sdp">
 
 
                                 <com.facebook.drawee.view.SimpleDraweeView
                                     android:id="@+id/user_image"
-                                    android:layout_width="@dimen/_80sdp"
-                                    android:layout_height="@dimen/_80sdp"
+                                    android:layout_width="@dimen/_120sdp"
+                                    android:layout_height="@dimen/_120sdp"
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentBottom="true"
                                     android:layout_centerHorizontal="true"
@@ -411,18 +411,6 @@
 
                                 </LinearLayout>
 
-                                <RelativeLayout
-                                    android:layout_width="@dimen/_15sdp"
-                                    android:layout_height="match_parent">
-
-                                    <View
-                                        android:alpha="0.2"
-                                        android:background="@color/darkgray"
-                                        android:layout_width="@dimen/_1sdp"
-                                        android:layout_height="@dimen/_22sdp"
-                                        android:layout_centerInParent="true" />
-                                </RelativeLayout>
-
                                 <LinearLayout
                                     android:id="@+id/fans_layout"
                                     android:layout_width="wrap_content"
@@ -457,19 +445,6 @@
                                         android:textSize="@dimen/_10sdp"
                                         android:textStyle="bold" />
                                 </LinearLayout>
-
-
-                                <RelativeLayout
-                                    android:layout_width="@dimen/_15sdp"
-                                    android:layout_height="match_parent">
-
-                                    <View
-                                        android:alpha="0.2"
-                                        android:background="@color/darkgray"
-                                        android:layout_width="@dimen/_1sdp"
-                                        android:layout_height="@dimen/_22sdp"
-                                        android:layout_centerInParent="true" />
-                                </RelativeLayout>
 
 
                                 <LinearLayout
