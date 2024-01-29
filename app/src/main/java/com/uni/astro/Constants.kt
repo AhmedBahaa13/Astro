@@ -1,7 +1,7 @@
 package com.uni.astro
 
 object Constants {
-    const val BASE_URL = "http://www.astrowolf.me/new_astro/"
+    const val BASE_URL = "http://www.astrowolf.me/"
     const val API_KEY = "156c4675-9608-4591-1111-00000"
 
     const val REFERRAL_LINK = BASE_URL + "ref/?code="
@@ -15,8 +15,8 @@ object Constants {
     const val AD_COLONY_BANNER_ID = "vzdb67721f381948c292"
     const val AD_COLONY_INTERSTITIAL_ID = "vza31e4740f6e94f5d9b"
     val AD_COLONY_UNIT_Zone_Ids = arrayOf(AD_COLONY_BANNER_ID, AD_COLONY_INTERSTITIAL_ID)
-    const val privacy_policy = "encept.co"
-    const val terms_conditions = "encept.co"
+    const val privacy_policy = "encept.online"
+    const val terms_conditions = "encept.online"
 
     // if you want a user can't share a video from your app then you have to set this value to true
     const val IS_SECURE_INFO = false
