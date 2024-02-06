@@ -6,9 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -23,7 +21,6 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -36,6 +33,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
 import com.uni.astro.Constants.TAG_
 import com.uni.astro.R
 import com.uni.astro.activitesfragments.InboxA
@@ -100,7 +98,7 @@ class ProfileTabF : Fragment() {
     private var followingCount: String? = null
     private var myVideoCount = 0
 
-    private val closeFriends: List<CloseFriendModel> = ArrayList()
+    private val closeFriends: MutableList<CloseFriendModel> = ArrayList()
     private val closeFriendsPicList: MutableList<ImageView> = ArrayList()
 
 
@@ -178,23 +176,6 @@ class ProfileTabF : Fragment() {
                 closeFriend2.visibility = View.GONE
             }
 
-            closeFriend1.setOnClickListener {
-                val intent = Intent(requireActivity(), ProfileA::class.java)
-                intent.putExtra("user_id", closeFriends[0].fb_id)
-                intent.putExtra("user_name", closeFriends[0].username)
-                intent.putExtra("user_pic", closeFriends[0].profile_pic)
-                startActivity(intent)
-                requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
-            }
-
-            closeFriend2.setOnClickListener {
-                val intent = Intent(requireActivity(), ProfileA::class.java)
-                intent.putExtra("user_id", closeFriends[1].fb_id)
-                intent.putExtra("user_name", closeFriends[1].username)
-                intent.putExtra("user_pic", closeFriends[1].profile_pic)
-                startActivity(intent)
-                requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
-            }
 
             userImage.setOnClickListener(DebounceClickHandler {
                 if (circleStatusBar.visibility == View.VISIBLE) {
@@ -508,31 +489,67 @@ class ProfileTabF : Fragment() {
 
         VolleyRequest.JsonPostRequest(requireActivity(), ApiLinks.showCloseFriends, parameters, Functions.getHeaders(requireContext())) { resp: String? ->
             Functions.checkStatus(requireActivity(), resp)
-
+            Log.d("CloseFriends", "getCloseFriends: $resp")
             try {
+
                 val response = JSONObject(resp)
                 if (response.optString("code") == "200") {
                     val closeFriendsArray = response.optJSONArray("msg")
 
                     if (closeFriendsArray != null && closeFriendsArray.length() != 0) {
+                        closeFriends.clear()
                         for (i in 0 until closeFriendsArray.length()) {
                             val item = closeFriendsArray.getJSONObject(i)
-                            closeFriend.profile_pic = item.optString("profile_pic_small")
-                            closeFriend.fb_id = item.optString("user_id")
-                            Glide.with(requireContext()).load(closeFriend.profile_pic)
+                            closeFriend.setProfile_pic(item.optString("profile_pic_small"))
+                            closeFriend.id = item.optString("user_id")
+
+
+                            Log.d(TAG_, "getCloseFriends: # of close frirends: $i")
+                            val myModel = Gson().fromJson(item.toString(),CloseFriendModel::class.java)
+                            closeFriends.add(myModel)
+                            Glide.with(requireContext()).load(myModel.getProfile_pic())
                                 .circleCrop()
-                                .placeholder(R.drawable.loading_animation)
                                 .error(R.drawable.baseline_person_24)
                                 .into(closeFriendsPicList!![i])
 
-                            Log.d(TAG_, "getCloseFriends: # of close frirends: $i")
-
+                            Log.d("CloseFriends", "CloseFriends : $closeFriends")
                             closeFriendsPicList!![i].setOnClickListener { view: View? ->
                                 val intent = Intent(requireActivity(), ProfileA::class.java)
-                                intent.putExtra("user_id", closeFriend.fb_id)
+                                intent.putExtra("user_id", myModel.id)
                                 startActivity(intent)
                             }
                         }
+
+                        bind.closeFriend1.setOnClickListener {
+                            val intent = Intent(requireActivity(), ProfileA::class.java)
+                            intent.putExtra("user_id", closeFriends[0].id)
+                            intent.putExtra("user_name", closeFriends[0].username)
+                            intent.putExtra("user_pic", closeFriends[0].getProfile_pic())
+                            startActivity(intent)
+                            requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
+                        }
+
+                        bind.closeFriend2.setOnClickListener {
+                            val intent = Intent(requireActivity(), ProfileA::class.java)
+                            intent.putExtra("user_id", closeFriends[1].id)
+                            intent.putExtra("user_name", closeFriends[1].username)
+                            intent.putExtra("user_pic", closeFriends[1].getProfile_pic())
+                            startActivity(intent)
+                            requireActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left)
+                        }
+
+                        if (closeFriends.isEmpty()) {
+                            bind.closeFriend1.visibility = View.GONE
+                            bind.closeFriend2.visibility = View.GONE
+
+                        } else if (closeFriends.size == 1) {
+                            bind.closeFriend1.visibility = View.VISIBLE
+                            bind.closeFriend2.visibility = View.GONE
+                        }else{
+                            bind.closeFriend1.visibility = View.VISIBLE
+                            bind.closeFriend2.visibility = View.VISIBLE
+                        }
+
                     }
                 }
             } catch (e: Exception) {
@@ -911,8 +928,8 @@ class ProfileTabF : Fragment() {
                         username.text = "$firstName $lastName"
                     }
 
-                    picUrl = userDetailModel.profilePic
-                    profileGif = userDetailModel.profileGif
+                    picUrl = userDetailModel.getProfilePic()
+                    profileGif = userDetailModel.getProfileGif()
 
                     if (profileGif == com.uni.astro.Constants.BASE_URL) {
                         userImage.controller = Functions.frescoImageLoad(picUrl, userImage, false)
@@ -926,7 +943,7 @@ class ProfileTabF : Fragment() {
 
                 val editor = Functions.getSharedPreference(context).edit()
                 editor.putString(Variables.U_PIC, picUrl)
-                editor.putString(Variables.U_GIF, userDetailModel.profileGif)
+                editor.putString(Variables.U_GIF, userDetailModel.getProfileGif())
                 editor.putString(Variables.U_PROFILE_VIEW, userDetailModel.profileView)
                 editor.putString(Variables.U_WALLET, userDetailModel.wallet.toString())
                 editor.putString(Variables.U_total_coins_all_time, userDetailModel.total_all_time_coins.toString())
@@ -936,7 +953,7 @@ class ProfileTabF : Fragment() {
 
                 followingCount = userDetailModel.followingCount
                 followerCount = userDetailModel.followersCount
-                totalLikes = userDetailModel.likesCount
+                totalLikes = userDetailModel.likesCount!!
 
                 bind.followCountTxt.text = Functions.getSuffix(followingCount)
                 bind.fanCountTxt.text = Functions.getSuffix(followerCount)

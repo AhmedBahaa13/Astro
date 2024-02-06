@@ -48,14 +48,14 @@ public class CloseFriendsAdapter extends RecyclerView.Adapter<CloseFriendsAdapte
         );
         holder.userName.setText(
                 context.getString(
-                        R.string.user_name, usersList.get(position).first_name, usersList.get(position).last_name
+                        R.string.user_name, usersList.get(position).getFirst_name(), usersList.get(position).getLast_name()
                 )
         );
 
         holder.userUserName.setText(
-                usersList.get(position).username
+                usersList.get(position).getUsername()
         );
-        holder.radioButton.setChecked(usersList.get(position).isClose);
+        holder.radioButton.setChecked(usersList.get(position).isClose());
     }
 
     @Override

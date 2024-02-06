@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
 import com.uni.astro.R;
 import com.uni.astro.activitesfragments.spaces.models.HomeUserModel;
 import com.uni.astro.databinding.FragmentRoomStreamingSettingBinding;

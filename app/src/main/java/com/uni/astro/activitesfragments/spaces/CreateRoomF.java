@@ -30,6 +30,7 @@ import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.models.UserModel;
 import com.uni.astro.simpleclasses.Functions;
 import com.realpacific.clickshrinkeffect.ClickShrinkUtils;
+import com.uni.astro.interfaces.FragmentCallBack;
 
 import java.util.ArrayList;
 
@@ -127,7 +128,7 @@ public class CreateRoomF extends BottomSheetDialogFragment implements View.OnCli
 
     ArrayList<TopicModel> selectedTopics=new ArrayList<>();
     private void addTopics() {
-        Intent intent=new Intent(getActivity(), InterestPreferenceA.class);
+        Intent intent=new Intent(requireActivity(), InterestPreferenceA.class);
         resultCallback.launch(intent);
     }
 
@@ -189,9 +190,6 @@ public class CreateRoomF extends BottomSheetDialogFragment implements View.OnCli
     }
 
 
-
-
-
     ArrayList<UserModel> selectedFriends;
     private void addFriendsToRoom() {
         final AddFriendsSelectionF fragment = new AddFriendsSelectionF(bundle -> {
@@ -214,7 +212,6 @@ public class CreateRoomF extends BottomSheetDialogFragment implements View.OnCli
         },false);
         fragment.show(getChildFragmentManager(), "AddFriendsSelectionF");
     }
-
 
 
 

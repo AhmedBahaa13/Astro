@@ -2,6 +2,8 @@ package com.uni.astro.activitesfragments.spaces.utils;
 
 import android.app.Activity;
 import android.util.Log;
+
+
 import com.uni.astro.Constants;
 import com.uni.astro.apiclasses.ApiLinks;
 import com.uni.astro.simpleclasses.Functions;
@@ -34,7 +36,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });
@@ -61,7 +63,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });
@@ -88,7 +90,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });
@@ -114,7 +116,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });
@@ -142,7 +144,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });
@@ -168,7 +170,7 @@ public class ApiCalling {
                     }
 
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception : "+e);
+                    Log.d(Constants.tag,"Exception : "+e);
                 }
             }
         });

@@ -363,7 +363,7 @@
                                     android:layout_height="50dp"
                                     android:layout_marginEnd="@dimen/_34sdp"
                                     tools:ignore="ContentDescription"
-                                    tools:src="@mipmap/ic_launcher" />
+                                    android:src="@mipmap/ic_launcher" />
 
                                 <ImageView
                                     android:id="@+id/close_friend_2"
@@ -371,7 +371,7 @@
                                     android:layout_height="50dp"
                                     android:layout_marginStart="@dimen/_5sdp"
                                     tools:ignore="ContentDescription"
-                                    tools:src="@mipmap/ic_launcher" />
+                                    android:src="@mipmap/ic_launcher" />
                             </LinearLayout>
 
 

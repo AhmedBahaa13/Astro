@@ -530,7 +530,7 @@ class ProfileA : AppCompatLocaleActivity() {
                             item.last_name = userDetailModel.lastName
                             item.bio = userDetailModel.bio
                             item.username = userDetailModel.username
-                            item.profile_pic = userDetailModel.profilePic
+                            item.profile_pic = userDetailModel.getProfilePic()
                             item.follow_status_button = "follow"
                             suggestionList.add(item)
                             adapterSuggestion!!.notifyDataSetChanged()
@@ -598,7 +598,7 @@ class ProfileA : AppCompatLocaleActivity() {
 
 
     private fun callApiForGetAllvideos() {
-        if (intent == null) {
+        if (userId == null) {
             userId = Functions.getSharedPreference(this).getString(Variables.U_ID, "0")
         }
         val parameters = JSONObject()
@@ -646,6 +646,7 @@ class ProfileA : AppCompatLocaleActivity() {
                 val msg = jsonObject.optJSONObject("msg")
                 val userObj = msg.optJSONObject("User")
                 val userDetailModel = DataParsing.getUserDataModel(userObj)
+                Log.d("ProfileA", "parseData: $userDetailModel")
                 try {
                     val storyArray = userObj.getJSONArray("story")
                     storyDataList.clear()
@@ -688,11 +689,11 @@ class ProfileA : AppCompatLocaleActivity() {
                 }
 
                 bind.username2Txt.text = Functions.showUsername(userDetailModel.username)
-                picUrl = userDetailModel.profilePic
-                profileGif = userDetailModel.profileGif
-                userPic = userDetailModel.profilePic
+                picUrl = userDetailModel.getProfilePic()!!
+                profileGif = userDetailModel.getProfileGif()!!
+                userPic = userDetailModel.getProfilePic()!!
                 fullName = "$first_name $last_name"
-                buttonStatus = userDetailModel.button.lowercase(Locale.getDefault())
+                buttonStatus = userDetailModel.button?.lowercase(Locale.getDefault())
 
                 if (profileGif == Constants.BASE_URL) {
                     bind.userImage.controller = Functions.frescoImageLoad(picUrl, bind.userImage, false)
@@ -721,9 +722,9 @@ class ProfileA : AppCompatLocaleActivity() {
 
                 followingCount = userDetailModel.followingCount
                 followerCount = userDetailModel.followersCount
-                totalLikes = userDetailModel.likesCount
-                isUserAlreadyBlock = userDetailModel.block
-                blockByUserId = userDetailModel.blockByUser
+                totalLikes = userDetailModel.likesCount!!
+                isUserAlreadyBlock = userDetailModel.block!!
+                blockByUserId = userDetailModel.blockByUser!!
                 notificationType = userDetailModel.notification
                 setUpNotificationIcon(notificationType)
 
@@ -805,7 +806,7 @@ class ProfileA : AppCompatLocaleActivity() {
                     userDetailModel.button.equals("friends", ignoreCase = true)
                 )
 
-                val follow_status = userDetailModel.button.lowercase(Locale.getDefault())
+                val follow_status = userDetailModel.button?.lowercase(Locale.getDefault())
                 if (follow_status.equals("following", ignoreCase = true)) {
                     bind.unFriendBtn.visibility = View.VISIBLE
                     bind.tvFollowBtn.visibility = View.GONE

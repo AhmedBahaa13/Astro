@@ -22,14 +22,14 @@ public class ViewUtil {
     /* package */
     static final boolean checkDoubleTouchEvent(MotionEvent event, View view) {
         if (DEBUG_ENABLED) {
-            Functions.printLog(Constants.TAG_,"dispatchTouchEvent " + mLastTouchTime + " " + event);
+            Functions.printLog(Constants.tag,"dispatchTouchEvent " + mLastTouchTime + " " + event);
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) { // only check touch down event
             if (mLastTouchTime == DEFAULT_TOUCH_TIMESTAMP || (SystemClock.elapsedRealtime() - mLastTouchTime) >= TOUCH_COOL_DOWN_TIME) {
                 mLastTouchTime = SystemClock.elapsedRealtime();
             } else {
-                Functions.printLog(Constants.TAG_,"too many touch events " + view + " " + MotionEvent.ACTION_DOWN);
+                Functions.printLog(Constants.tag,"too many touch events " + view + " " + MotionEvent.ACTION_DOWN);
                 return true;
             }
         }
@@ -39,12 +39,12 @@ public class ViewUtil {
     /* package */
     static final boolean checkDoubleKeyEvent(KeyEvent event, View view) {
         if (DEBUG_ENABLED) {
-            Functions.printLog(Constants.TAG_,"dispatchKeyEvent " + mLastTouchTime + " " + event);
+            Functions.printLog(Constants.tag,"dispatchKeyEvent " + mLastTouchTime + " " + event);
         }
 
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             if (mLastTouchTime != DEFAULT_TOUCH_TIMESTAMP && (SystemClock.elapsedRealtime() - mLastTouchTime) < TOUCH_COOL_DOWN_TIME) {
-                Functions.printLog(Constants.TAG_,"too many key events " + view + " " + KeyEvent.ACTION_DOWN);
+                Functions.printLog(Constants.tag,"too many key events " + view + " " + KeyEvent.ACTION_DOWN);
                 return true;
             }
             mLastTouchTime = SystemClock.elapsedRealtime();

@@ -1019,7 +1019,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     val msg = jsonObject.optJSONObject("msg")
                     val userDetailModel = DataParsing.getUserDataModel(msg.optJSONObject("User"))
                     moveToProfile(
-                        userDetailModel.id, userDetailModel.username, userDetailModel.profilePic
+                        userDetailModel.id!!, userDetailModel.username!!, userDetailModel.getProfilePic()!!
                     )
                 }
             } catch (e: Exception) {
@@ -1190,7 +1190,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     binding.ivJoinProfileOne.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
                         Functions.getUserName(userModel?.getUserModel()),
-                        userModel?.getUserModel()?.profilePic,
+                        userModel?.getUserModel()?.getProfilePic(),
                         binding.ivJoinProfileOne
                     )
                 }
@@ -1201,7 +1201,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     binding.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
                         Functions.getUserName(userModel?.getUserModel()),
-                        userModel?.getUserModel()?.profilePic,
+                        userModel?.getUserModel()?.getProfilePic(),
                         binding.ivJoinProfileTwo
                     )
 
@@ -1211,7 +1211,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     binding.ivJoinProfileTwo.controller = Functions.frescoImageLoad(
                         this@MainMenuActivity,
                         Functions.getUserName(userModel?.getUserModel()),
-                        userModel?.getUserModel()?.profilePic,
+                        userModel?.getUserModel()?.getProfilePic(),
                         binding.ivJoinProfileTwo
                     )
 
@@ -1524,7 +1524,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     private fun makeRoomModeratorAndLeave(itemUpdate: HomeUserModel?) {
         if (model!!.model != null) {
             reference!!.child(Variables.roomKey).child(model!!.model.id).child(Variables.roomUsers)
-                .child(itemUpdate!!.getUserModel().id)
+                .child(itemUpdate!!.getUserModel().id!!)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
@@ -1534,7 +1534,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                             dataItem!!.setUserRoleType("1")
                             reference!!.child(Variables.roomKey).child(model!!.model.id)
                                 .child(Variables.roomUsers)
-                                .child(itemUpdate.getUserModel().id)
+                                .child(itemUpdate.getUserModel().id!!)
                                 .setValue(dataItem).addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         roomManager!!.leaveRoom(model!!.model.id)
@@ -1549,27 +1549,30 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     }
 
     private fun openRiseHandToSpeak() {
-        val riseHandForSpeakF = RiseHandForSpeakF { bundle ->
-            if (bundle.getBoolean("isShow")) {
-                if (bundle.getString("action") == "riseHandForSpeak") {
-                    val riseHandMap = HashMap<String, Any>()
-                    riseHandMap["riseHand"] = "1"
-                    reference!!.child(Variables.roomKey).child(model!!.model.id)
-                        .child(Variables.roomUsers).child(
-                            Functions.getSharedPreference(context).getString(Variables.U_ID, "")!!
-                        )
-                        .updateChildren(riseHandMap)
-                } else if (bundle.getString("action") == "neverMind") {
-                    val riseHandMap = HashMap<String, Any>()
-                    riseHandMap["riseHand"] = "0"
-                    reference!!.child(Variables.roomKey).child(model!!.model.id)
-                        .child(Variables.roomUsers).child(
-                            Functions.getSharedPreference(context).getString(Variables.U_ID, "")!!
-                        )
-                        .updateChildren(riseHandMap)
+        val riseHandForSpeakF =
+            RiseHandForSpeakF { bundle ->
+                if (bundle.getBoolean("isShow")) {
+                    if (bundle.getString("action") == "riseHandForSpeak") {
+                        val riseHandMap = HashMap<String, Any>()
+                        riseHandMap["riseHand"] = "1"
+                        reference!!.child(Variables.roomKey).child(model!!.model.id)
+                            .child(Variables.roomUsers).child(
+                                Functions.getSharedPreference(context)
+                                    .getString(Variables.U_ID, "")!!
+                            )
+                            .updateChildren(riseHandMap)
+                    } else if (bundle.getString("action") == "neverMind") {
+                        val riseHandMap = HashMap<String, Any>()
+                        riseHandMap["riseHand"] = "0"
+                        reference!!.child(Variables.roomKey).child(model!!.model.id)
+                            .child(Variables.roomUsers).child(
+                                Functions.getSharedPreference(context)
+                                    .getString(Variables.U_ID, "")!!
+                            )
+                            .updateChildren(riseHandMap)
+                    }
                 }
             }
-        }
         riseHandForSpeakF.show(supportFragmentManager, "RiseHandForSpeakF")
     }
 
@@ -1593,17 +1596,19 @@ class MainMenuActivity : AppCompatLocaleActivity() {
     }
 
     private fun openRiseHandList() {
-        val fragment = RiseHandUsersF(
-            model!!.model.id,
-            roomFirebaseManager!!.mainStreamingModel.model.riseHandRule
-        ) { bundle ->
-            if (bundle.getBoolean("isShow")) {
-                if (bundle.getString("action") == "invite") {
-                    val itemUpdate = bundle.getSerializable("itemModel") as HomeUserModel?
-                    sendInvitationForSpeak(itemUpdate!!.userModel)
+        val fragment =
+            RiseHandUsersF(
+                model!!.model.id,
+                roomFirebaseManager!!.mainStreamingModel.model.riseHandRule
+            ) { bundle ->
+                if (bundle.getBoolean("isShow")) {
+                    if (bundle.getString("action") == "invite") {
+                        val itemUpdate =
+                            bundle.getSerializable("itemModel") as HomeUserModel?
+                        sendInvitationForSpeak(itemUpdate!!.userModel)
+                    }
                 }
             }
-        }
         fragment.show(supportFragmentManager, "RiseHandUsersF")
     }
 
@@ -1619,7 +1624,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             )
             reference!!.child(Variables.roomKey).child(model!!.model.id)
                 .child(Variables.roomInvitation)
-                .child(userModel.id)
+                .child(userModel.id!!)
                 .setValue(invitation).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Functions.showSuccess(

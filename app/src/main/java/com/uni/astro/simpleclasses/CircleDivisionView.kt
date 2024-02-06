@@ -10,6 +10,9 @@ import android.view.View
 import com.uni.astro.R
 
 class CircleDivisionView : View {
+    override fun isInEditMode(): Boolean {
+        return true
+    }
     private var paint: Paint? = null
 
     var strokeWidth: Float = 5F

@@ -408,10 +408,10 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                             val receiverDetailModel =
                                 DataParsing.getUserDataModel(msg?.optJSONObject("User") ?: JSONObject())
                             val followStatus =
-                                receiverDetailModel.button.lowercase(Locale.getDefault())
+                                receiverDetailModel.button?.lowercase(Locale.getDefault())
                             item!!.follow_status_button =
-                                receiverDetailModel.button.lowercase(Locale.getDefault())
-                            setFollowBtnStatus(receiverDetailModel.id, followStatus)
+                                receiverDetailModel.button?.lowercase(Locale.getDefault())
+                            setFollowBtnStatus(receiverDetailModel?.id!!, followStatus!!)
                         }
                     } catch (e: Exception) {
                         Functions.printLog(Constants.TAG_, "Exception : $e")

@@ -19,16 +19,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import com.uni.astro.Constants;
 import com.uni.astro.R;
@@ -36,7 +28,6 @@ import com.uni.astro.activitesfragments.profile.FollowsMainTabA;
 import com.uni.astro.activitesfragments.profile.ProfileA;
 import com.uni.astro.activitesfragments.profile.ReportTypeA;
 import com.uni.astro.activitesfragments.profile.ShareUserProfileF;
-import com.uni.astro.activitesfragments.profile.settings.ShowLocationPermissionF;
 import com.uni.astro.activitesfragments.spaces.adapters.ProfileSuggestionAdapter;
 import com.uni.astro.activitesfragments.spaces.models.HomeUserModel;
 import com.uni.astro.activitesfragments.spaces.models.UserSuggestionModel;
@@ -51,6 +42,12 @@ import com.uni.astro.models.UserModel;
 import com.uni.astro.simpleclasses.DataParsing;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.realpacific.clickshrinkeffect.ClickShrinkUtils;
 import com.volley.plus.VPackages.VolleyRequest;
 import com.volley.plus.interfaces.APICallBack;
@@ -228,13 +225,14 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
 
     private void openProfile(String id) {
         dismiss();
-        Intent intent=new Intent(getActivity(), ProfileA.class);
-        intent.putExtra("user_id", selectedModel.getId());
-        intent.putExtra("user_name", selectedModel.getUsername());
-        intent.putExtra("user_pic", selectedModel.getProfilePic());
-        startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
-
+        if(Functions.checkProfileOpenValidation(selectedModel.getId())) {
+            Intent intent = new Intent(getActivity(), ProfileA.class);
+            intent.putExtra("user_id", selectedModel.getId());
+            intent.putExtra("user_name", selectedModel.getUsername());
+            intent.putExtra("user_pic", selectedModel.getProfilePic());
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+        }
     }
 
 
@@ -246,7 +244,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             parameters.put("user_id",  Functions.getSharedPreference(getContext()).getString(Variables.U_ID,""));
             parameters.put("starting_point", "0");
         } catch (Exception e) {
-            Log.d(Constants.TAG_,"Exception : "+e);
+            Log.d(Constants.tag,"Exception : "+e);
         }
 
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showSuggestedUsers, parameters,Functions.getHeaders(getActivity()), new Callback() {
@@ -287,7 +285,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.TAG_,"Exception : "+e);
+            Log.d(Constants.tag,"Exception : "+e);
         }
     }
 
@@ -314,26 +312,32 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
         {
             binding.ivMenu.setVisibility(View.GONE);
             binding.tabFollowSuggestion.setVisibility(View.INVISIBLE);
+            binding.tabChat.setVisibility(View.GONE);
+            binding.tabViewProfile.setVisibility(View.GONE);
         }
         else
         {
             binding.ivMenu.setVisibility(View.VISIBLE);
             binding.tabFollowSuggestion.setVisibility(View.VISIBLE);
+
+            if (isDirectMessage) {
+                binding.tabChat.setVisibility(View.VISIBLE);
+            } else {
+                binding.tabChat.setVisibility(View.GONE);
+            }
+
+
         }
 
         binding.tvFullName.setText(selectedModel.getFirstName()+" "+selectedModel.getLastName());
         binding.tvUsername.setText(Functions.showUsername(selectedModel.getUsername()));
-
-
-
-
-
+        binding.tvBio.setText(selectedModel.getBio());
 
 
         binding.tvFollowersCount.setText(""+selectedModel.getFollowersCount());
         binding.tvFolloweringsCount.setText(""+selectedModel.getFollowingCount());
 
-        binding.tvJoinDate.setText(binding.getRoot().getContext().getString(R.string.joined)+" "+Functions.ChangeDateFormat("yyyy-MM-dd HH:mm:ss","EEE MM, yyyy",selectedModel.getCreated()));
+        binding.tvJoinDate.setText(binding.getRoot().getContext().getString(R.string.joined)+" "+Functions.ChangeDateFormat("yyyy-MM-dd HH:mm:ss","MMMM dd, yyyy",selectedModel.getCreated()));
 
 
         isUserAlreadyBlock = selectedModel.getBlock();
@@ -719,8 +723,8 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
         RelativeLayout tabShareProfile=alertDialog.findViewById(R.id.tabShareProfile);
         tvBlockUser = alertDialog.findViewById(R.id.tvBlockUser);
 
-        Log.d(Constants.TAG_,"blockObj: "+blockByUserId);
-        Log.d(Constants.TAG_,"isUserAlreadyBlock: "+isUserAlreadyBlock);
+        Log.d(Constants.tag,"blockObj: "+blockByUserId);
+        Log.d(Constants.tag,"isUserAlreadyBlock: "+isUserAlreadyBlock);
 
         if (blockByUserId.equals(Functions.getSharedPreference(getActivity()).getString(Variables.U_ID,"")))
         {
@@ -811,7 +815,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
                     }
                     hitUserprofileDetail();
                 } catch (Exception e) {
-                    Log.d(Constants.TAG_,"Exception: "+e);
+                    Log.d(Constants.tag,"Exception: "+e);
                 }
             }
         });
@@ -919,7 +923,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.TAG_,"Exception: hitUserprofileDetail "+e);
+            Log.d(Constants.tag,"Exception: hitUserprofileDetail "+e);
         }
 
         VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showUserDetail, parameters,Functions.getHeaders(getActivity()), new Callback() {
@@ -976,7 +980,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             }
 
         } catch (Exception e) {
-            Log.d(Constants.TAG_,"Exception : "+e);
+            Log.d(Constants.tag,"Exception : "+e);
         }
     }
 
@@ -989,7 +993,7 @@ public class OtherUserProfileF extends BottomSheetDialogFragment implements View
             speakInvitationListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(Constants.TAG_,"roomUpdateListener : "+dataSnapshot);
+                    Log.d(Constants.tag,"roomUpdateListener : "+dataSnapshot);
                     if (dataSnapshot.exists())
                     {
                         InviteForSpeakModel invitation=dataSnapshot.getValue(InviteForSpeakModel.class);

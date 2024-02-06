@@ -93,7 +93,7 @@ public class FileUploader {
 
         Log.d(Constants.TAG_, "******** before call: " + fileUpload.request().url());
 
-        fileUpload.enqueue(new Callback<>() {
+        fileUpload.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
 
@@ -144,7 +144,7 @@ public class FileUploader {
         Log.d(Constants.TAG_, "UserId: " + userID);
         Log.d(Constants.TAG_, "ExtensionId: " + "png");
 
-        fileUpload.enqueue(new Callback<>() {
+        fileUpload.enqueue(new Callback<Object>() {
 
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
@@ -196,7 +196,7 @@ public class FileUploader {
         Log.d(Constants.TAG_, "UserId: " + userID);
         Log.d(Constants.TAG_, "ExtensionId: " + "mp4");
 
-        fileUpload.enqueue(new Callback<>() {
+        fileUpload.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 String bodyRes = new Gson().toJson(response.body());

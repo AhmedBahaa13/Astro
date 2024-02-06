@@ -82,7 +82,7 @@ public class RiseHandUsersF extends BottomSheetDialogFragment implements View.On
 
     private void setupScreenData() {
         String rule="";
-        Functions.printLog(Constants.TAG_,"riseHandRule:"+riseHandRule);
+        Functions.printLog(Constants.tag,"riseHandRule:"+riseHandRule);
 
         if (riseHandRule.equals("1")) {
 
@@ -227,7 +227,7 @@ public class RiseHandUsersF extends BottomSheetDialogFragment implements View.On
         }
         else
         {
-            Log.d(Constants.TAG_,"myRoomListener not null");
+            Log.d(Constants.tag,"myRoomListener not null");
         }
     }
     public void removeMyRoomListener() {
@@ -281,7 +281,7 @@ public class RiseHandUsersF extends BottomSheetDialogFragment implements View.On
         MenuItem itemOne=popup.getMenu().getItem(0);
         MenuItem itemTwo=popup.getMenu().getItem(1);
 
-        Functions.printLog(Constants.TAG_,"openEditMenu:riseHandRule:"+riseHandRule);
+        Functions.printLog(Constants.tag,"openEditMenu:riseHandRule:"+riseHandRule);
 
         if (riseHandRule.equals("1")) {
             itemOne.setChecked(false);

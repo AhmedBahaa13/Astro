@@ -218,7 +218,7 @@ public class Cookie extends LinearLayout implements View.OnTouchListener {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(Constants.TAG_,"triger :");
+                    Log.d(Constants.tag,"triger :");
                     timeOutDismiss = true;
                     dismiss();
                 }
@@ -304,7 +304,7 @@ public class Cookie extends LinearLayout implements View.OnTouchListener {
         startAnimation(slideOutAnimation);
     }
 
-    void silentDismiss() {
+   public void silentDismiss() {
 //        Log.i("Cookiebar", "Removing stale cooke " + cookieId);
         isCookieRemovalInProgress = true;
         handler.removeCallbacksAndMessages(null);

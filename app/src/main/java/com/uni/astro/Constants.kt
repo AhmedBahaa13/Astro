@@ -91,4 +91,5 @@ object Constants {
 
     const val TAG_ = "astro_"
     const val ALL_IMAGE_DEFAULT_SIZE = 500
+    const val tag = "astro_"
 }

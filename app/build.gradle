@@ -25,12 +25,12 @@ android {
     }
 
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_17
-        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
 
     buildTypes {
@@ -165,7 +165,7 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
 
     implementation 'com.android.billingclient:billing:6.1.0'
 

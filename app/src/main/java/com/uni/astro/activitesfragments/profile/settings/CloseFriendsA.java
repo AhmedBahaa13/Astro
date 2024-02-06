@@ -44,7 +44,7 @@ public class CloseFriendsA extends AppCompatActivity {
         adapter = new CloseFriendsAdapter(
                 this,
                 (position) -> {
-                    receiverId = friendsList.get(position).fb_id;
+                    receiverId = friendsList.get(position).getId();
                     closeFriendsList.add(receiverId);
                 }
         );
@@ -75,16 +75,17 @@ public class CloseFriendsA extends AppCompatActivity {
                         JSONObject _friend = friendsList.optJSONObject(i);
                         UserModel userDetail = DataParsing.getUserDataModel(_friend.optJSONObject("FollowingList"));
                         CloseFriendModel friend = new CloseFriendModel();
-                        friend.fb_id = userDetail.getId();
-                        friend.first_name = userDetail.getFirstName();
-                        friend.last_name = userDetail.getLastName();
-                        friend.username = userDetail.getUsername();
+                        friend.setId(userDetail.getId());
+                        friend.setFirst_name(userDetail.getFirstName());
+                        friend.setLast_name(userDetail.getLastName());
+                        friend.setUsername(userDetail.getUsername());
                         friend.setProfile_pic(userDetail.getProfilePic());
 
-                        friend.isClose = _friend.optBoolean("is_close_friend");
+                        friend.setClose(_friend.optBoolean("is_close_friend"));
                         _friends.add(friend);
 
                     }
+                    Log.d("CloseFriendsA", "getFriends: "+resp);
                     adapter.setUsersList(_friends);
 
                 } else if (friendsList.isEmpty()) {

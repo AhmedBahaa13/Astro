@@ -4,7 +4,7 @@ import com.uni.astro.activitesfragments.livestreaming.Constants;
 
 public class EngineConfig {
 
-    public int mUid;
+    public String mUid;
     private String mChannelName;
     private boolean mShowVideoStats;
     private int mDimenIndex = Constants.DEFAULT_PROFILE_IDX;
@@ -13,11 +13,11 @@ public class EngineConfig {
     private int mMirrorEncodeIndex;
 
 
-    public int getmUid() {
+    public String getUid() {
         return mUid;
     }
 
-    public void setmUid(int mUid) {
+    public void setUid(String mUid) {
         this.mUid = mUid;
     }
 

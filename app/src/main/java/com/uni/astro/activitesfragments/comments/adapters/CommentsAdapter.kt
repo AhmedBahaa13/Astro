@@ -197,7 +197,6 @@ class CommentsAdapter(
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(vID)
                 prepare()
-                start()
             }
 
             cBinder.apply {

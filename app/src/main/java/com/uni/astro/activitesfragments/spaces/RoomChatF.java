@@ -32,7 +32,6 @@ import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,13 +42,21 @@ public class RoomChatF extends Fragment implements View.OnClickListener {
 
     MainStreamingModel mainStreamingModel;
     FragmentRoomChatBinding binding;
-
+    FragmentCallBack fragmentCallBack;
     DatabaseReference rootref;
 
+
+    public RoomChatF(MainStreamingModel mainStreamingModel, FragmentCallBack fragmentCallBack) {
+        this.mainStreamingModel=mainStreamingModel;
+        this.fragmentCallBack=fragmentCallBack;
+    }
+
+    public RoomChatF() {
+    }
+
     public static RoomChatF newInstance(MainStreamingModel mainStreamingModel, FragmentCallBack fragmentCallBack) {
-        RoomChatF fragment = new RoomChatF();
+        RoomChatF fragment = new RoomChatF(mainStreamingModel,fragmentCallBack);
         Bundle args = new Bundle();
-        args.putSerializable("data",mainStreamingModel);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,10 +69,6 @@ public class RoomChatF extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
 
         binding= DataBindingUtil.inflate(inflater, R.layout.fragment_room_chat, container, false);
-
-        mainStreamingModel=(MainStreamingModel) getArguments().getSerializable("data");
-
-
         rootref = FirebaseDatabase.getInstance().getReference();
 
         initcontrols();
@@ -341,6 +344,15 @@ public class RoomChatF extends Fragment implements View.OnClickListener {
     }
 
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (fragmentCallBack!=null)
+        {
+            Bundle bundle=new Bundle();
+            bundle.putBoolean("isShow",true);
+            fragmentCallBack.onResponce(bundle);
+        }
+    }
 
 }

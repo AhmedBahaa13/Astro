@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.uni.astro.R;
 import com.uni.astro.databinding.FriendsSelectionItemViewBinding;
 import com.uni.astro.interfaces.AdapterClickListener;

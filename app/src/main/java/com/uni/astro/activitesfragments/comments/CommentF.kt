@@ -863,7 +863,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                                     commntModel.created = jsonObject.optString("created")
                                     commntModel.videoOwnerId = videoObj.optString("user_id")
                                     commntModel.replay_user_name = userDetailModelReply.username
-                                    commntModel.replay_user_url = userDetailModelReply.profilePic
+                                    commntModel.replay_user_url = userDetailModelReply.getProfilePic()
                                     commntModel.userId = userDetailModelReply.id
                                     commntModel.isVerified = userDetailModelReply.verified
                                     commntModel.parent_comment_id = videoComment.optString("id")
@@ -882,7 +882,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                             commsModel.first_name = userDetailModel.firstName
                             commsModel.last_name = userDetailModel.lastName
                             commsModel.arraylist_size = videoCommentReply.length().toString()
-                            commsModel.profile_pic = userDetailModel.profilePic
+                            commsModel.profile_pic = userDetailModel.getProfilePic()
                             commsModel.arrayList = replyList
                             commsModel.video_id = videoComment.optString("video_id")
                             commsModel.type = videoComment.optString("type")
