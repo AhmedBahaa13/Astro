@@ -1,101 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/_70sdp"
-    android:id="@+id/mainlayout"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:id="@+id/mainlayout"
+    android:layout_width="@dimen/_92sdp"
+    android:layout_height="@dimen/_153sdp"
+    android:background="@color/white"
+    app:cardCornerRadius="@dimen/_40sdp"
+    android:layout_marginHorizontal="@dimen/_6sdp"
+    app:cardElevation="0dp">
 
-
-    <RelativeLayout
-        android:layout_centerInParent="true"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:layout_marginEnd="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_6sdp"
-        android:layout_marginBottom="@dimen/_6sdp">
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:paddingTop="@dimen/_7sdp"
+        android:paddingBottom="@dimen/_13sdp">
 
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_55sdp"
-            android:layout_centerVertical="true"
             android:id="@+id/user_image"
-            fresco:placeholderImage="@drawable/ic_user_icon"
-            app:roundAsCircle="true"/>
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_65sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:roundAsCircle="true"
+            fresco:placeholderImage="@drawable/ic_user_icon" />
 
-
-        <RelativeLayout
-            android:layout_toStartOf="@id/ivCross"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/user_image"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_toStartOf="@+id/action_txt"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/username"
-                    android:textSize="@dimen/_11sdp"
-                    android:id="@+id/user_name"
-                    android:textStyle="bold"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/user_id"
-                    android:text="@string/user_name_upload_a_video"
-                    android:textSize="@dimen/_10sdp"
-                    android:maxLines="2"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:textColor="@color/black"/>
-
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/action_txt"
-                android:textSize="@dimen/_11sdp"
-                android:text="@string/following"
-                android:textStyle="bold"
-                android:background="@drawable/d_gray_border"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:paddingStart="@dimen/_10sdp"
-                android:paddingEnd="@dimen/_10sdp"
-                android:textColor="@color/black"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                />
-
-        </RelativeLayout>
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:text="@string/username"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_image"/>
 
         <ImageView
+            android:id="@+id/ic_add_follower"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/plus_background"
+            android:src="@drawable/ic_plus"
+            android:padding="@dimen/_5sdp"
+            android:visibility="visible"
+            app:tint="#4C5B6A"
+            app:layout_constraintStart_toStartOf="@id/user_name"
+            app:layout_constraintEnd_toEndOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias=".5"/>
+
+        <ImageView
+            android:id="@+id/ic_followed"
+            android:layout_width="@dimen/_53sdp"
+            android:layout_height="@dimen/_31sdp"
+            android:background="@drawable/correct_background"
+            android:src="@drawable/ic_correct"
+            android:padding="@dimen/_5sdp"
             android:visibility="gone"
-            android:id="@+id/ivCross"
-            android:layout_marginStart="@dimen/_6sdp"
+            app:tint="#FFFCFC"
+            app:layout_constraintStart_toStartOf="@id/user_name"
+            app:layout_constraintEnd_toEndOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias=".5"/>
+
+   <!--     <TextView
+            android:id="@+id/user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:maxLines="2"
+            android:text="@string/user_name_upload_a_video"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp" />
+    -->
+
+    <!--    <TextView
+            android:id="@+id/action_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:background="@drawable/d_gray_border"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:text="@string/following"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold" />
+    -->
+    <!--    <ImageView
+            android:id="@+id/ivCross"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
-            app:tint="@color/darkgray"
-            android:src="@drawable/ic_cross"/>
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:src="@drawable/ic_"
+            android:visibility="gone"
+            app:tint="@color/darkgray" />
+    -->
 
-    </RelativeLayout>
-
-</RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
