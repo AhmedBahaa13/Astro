@@ -21,9 +21,11 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recylerview"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:paddingTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/recylerview"/>
+                android:layout_height="wrap_content" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

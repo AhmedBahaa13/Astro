@@ -89,7 +89,7 @@ public class SuggestedUserF extends Fragment {
         loadMoreProgress = view.findViewById(R.id.load_more_progress);
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview);
         linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
@@ -98,17 +98,16 @@ public class SuggestedUserF extends Fragment {
             public void onItemClick(View view, int postion, FollowingModel item) {
 
                 switch (view.getId()) {
-                    case R.id.action_txt:
+                    case R.id.ic_add_follower:
                         if (Functions.checkLoginUser(getActivity())) {
                             if (!item.fb_id.equals(Functions.getSharedPreference(context).getString(Variables.U_ID, "")))
                                 followUnFollowUser(item, postion);
                         }
                         break;
-
                     case R.id.mainlayout:
                         openProfile(item);
                         break;
-                    case R.id.ivCross:
+                    case R.id.ic_followed:
                         datalist.remove(postion);
                         adapter.notifyDataSetChanged();
                         break;

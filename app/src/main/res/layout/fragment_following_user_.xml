@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.cardview.widget.CardView
             android:visibility="gone"
             android:layout_centerHorizontal="true"
@@ -64,7 +63,6 @@
 
         </androidx.cardview.widget.CardView>
 
-
         <RelativeLayout
             android:layout_below="@+id/search_layout"
             android:layout_alignParentBottom="true"
@@ -72,9 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <include layout="@layout/shimmer_list_layout" />
-
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/refreshLayout"
@@ -85,14 +81,13 @@
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recylerview"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:paddingTop="@dimen/_10sdp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/recylerview"/>
-
+                    android:layout_height="wrap_content" />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -127,8 +122,6 @@
 
             </RelativeLayout>
 
-
-
             <ProgressBar
                 android:layout_alignParentBottom="true"
                 android:id="@+id/load_more_progress"
@@ -141,12 +134,5 @@
 
 
         </RelativeLayout>
-
-
-
-
-
-
     </RelativeLayout>
-
 </FrameLayout>
