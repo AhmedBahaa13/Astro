@@ -1,10 +1,6 @@
 package com.uni.astro.adapters;
 
 import android.content.Context;
-
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +8,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.uni.astro.models.FollowingModel;
 import com.uni.astro.R;
+import com.uni.astro.models.FollowingModel;
 import com.uni.astro.simpleclasses.Functions;
 
 import java.util.ArrayList;
@@ -36,12 +34,12 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Cust
 
     public OnItemClickListener listener;
 
-    public FollowingAdapter(Context context,boolean isSelf,String fromFrag, ArrayList<FollowingModel> arrayList, OnItemClickListener listener) {
+    public FollowingAdapter(Context context, boolean isSelf, String fromFrag, ArrayList<FollowingModel> arrayList, OnItemClickListener listener) {
         this.context = context;
         datalist = arrayList;
-        this.isSelf=isSelf;
+        this.isSelf = isSelf;
         this.listener = listener;
-        this.fromFrag=fromFrag;
+        this.fromFrag = fromFrag;
     }
 
     @Override
@@ -59,47 +57,47 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Cust
 
         SimpleDraweeView userImage;
         TextView userName;
-        TextView userId;
-        TextView actionTxt;
-        ImageView ivCross;
+        ImageView icAddFollower;
+        ImageView icFollowed;
         RelativeLayout mainlayout;
 
         public CustomViewHolder(View view) {
             super(view);
-            ivCross=view.findViewById(R.id.ivCross);
             userImage = view.findViewById(R.id.user_image);
             userName = view.findViewById(R.id.user_name);
-            userId = view.findViewById(R.id.user_id);
-            mainlayout=view.findViewById(R.id.mainlayout);
-            actionTxt = view.findViewById(R.id.action_txt);
+            icAddFollower = view.findViewById(R.id.ic_add_follower);
+            icFollowed = view.findViewById(R.id.ic_followed);
+            mainlayout = view.findViewById(R.id.mainlayout);
         }
 
         public void bind(final int pos, final FollowingModel item, final OnItemClickListener listener) {
 
-
             mainlayout.setOnClickListener(v -> {
                 listener.onItemClick(v, pos, item);
-
             });
 
-            actionTxt.setOnClickListener(v -> {
+            icFollowed.setOnClickListener(v -> {
                 listener.onItemClick(v, pos, item);
-
             });
 
-            ivCross.setOnClickListener(v -> {
+            icAddFollower.setOnClickListener(v -> {
                 listener.onItemClick(v, pos, item);
-
             });
 
+            //region the below comment not used when the design changed
 
-
+//            actionTxt.setOnClickListener(v -> {
+//                listener.onItemClick(v, pos, item);
+//
+//            });
+//
+//            ivCross.setOnClickListener(v -> {
+//                listener.onItemClick(v, pos, item);
+//
+//            });
+            //endregion
         }
-
-
     }
-
-
 
     @Override
     public void onBindViewHolder(final CustomViewHolder holder, final int i) {
@@ -109,60 +107,62 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Cust
 
         holder.userName.setText(item.username);
 
-        holder.userImage.setController(Functions.frescoImageLoad(item.getProfile_pic(),R.drawable.ic_user_icon,holder.userImage,false));
+        holder.userImage.setController(Functions.frescoImageLoad(item.getProfile_pic(), R.drawable.ic_user_icon, holder.userImage, false));
 
-        if (isSelf)
-        {
-            if (fromFrag.equalsIgnoreCase("following"))
-            {
-                if (item.notificationType.equalsIgnoreCase("1"))
-                {
-                    holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_live_notification));
-                }
-                else
-                if (item.notificationType.equalsIgnoreCase("0"))
-                {
-                    holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_mute_notification));
-                }
+        // region unused code
+//        if (isSelf)
+//        {
+//            if (fromFrag.equalsIgnoreCase("following"))
+//            {
+//                if (item.notificationType.equalsIgnoreCase("1"))
+//                {
+//                    holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_live_notification));
+//                }
+//                else
+//                if (item.notificationType.equalsIgnoreCase("0"))
+//                {
+//                    holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_mute_notification));
+//                }
+//
+//            }else
+//            if (fromFrag.equalsIgnoreCase("fan"))
+//            {
+//                holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_option));
+//            }else
+//            {
+//                holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_cross));
+//            }
+//
+//        }
+        //endregion unused code
 
-            }else
-            if (fromFrag.equalsIgnoreCase("fan"))
-            {
-                holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_option));
-            }else
-            {
-                holder.ivCross.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_cross));
-            }
-
+        if (item.isFollow) {
+            holder.icAddFollower.setVisibility(View.GONE);
+            holder.icFollowed.setVisibility(View.VISIBLE);
+        } else {
+            holder.icFollowed.setVisibility(View.GONE);
+            holder.icAddFollower.setVisibility(View.VISIBLE);
         }
 
-        if (item.isFollow)
-        {
-            holder.ivCross.setVisibility(View.GONE);
-        }
-        else
-        {
-            holder.ivCross.setVisibility(View.VISIBLE);
-        }
+        // region not used code
+//        holder.userId.setText(item.first_name + " " + item.last_name);
+//        holder.actionTxt.setText(item.follow_status_button);
+//
+//        if (item.follow_status_button != null &&
+//                (item.follow_status_button.equalsIgnoreCase("follow") || item.follow_status_button.equalsIgnoreCase("follow back"))) {
+//            holder.actionTxt.setBackground(ContextCompat.getDrawable(context, R.drawable.button_rounded_background));
+//            holder.actionTxt.setTextColor(ContextCompat.getColor(context, R.color.whiteColor));
+//
+//        } else if (item.follow_status_button != null &&
+//                (item.follow_status_button.equalsIgnoreCase("following") || item.follow_status_button.equalsIgnoreCase("friends"))) {
+//            holder.actionTxt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
+//            holder.actionTxt.setTextColor(ContextCompat.getColor(context, R.color.black));
+//
+//        } else if (item.follow_status_button != null && item.follow_status_button.equalsIgnoreCase("0")) {
+//            holder.actionTxt.setVisibility(View.GONE);
+//        }
 
-
-        holder.userId.setText(item.first_name + " " + item.last_name);
-        holder.actionTxt.setText(item.follow_status_button);
-
-        if (item.follow_status_button != null &&
-                (item.follow_status_button.equalsIgnoreCase("follow") || item.follow_status_button.equalsIgnoreCase("follow back"))) {
-            holder.actionTxt.setBackground(ContextCompat.getDrawable(context, R.drawable.button_rounded_background));
-            holder.actionTxt.setTextColor(ContextCompat.getColor(context, R.color.whiteColor));
-
-        } else if (item.follow_status_button != null &&
-                (item.follow_status_button.equalsIgnoreCase("following") || item.follow_status_button.equalsIgnoreCase("friends"))) {
-            holder.actionTxt.setBackground(ContextCompat.getDrawable(context, R.drawable.d_gray_border));
-            holder.actionTxt.setTextColor(ContextCompat.getColor(context, R.color.black));
-
-        } else if (item.follow_status_button != null && item.follow_status_button.equalsIgnoreCase("0")) {
-            holder.actionTxt.setVisibility(View.GONE);
-        }
-
+        //endregion not used code
 
         holder.bind(i, datalist.get(i), listener);
 

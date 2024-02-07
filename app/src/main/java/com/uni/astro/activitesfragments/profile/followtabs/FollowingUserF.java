@@ -4,13 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,21 +15,27 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.uni.astro.Constants;
+import com.uni.astro.R;
 import com.uni.astro.activitesfragments.profile.ProfileA;
 import com.uni.astro.adapters.FollowingAdapter;
 import com.uni.astro.apiclasses.ApiLinks;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.uni.astro.Constants;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
 import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.models.FollowingModel;
 import com.uni.astro.models.UserModel;
-import com.uni.astro.R;
 import com.uni.astro.simpleclasses.DataParsing;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
+import com.volley.plus.VPackages.VolleyRequest;
+import com.volley.plus.interfaces.APICallBack;
+import com.volley.plus.interfaces.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +54,7 @@ public class FollowingUserF extends Fragment {
     RecyclerView recyclerView;
     ArrayList<FollowingModel> datalist;
     FollowingAdapter adapter;
-    String userId,userName,fromWhere="following";
+    String userId, userName, fromWhere = "following";
     boolean isSelf;
     CardView searchLayout;
     EditText edtSearch;
@@ -70,21 +69,19 @@ public class FollowingUserF extends Fragment {
 
     FragmentCallBack callBack;
 
-    public FollowingUserF()
-    {
+    public FollowingUserF() {
 
     }
 
-    public FollowingUserF(String userId, String userName, boolean isSelf,FragmentCallBack callBack)
-    {
-        this.userId=userId;
-        this.userName=userName;
-        this.isSelf=isSelf;
-        this.callBack=callBack;
+    public FollowingUserF(String userId, String userName, boolean isSelf, FragmentCallBack callBack) {
+        this.userId = userId;
+        this.userName = userName;
+        this.isSelf = isSelf;
+        this.callBack = callBack;
     }
 
-    public static FollowingUserF newInstance(String userId, String userName, boolean isSelf,FragmentCallBack callBack) {
-        FollowingUserF fragment = new FollowingUserF(userId,userName,isSelf,callBack);
+    public static FollowingUserF newInstance(String userId, String userName, boolean isSelf, FragmentCallBack callBack) {
+        FollowingUserF fragment = new FollowingUserF(userId, userName, isSelf, callBack);
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -94,60 +91,60 @@ public class FollowingUserF extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_following_user_, container, false);
+        view = inflater.inflate(R.layout.fragment_following_user_, container, false);
         context = getContext();
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.startShimmer();
-        refreshLayout=view.findViewById(R.id.refreshLayout);
+        refreshLayout = view.findViewById(R.id.refreshLayout);
         datalist = new ArrayList<>();
 
         loadMoreProgress = view.findViewById(R.id.load_more_progress);
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview);
         linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        searchLayout=view.findViewById(R.id.search_layout);
-        if (isSelf)
-        {
+        searchLayout = view.findViewById(R.id.search_layout);
+        if (isSelf) {
             searchLayout.setVisibility(View.VISIBLE);
             Functions.hideSoftKeyboard(getActivity());
-        }
-        else
-        {
+        } else {
             searchLayout.setVisibility(View.GONE);
         }
 
-        adapter = new FollowingAdapter(context,isSelf,fromWhere, datalist, new FollowingAdapter.OnItemClickListener() {
+        adapter = new FollowingAdapter(context, isSelf, fromWhere, datalist, new FollowingAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int postion, FollowingModel item) {
 
                 switch (view.getId()) {
-                    case R.id.action_txt:
+                    case R.id.ic_add_follower:
                         if (Functions.checkLoginUser(getActivity())) {
                             if (!item.fb_id.equals(Functions.getSharedPreference(context).getString(Variables.U_ID, "")))
                                 followUnFollowUser(item, postion);
                         }
                         break;
-
                     case R.id.mainlayout:
                         openProfile(item);
                         break;
-                    case R.id.ivCross:
+                    case R.id.ic_followed:
                         selectNotificationPriority(postion);
                         break;
 
                 }
-
             }
         }
         );
 
-        edtSearch=view.findViewById(R.id.search_edit);
+        edtSearch = view.findViewById(R.id.search_edit);
         edtSearch.addTextChangedListener(
                 new TextWatcher() {
-                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
-                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
 
                     @Override
                     public void afterTextChanged(final Editable s) {
@@ -161,12 +158,10 @@ public class FollowingUserF extends Fragment {
                                             @Override
                                             public void run() {
                                                 String search_txt = edtSearch.getText().toString();
-                                                pageCount=0;
+                                                pageCount = 0;
                                                 if (search_txt.length() > 0) {
                                                     callApiForFollowingSearch();
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     callFollowingApi();
                                                 }
                                             }
@@ -205,12 +200,9 @@ public class FollowingUserF extends Fragment {
                     if (loadMoreProgress.getVisibility() != View.VISIBLE && !ispostFinsh) {
                         loadMoreProgress.setVisibility(View.VISIBLE);
                         pageCount = pageCount + 1;
-                        if (edtSearch.getText().toString().length()>0)
-                        {
+                        if (edtSearch.getText().toString().length() > 0) {
                             callApiForFollowingSearch();
-                        }
-                        else
-                        {
+                        } else {
                             callFollowingApi();
                         }
                     }
@@ -224,13 +216,10 @@ public class FollowingUserF extends Fragment {
             @Override
             public void onRefresh() {
                 refreshLayout.setRefreshing(false);
-                pageCount=0;
-                if (edtSearch.getText().toString().length()>0)
-                {
+                pageCount = 0;
+                if (edtSearch.getText().toString().length() > 0) {
                     callApiForFollowingSearch();
-                }
-                else
-                {
+                } else {
                     callFollowingApi();
                 }
             }
@@ -243,7 +232,7 @@ public class FollowingUserF extends Fragment {
             recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                    Log.d(Constants.TAG_,"recyclerView : "+i);
+                    Log.d(Constants.TAG_, "recyclerView : " + i);
                 }
             });
         }
@@ -254,7 +243,7 @@ public class FollowingUserF extends Fragment {
     private void callApiForFollowingSearch() {
         JSONObject parameters = new JSONObject();
         try {
-            parameters.put("user_id",userId);
+            parameters.put("user_id", userId);
             parameters.put("type", "following");
             parameters.put("keyword", edtSearch.getText().toString());
             parameters.put("starting_point", "" + pageCount);
@@ -263,54 +252,43 @@ public class FollowingUserF extends Fragment {
         }
 
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.search, parameters,Functions.getHeaders(getActivity()), new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.search, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 parseFollowingData(resp);
             }
         });
     }
 
 
-
-
     private void selectNotificationPriority(int position) {
-        boolean isFriend=false;
-        if (datalist.get(position).follow_status_button.equalsIgnoreCase("Follow"))
-        {
-            isFriend=false;
+        boolean isFriend = false;
+        if (datalist.get(position).follow_status_button.equalsIgnoreCase("Follow")) {
+            isFriend = false;
+        } else {
+            isFriend = true;
         }
-        else
-        {
-            isFriend=true;
-        }
-        NotificationPriorityF f = new NotificationPriorityF(datalist.get(position).notificationType,isFriend,
-                datalist.get(position).username,datalist.get(position).fb_id,new FragmentCallBack() {
+        NotificationPriorityF f = new NotificationPriorityF(datalist.get(position).notificationType, isFriend,
+                datalist.get(position).username, datalist.get(position).fb_id, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                if (bundle.getBoolean("isShow",false))
-                {
-                    FollowingModel itemUpdate=datalist.get(position);
-                    itemUpdate.notificationType=bundle.getString("type");
+                if (bundle.getBoolean("isShow", false)) {
+                    FollowingModel itemUpdate = datalist.get(position);
+                    itemUpdate.notificationType = bundle.getString("type");
 
-                    datalist.set(position,itemUpdate);
+                    datalist.set(position, itemUpdate);
                     adapter.notifyDataSetChanged();
-                }
-                else
-                {
+                } else {
 
-                    FollowingModel itemUpdte=datalist.get(position);
-                    if (itemUpdte.follow_status_button.equalsIgnoreCase("Follow"))
-                    {
-                        itemUpdte.follow_status_button="Following";
-                    }
-                    else
-                    {
-                        itemUpdte.follow_status_button="Follow";
+                    FollowingModel itemUpdte = datalist.get(position);
+                    if (itemUpdte.follow_status_button.equalsIgnoreCase("Follow")) {
+                        itemUpdte.follow_status_button = "Following";
+                    } else {
+                        itemUpdte.follow_status_button = "Follow";
                     }
 
-                    datalist.set(position,itemUpdte);
+                    datalist.set(position, itemUpdte);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -321,15 +299,13 @@ public class FollowingUserF extends Fragment {
     // this will open the profile of user which have uploaded the currenlty running video
     private void openProfile(final FollowingModel item) {
 
-        String userName="";
+        String userName = "";
         if (view != null) {
-            userName=item.username;
+            userName = item.username;
+        } else {
+            userName = item.first_name + " " + item.last_name;
         }
-        else
-        {
-            userName=item.first_name + " " + item.last_name;
-        }
-        if(Functions.checkProfileOpenValidation(item.fb_id)) {
+        if (Functions.checkProfileOpenValidation(item.fb_id)) {
             Intent intent = new Intent(view.getContext(), ProfileA.class);
             intent.putExtra("user_id", item.fb_id);
             intent.putExtra("user_name", userName);
@@ -339,7 +315,6 @@ public class FollowingUserF extends Fragment {
         }
 
     }
-
 
 
     public void followUnFollowUser(final FollowingModel item, final int position) {
@@ -357,24 +332,24 @@ public class FollowingUserF extends Fragment {
                     @Override
                     public void onSuccess(String responce) {
                         try {
-                            JSONObject jsonObject=new JSONObject(responce);
-                            String code=jsonObject.optString("code");
-                            if(code.equalsIgnoreCase("200")){
-                                JSONObject msg=jsonObject.optJSONObject("msg");
-                                if(msg!=null){
-                                    UserModel userDetailModel= DataParsing.getUserDataModel(msg.optJSONObject("User"));
-                                    if(!(TextUtils.isEmpty(userDetailModel.getId()))){
-                                        FollowingModel itemUpdte=item;
-                                        String userStatus=userDetailModel.getButton().toLowerCase();
-                                        itemUpdte.follow_status_button=userStatus;
-                                        datalist.set(position,itemUpdte);
+                            JSONObject jsonObject = new JSONObject(responce);
+                            String code = jsonObject.optString("code");
+                            if (code.equalsIgnoreCase("200")) {
+                                JSONObject msg = jsonObject.optJSONObject("msg");
+                                if (msg != null) {
+                                    UserModel userDetailModel = DataParsing.getUserDataModel(msg.optJSONObject("User"));
+                                    if (!(TextUtils.isEmpty(userDetailModel.getId()))) {
+                                        FollowingModel itemUpdte = item;
+                                        String userStatus = userDetailModel.getButton().toLowerCase();
+                                        itemUpdte.follow_status_button = userStatus;
+                                        datalist.set(position, itemUpdte);
                                         adapter.notifyDataSetChanged();
 
                                     }
                                 }
                             }
                         } catch (Exception e) {
-                            Log.d(Constants.TAG_,"Exception : "+e);
+                            Log.d(Constants.TAG_, "Exception : " + e);
                         }
                     }
 
@@ -395,11 +370,9 @@ public class FollowingUserF extends Fragment {
         JSONObject parameters = new JSONObject();
         try {
 
-            if (Functions.getSharedPreference(context).getString(Variables.U_ID, "0").equals(userId))
-            {
+            if (Functions.getSharedPreference(context).getString(Variables.U_ID, "0").equals(userId)) {
                 parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
-            }
-            else {
+            } else {
                 parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""));
                 parameters.put("other_user_id", userId);
             }
@@ -409,10 +382,10 @@ public class FollowingUserF extends Fragment {
         }
 
 
-        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showFollowing, parameters, Functions.getHeaders(getActivity()),new Callback() {
+        VolleyRequest.JsonPostRequest(getActivity(), ApiLinks.showFollowing, parameters, Functions.getHeaders(getActivity()), new Callback() {
             @Override
             public void onResponce(String resp) {
-                Functions.checkStatus(getActivity(),resp);
+                Functions.checkStatus(getActivity(), resp);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
                 parseFollowingData(resp);
@@ -436,7 +409,7 @@ public class FollowingUserF extends Fragment {
                 for (int i = 0; i < msgArray.length(); i++) {
 
                     JSONObject object = msgArray.optJSONObject(i);
-                    UserModel userDetailModel=DataParsing.getUserDataModel(object.optJSONObject("FollowingList"));
+                    UserModel userDetailModel = DataParsing.getUserDataModel(object.optJSONObject("FollowingList"));
 
                     FollowingModel item = new FollowingModel();
                     item.fb_id = userDetailModel.getId();
@@ -446,34 +419,22 @@ public class FollowingUserF extends Fragment {
                     item.username = userDetailModel.getUsername();
                     item.setProfile_pic(userDetailModel.getProfilePic());
 
-                    if (isSelf)
-                    {
-                        item.isFollow=false;
+                    if (isSelf) {
+                        item.isFollow = false;
+                    } else {
+                        item.isFollow = true;
                     }
-                    else
-                    {
-                        item.isFollow=true;
-                    }
-                    String userStatus=userDetailModel.getButton().toLowerCase();
-                    if (userStatus.equalsIgnoreCase("following"))
-                    {
+                    String userStatus = userDetailModel.getButton().toLowerCase();
+                    if (userStatus.equalsIgnoreCase("following")) {
                         item.follow_status_button = "Following";
-                    }
-                    else
-                    if (userStatus.equalsIgnoreCase("friends"))
-                    {
+                    } else if (userStatus.equalsIgnoreCase("friends")) {
                         item.follow_status_button = "Friends";
-                    }
-                    else
-                    if (userStatus.equalsIgnoreCase("follow back"))
-                    {
+                    } else if (userStatus.equalsIgnoreCase("follow back")) {
                         item.follow_status_button = "Follow back";
-                    }
-                    else
-                    {
+                    } else {
                         item.follow_status_button = "Follow";
                     }
-                    item.notificationType=userDetailModel.getNotification();
+                    item.notificationType = userDetailModel.getNotification();
 
                     temp_list.add(item);
 

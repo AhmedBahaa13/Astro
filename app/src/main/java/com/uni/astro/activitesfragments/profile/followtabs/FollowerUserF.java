@@ -5,12 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,21 +14,26 @@ import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.uni.astro.Constants;
+import com.uni.astro.R;
 import com.uni.astro.activitesfragments.profile.ProfileA;
 import com.uni.astro.adapters.FollowingAdapter;
 import com.uni.astro.apiclasses.ApiLinks;
-import com.volley.plus.VPackages.VolleyRequest;
-import com.uni.astro.Constants;
-import com.volley.plus.interfaces.APICallBack;
-import com.volley.plus.interfaces.Callback;
 import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.models.FollowingModel;
 import com.uni.astro.models.UserModel;
-import com.uni.astro.R;
 import com.uni.astro.simpleclasses.DataParsing;
 import com.uni.astro.simpleclasses.Functions;
 import com.uni.astro.simpleclasses.Variables;
+import com.volley.plus.VPackages.VolleyRequest;
+import com.volley.plus.interfaces.APICallBack;
+import com.volley.plus.interfaces.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,7 +91,7 @@ public class FollowerUserF extends Fragment {
         loadMoreProgress = view.findViewById(R.id.load_more_progress);
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview);
         linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
@@ -101,7 +100,7 @@ public class FollowerUserF extends Fragment {
             public void onItemClick(View view, int postion, FollowingModel item) {
 
                 switch (view.getId()) {
-                    case R.id.action_txt:
+                    case R.id.ic_add_follower:
                         if (Functions.checkLoginUser(getActivity())) {
                             if (!item.fb_id.equals(Functions.getSharedPreference(context).getString(Variables.U_ID, "")))
                                 followUnFollowUser(item, postion);
@@ -110,7 +109,7 @@ public class FollowerUserF extends Fragment {
                     case R.id.mainlayout:
                         openProfile(item);
                         break;
-                    case R.id.ivCross:
+                    case R.id.ic_followed:
                         removeFollower(postion);
                         break;
 

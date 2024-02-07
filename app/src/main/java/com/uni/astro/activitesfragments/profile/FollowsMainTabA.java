@@ -4,13 +4,16 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.uni.astro.adapters.ViewPagerAdapter;
 import com.uni.astro.interfaces.FragmentCallBack;
 import com.uni.astro.simpleclasses.AppCompatLocaleActivity;
+
 import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
 import com.google.android.material.tabs.TabLayout;
 import com.uni.astro.activitesfragments.profile.followtabs.FollowerUserF;
 import com.uni.astro.activitesfragments.profile.followtabs.FollowingUserF;
@@ -23,9 +26,9 @@ public class FollowsMainTabA extends AppCompatLocaleActivity {
 
     Context context;
     TextView tvTitle;
-    String userName="",userId="",followerCount="",followingCount="";
-    boolean isSelf=false;
-    String fromWhere="";
+    String userName = "", userId = "", followerCount = "", followingCount = "";
+    boolean isSelf = false;
+    String fromWhere = "";
 
     protected TabLayout tabLayout;
     protected ViewPager2 menuPager;
@@ -34,18 +37,18 @@ public class FollowsMainTabA extends AppCompatLocaleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Functions.setLocale(Functions.getSharedPreference(FollowsMainTabA.this).getString(Variables.APP_LANGUAGE_CODE,Variables.DEFAULT_LANGUAGE_CODE)
-                , this, getClass(),false);
+        Functions.setLocale(Functions.getSharedPreference(FollowsMainTabA.this).getString(Variables.APP_LANGUAGE_CODE, Variables.DEFAULT_LANGUAGE_CODE)
+                , this, getClass(), false);
         setContentView(R.layout.activity_follows_main_tab_);
 
         context = FollowsMainTabA.this;
-        tvTitle=findViewById(R.id.tvTitle);
+        tvTitle = findViewById(R.id.tvTitle);
 
-        followingCount=getIntent().getStringExtra("followingCount");
-        followerCount=getIntent().getStringExtra("followerCount");
-        userId=getIntent().getStringExtra("id");
-        userName=getIntent().getStringExtra("userName");
-        fromWhere=getIntent().getStringExtra("from_where");
+        followingCount = getIntent().getStringExtra("followingCount");
+        followerCount = getIntent().getStringExtra("followerCount");
+        userId = getIntent().getStringExtra("id");
+        userName = getIntent().getStringExtra("userName");
+        fromWhere = getIntent().getStringExtra("from_where");
         tvTitle.setText(Functions.showUsername(userName));
         findViewById(R.id.back_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,18 +57,14 @@ public class FollowsMainTabA extends AppCompatLocaleActivity {
             }
         });
 
-        if (userId==null)
-        {
-            userId="";
+        if (userId == null) {
+            userId = "";
         }
 
-        if (userId.equalsIgnoreCase(Functions.getSharedPreference(context).getString(Variables.U_ID, "")))
-        {
-            isSelf=true;
-        }
-        else
-        {
-            isSelf=false;
+        if (userId.equalsIgnoreCase(Functions.getSharedPreference(context).getString(Variables.U_ID, ""))) {
+            isSelf = true;
+        } else {
+            isSelf = false;
         }
 
         SetTabs();
@@ -91,38 +90,25 @@ public class FollowsMainTabA extends AppCompatLocaleActivity {
         });
 
 
-        if (fromWhere.equalsIgnoreCase("following"))
-        {
+        if (fromWhere.equalsIgnoreCase("following")) {
             tabLayout.getTabAt(0).select();
-        }
-        else
-        if (fromWhere.equalsIgnoreCase("fan"))
-        {
+        } else if (fromWhere.equalsIgnoreCase("fan")) {
             tabLayout.getTabAt(1).select();
-        }
-        else
-        {
+        } else {
             tabLayout.getTabAt(2).select();
         }
 
     }
 
     private void addTabs() {
-        TabLayoutMediator tabLayoutMediator=new TabLayoutMediator(tabLayout, menuPager, new TabLayoutMediator.TabConfigurationStrategy() {
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, menuPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                if (position==0)
-                {
-                    tab.setText(context.getString(R.string.following)+" "+followingCount);
-                }
-                else
-                if (position==1)
-                {
-                    tab.setText(context.getString(R.string.followers)+" "+followerCount);
-                }
-                else
-                if (position==2)
-                {
+                if (position == 0) {
+                    tab.setText(context.getString(R.string.following) + " " + followingCount);
+                } else if (position == 1) {
+                    tab.setText(context.getString(R.string.followers) + " " + followerCount);
+                } else if (position == 2) {
                     tab.setText(context.getString(R.string.suggested));
                 }
             }
@@ -134,72 +120,61 @@ public class FollowsMainTabA extends AppCompatLocaleActivity {
         adapter.addFrag(FollowingUserF.newInstance(userId, userName, isSelf, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                TabLayout.Tab updateTab=tabLayout.getTabAt(0);
-                if (bundle.getBoolean("isShow"))
-                {
-                    int count=Integer.valueOf(followingCount)+1;
-                    followingCount=""+count;
+                TabLayout.Tab updateTab = tabLayout.getTabAt(0);
+                if (bundle.getBoolean("isShow")) {
+                    int count = Integer.valueOf(followingCount) + 1;
+                    followingCount = "" + count;
+                } else {
+                    int count = Integer.valueOf(followingCount) - 1;
+                    followingCount = "" + count;
                 }
-                else
-                {
-                    int count=Integer.valueOf(followingCount)-1;
-                    followingCount=""+count;
-                }
-                isActivityCallback=true;
-                updateTab.setText(context.getString(R.string.following)+" "+followingCount);
+                isActivityCallback = true;
+                updateTab.setText(context.getString(R.string.following) + " " + followingCount);
             }
         }));
         adapter.addFrag(FollowerUserF.newInstance(userId, isSelf, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                TabLayout.Tab updateTab=tabLayout.getTabAt(0);
-                if (bundle.getBoolean("isShow"))
-                {
-                    int count=Integer.valueOf(followingCount)+1;
-                    followingCount=""+count;
+                TabLayout.Tab updateTab = tabLayout.getTabAt(0);
+                if (bundle.getBoolean("isShow")) {
+                    int count = Integer.valueOf(followingCount) + 1;
+                    followingCount = "" + count;
+                } else {
+                    int count = Integer.valueOf(followingCount) - 1;
+                    followingCount = "" + count;
                 }
-                else
-                {
-                    int count=Integer.valueOf(followingCount)-1;
-                    followingCount=""+count;
-                }
-                isActivityCallback=true;
-                updateTab.setText(context.getString(R.string.following)+" "+followingCount);
+                isActivityCallback = true;
+                updateTab.setText(context.getString(R.string.following) + " " + followingCount);
             }
         }));
         adapter.addFrag(SuggestedUserF.newInstance(userId, isSelf, new FragmentCallBack() {
             @Override
             public void onResponce(Bundle bundle) {
-                TabLayout.Tab updateTab=tabLayout.getTabAt(1);
-                if (bundle.getBoolean("isShow"))
-                {
-                    int count=Integer.valueOf(followerCount)+1;
-                    followerCount=""+count;
+                TabLayout.Tab updateTab = tabLayout.getTabAt(1);
+                if (bundle.getBoolean("isShow")) {
+                    int count = Integer.valueOf(followerCount) + 1;
+                    followerCount = "" + count;
+                } else {
+                    int count = Integer.valueOf(followerCount) - 1;
+                    followerCount = "" + count;
                 }
-                else
-                {
-                    int count=Integer.valueOf(followerCount)-1;
-                    followerCount=""+count;
-                }
-                isActivityCallback=true;
-                updateTab.setText(context.getString(R.string.followers)+" "+followerCount);
+                isActivityCallback = true;
+                updateTab.setText(context.getString(R.string.followers) + " " + followerCount);
             }
         }));
     }
 
 
-    boolean isActivityCallback=false;
+    boolean isActivityCallback = false;
+
     @Override
     public void onBackPressed() {
-        if(isActivityCallback)
-        {
+        if (isActivityCallback) {
             Intent intent = new Intent();
             intent.putExtra("isShow", true);
             setResult(RESULT_OK, intent);
             finish();
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
     }
