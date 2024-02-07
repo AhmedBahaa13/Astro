@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -59,7 +60,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Cust
         TextView userName;
         ImageView icAddFollower;
         ImageView icFollowed;
-        RelativeLayout mainlayout;
+        CardView mainlayout;
 
         public CustomViewHolder(View view) {
             super(view);
