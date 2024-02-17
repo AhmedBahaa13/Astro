@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.ContentValues
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -59,6 +60,7 @@ import com.uni.astro.adapters.ViewPagerStatAdapter
 import com.uni.astro.apiclasses.ApiLinks
 import com.uni.astro.databinding.AlertLabelEditorBinding
 import com.uni.astro.databinding.ItemHomeHeightedLayoutBinding
+import com.uni.astro.databinding.TestLayoutBinding
 import com.uni.astro.interfaces.FragmentCallBack
 import com.uni.astro.interfaces.FragmentDataSend
 import com.uni.astro.models.HomeModel
@@ -185,17 +187,17 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
     private fun initView() {
         bind.apply {
-            ivAddFollow.setOnClickListener(DebounceClickHandler {
+            bottomShet.ivAddFollow.setOnClickListener(DebounceClickHandler {
                 if (Functions.checkLoginUser(getActivity())) {
                     followUnFollowUser()
                 }
             })
 
-            duetOpenVideo.setOnClickListener(DebounceClickHandler {
+            bottomShet.duetOpenVideo.setOnClickListener(DebounceClickHandler {
                 openDuetVideo(item)
             })
 
-            userPic.setOnClickListener(DebounceClickHandler {
+            bottomShet.userPic.setOnClickListener(DebounceClickHandler {
                 onPause()
                 openProfile(item, false)
             })
@@ -207,20 +209,20 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 }
             })
 
-            username.setOnClickListener(DebounceClickHandler {
+            bind.bottomShet.username.setOnClickListener(DebounceClickHandler {
                 onPause()
                 openProfile(item, false)
             })
 
-            commentLayout.setOnClickListener(DebounceClickHandler {
+            bind.bottomShet.commentLayout.setOnClickListener(DebounceClickHandler {
                 if (Functions.checkLoginUser(activity)) {
                     openComment(item)
                 }
             })
 
-            sharedLayout.setOnClickListener(DebounceClickHandler { openShareVideoView() })
+            bind.bottomShet.sharedLayout.setOnClickListener(DebounceClickHandler { openShareVideoView() })
 
-            soundImageLayout.setOnClickListener(DebounceClickHandler(View.OnClickListener { view: View ->
+            /*soundImageLayout.setOnClickListener(DebounceClickHandler(View.OnClickListener { view: View ->
                 if (item == null || item!!.user_id == null) {
                     return@OnClickListener
                 }
@@ -242,11 +244,16 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                         getString(R.string.we_need_camera_and_recording_permission_for_make_video_on_sound)
                     )
                 }
-            }))
+            }))*/
 
             skipBtn.setOnClickListener(DebounceClickHandler { hideAd() })
 
-            likebtn.setOnLikeListener(object : OnLikeListener {
+            bind.bottomShet.likeLayout.setOnClickListener {
+                bind.bottomShet.likebtn.animate().start()
+                likeVideo(item)
+            }
+
+            bind.bottomShet.likebtn.setOnLikeListener(object : OnLikeListener {
                 override fun liked(likeButton: LikeButton) {
                     likeVideo(item)
                 }
@@ -256,7 +263,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 }
             })
 
-            tabFavourite.setOnLikeListener(object : OnLikeListener {
+            bind.bottomShet.tabFavourite.setOnLikeListener(object : OnLikeListener {
                 override fun liked(likeButton: LikeButton) {
                     favouriteVideo(item)
                 }
@@ -272,7 +279,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
 
     private fun updateImmediateViewChange() {
-        bind.ViewForPlaylist.visibility = try {
+        bind.bottomShet.ViewForPlaylist.visibility = try {
             if ((item!!.playlistId == "0")) {
                 View.GONE
             } else {
@@ -433,20 +440,20 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 }
 
                 if (flwStatus.equals("following", ignoreCase = true)) {
-                    bind.ivAddFollow.visibility = View.GONE
+                    bind.bottomShet.ivAddFollow.visibility = View.GONE
                 } else if (flwStatus.equals("friends", ignoreCase = true)) {
-                    bind.ivAddFollow.visibility = View.GONE
+                    bind.bottomShet.ivAddFollow.visibility = View.GONE
                 } else if (flwStatus.equals("follow back", ignoreCase = true)) {
                     if (Variables.followMapList.containsKey(item!!.user_id)) {
-                        bind.ivAddFollow.visibility = View.GONE
+                        bind.bottomShet.ivAddFollow.visibility = View.GONE
                     } else {
-                        bind.ivAddFollow.visibility = View.VISIBLE
+                        bind.bottomShet.ivAddFollow.visibility = View.VISIBLE
                     }
                 } else {
                     if (Variables.followMapList.containsKey(item!!.user_id)) {
-                        bind.ivAddFollow.visibility = View.GONE
+                        bind.bottomShet.ivAddFollow.visibility = View.GONE
                     } else {
-                        bind.ivAddFollow.visibility = View.VISIBLE
+                        bind.bottomShet.ivAddFollow.visibility = View.VISIBLE
                     }
                 }
             }
@@ -544,9 +551,9 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
             bind.thumbImage.controller = Functions.frescoImageLoad(
                 item!!.thum, bind.thumbImage, false
             )
-            bind.username.text = Functions.showUsernameOnVideoSection(item)
-            bind.userPic.controller = Functions.frescoImageLoad(
-                item!!.profile_pic, bind.userPic, false
+            bind.bottomShet.username.text = Functions.showUsernameOnVideoSection(item)
+            bind.bottomShet.userPic.controller = Functions.frescoImageLoad(
+                item!!.profile_pic, bind.bottomShet.userPic, false
             )
 
             if (item!!.repost == "1") {
@@ -561,18 +568,18 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
             }
 
             if (item!!.promotionModel != null && item!!.promotionModel.id != null) {
-                bind.soundName.text = getString(R.string.promoted_music)
-                bind.soundName.isSelected = false
+                bind.bottomShet.soundName.text = getString(R.string.promoted_music)
+                bind.bottomShet.soundName.isSelected = false
 
             } else {
                 if (item!!.sound_name == null || item!!.sound_name == "" || item!!.sound_name == "null") {
-                    bind.soundName.text = "${getString(R.string.orignal_sound_)} ${item!!.username}"
-                    item!!.sound_pic = item!!.profile_pic
+                    bind.bottomShet.soundName.text = "${getString(R.string.orignal_sound_)} ${item!!.username}"
+//                    bind.bottomShet!!.sound_pic = item!!.profile_pic
 
                 } else {
-                    bind.soundName.text = item!!.sound_name
+                    bind.bottomShet.soundName.text = item!!.sound_name
                 }
-                bind.soundName.isSelected = true
+                bind.bottomShet.soundName.isSelected = true
             }
 
             setFollowBtnStatus(item!!.user_id, item!!.follow_status_button)
@@ -607,7 +614,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                         openUserProfile(friendsTag)
                     }
                 }
-            }.handle(bind.descTxt)
+            }.handle(bind.bottomShet.descTxt)
 
             val builder = ShowMoreLess.Builder(requireContext())
                 .textLengthAndLengthType(2, ShowMoreLess.TYPE_LINE)
@@ -620,10 +627,10 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 .enableLinkify(true)
                 .textClickable(false, false).build()
 
-            builder.addShowMoreLess(bind.descTxt, item!!.video_description, false)
-            bind.descTxt.setOnClickListener {
+            builder.addShowMoreLess(bind.bottomShet.descTxt, item!!.video_description, false)
+            bind.bottomShet.descTxt.setOnClickListener {
                 builder.addShowMoreLess(
-                    bind.descTxt,
+                    bind.bottomShet.descTxt,
                     item!!.video_description,
                     !builder.getContentExpandStatus()
                 )
@@ -631,8 +638,8 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
 
             setLikeData()
             setFavouriteData()
-            bind.tvShare.text = Functions.getSuffix(item!!.share)
-            bind.commentLayout.visibility = if (item!!.allow_comments != null && item!!.allow_comments.equals(
+//            bind.tvShare.text = Functions.getSuffix(item!!.share)
+            bind.bottomShet.commentLayout.visibility = if (item!!.allow_comments != null && item!!.allow_comments.equals(
                     "false", ignoreCase = true)) {
                 View.GONE
 
@@ -640,17 +647,17 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                 View.VISIBLE
             }
 
-            bind.commentTxt.text = Functions.getSuffix(item!!.video_comment_count)
+            bind.bottomShet.commentCount.text = Functions.getSuffix(item!!.video_comment_count)
 
-            bind.varifiedBtn.visibility = if (item!!.verified != null && item!!.verified.equals("1", ignoreCase = true)) {
+            bind.bottomShet.varifiedBtn.visibility = if (item!!.verified != null && item!!.verified.equals("1", ignoreCase = true)) {
                View.VISIBLE
             } else {
                 View.GONE
             }
 
             if ((item!!.duet_video_id != null) && item!!.duet_video_id != "" && item!!.duet_video_id != "0") {
-                bind.duetLayoutUsername.visibility = View.VISIBLE
-                bind.duetUsername.text = item!!.duet_username
+                bind.bottomShet.duetLayoutUsername.visibility = View.VISIBLE
+                bind.bottomShet.duetUsername.text = item!!.duet_username
             }
 
             if (Functions.getSharedPreference(getContext()).getBoolean(Variables.IS_LOGIN, false)) {
@@ -662,48 +669,50 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
     private fun setLikeData() {
         try {
             if (item!!.liked == "1") {
-                bind.likebtn.animate().start()
-                bind.likebtn.setLikeDrawable(
-                    ContextCompat.getDrawable(requireContext(),
-                        R.drawable.ic_heart_gradient
-                    )
-                )
-                bind.likebtn.isLiked = true
+                bind.bottomShet.likebtn.animate().start()
+//                bind.bottomShet.likebtn.setLikeDrawable(
+//                    ContextCompat.getDrawable(requireContext(),
+//                        R.drawable.love
+//                    )
+//                )
+                bind.bottomShet.likeLayout.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.after_like,requireActivity().theme))
+                bind.bottomShet.likebtn.isLiked = true
 
             } else {
-                bind.likebtn.setLikeDrawable(
-                    ContextCompat.getDrawable(requireContext(),
-                        R.drawable.ic_unliked
-                    )
-                )
-                bind.likebtn.isLiked = false
-                bind.likebtn.animate().cancel()
+//                bind.bottomShet.likebtn.setLikeDrawable(
+//                    ContextCompat.getDrawable(requireContext(),
+//                        R.drawable.default_love
+//                    )
+//                )
+                bind.bottomShet.likeLayout.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.transparent,requireActivity().theme))
+                bind.bottomShet.likebtn.isLiked = false
+                bind.bottomShet.likebtn.animate().cancel()
             }
 
         } catch (e: Exception) {
             Log.d(Constants.TAG_, "Exception: $e")
         }
 
-        bind.likeTxt.text = Functions.getSuffix(item!!.like_count)
+        bind.bottomShet.likeTxt.text = Functions.getSuffix(item!!.like_count)
     }
 
     private fun setFavouriteData() {
         try {
             if (item!!.favourite == "1") {
-                bind.tabFavourite.animate().start()
-                bind.tabFavourite.setLikeDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite))
-                bind.tabFavourite.isLiked = true
+                bind.bottomShet.tabFavourite.animate().start()
+//                bind.tabFavourite.setLikeDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favourite))
+                bind.bottomShet.tabFavourite.isLiked = true
 
             } else {
-                bind.tabFavourite.setLikeDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_unfavourite))
-                bind.tabFavourite.isLiked = false
-                bind.tabFavourite.animate().cancel()
+//                bind.tabFavourite.setLikeDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_unfavourite))
+                bind.bottomShet.tabFavourite.isLiked = false
+                bind.bottomShet.tabFavourite.animate().cancel()
             }
         } catch (e: Exception) {
             Log.d(Constants.TAG_, "Exception: $e")
         }
 
-       bind.tvFavourite.text = Functions.getSuffix(item!!.favourite_count)
+        bind.bottomShet.tvFavourite.text = Functions.getSuffix(item!!.favourite_count)
     }
 
     private fun openVideoPromotion(item: HomeModel) {
@@ -933,10 +942,10 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
     }
 
     private fun showAd() {
-        bind.soundImageLayout.animation = null
-        bind.sideMenu.visibility = View.GONE
+//        bind.soundImageLayout.animation = null
+        bind.bottomShet.sideMenu.visibility = View.GONE
         bind.videoInfoLayout.visibility = View.GONE
-        bind.soundImageLayout.visibility = View.GONE
+//        bind.soundImageLayout.visibility = View.GONE
         bind.skipBtn.visibility = View.VISIBLE
 
         val bundle = Bundle()
@@ -975,11 +984,11 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
     // hide the ad of video after some time
     fun hideAd() {
         isAddAlreadyShow = true
-        bind.sideMenu.visibility = View.VISIBLE
+        bind.bottomShet.sideMenu.visibility = View.VISIBLE
         bind.videoInfoLayout.visibility = View.VISIBLE
-        bind.soundImageLayout.visibility = View.VISIBLE
+//        bind.soundImageLayout.visibility = View.VISIBLE
         val aniRotate = AnimationUtils.loadAnimation(getContext(), R.anim.d_clockwise_rotation)
-        bind.soundImageLayout.startAnimation(aniRotate)
+//        bind.soundImageLayout.startAnimation(aniRotate)
         bind.skipBtn.visibility = View.GONE
         val bundle = Bundle()
         bundle.putString("action", "hidead")
@@ -1011,16 +1020,16 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
                                 bind.tabBlockVideo.visibility = View.GONE
                             }
 
-                            try {
-                                if (item!!.storyDataList != null && item!!.storyDataList.size > 0) {
-                                    bind.circleStatusBar.counts = item!!.storyDataList.size
-                                    bind.circleStatusBar.visibility = View.VISIBLE
-                                } else {
-                                    bind.circleStatusBar.visibility = View.GONE
-                                }
-                            } catch (e: Exception) {
-                                Log.d(Constants.TAG_, "Exception: $e")
-                            }
+//                            try {
+//                                if (item!!.storyDataList != null && item!!.storyDataList.size > 0) {
+//                                    bind.circleStatusBar.counts = item!!.storyDataList.size
+//                                    bind.circleStatusBar.visibility = View.VISIBLE
+//                                } else {
+//                                    bind.circleStatusBar.visibility = View.GONE
+//                                }
+//                            } catch (e: Exception) {
+//                                Log.d(Constants.TAG_, "Exception: $e")
+//                            }
                         }
                     }
                 }
@@ -1695,7 +1704,7 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
     override fun onDataSent(yourData: String) {
         val commentCount = Functions.parseInterger(yourData)
         item!!.video_comment_count = "$commentCount"
-        bind.commentTxt.text = Functions.getSuffix(item!!.video_comment_count)
+//        bind.commentTxt.text = Functions.getSuffix(item!!.video_comment_count)
     }
 
     override fun onDetach() {

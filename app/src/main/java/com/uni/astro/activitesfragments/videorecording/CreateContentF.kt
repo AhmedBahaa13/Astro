@@ -32,7 +32,7 @@ class CreateContentF(private var fragmentCallBack: FragmentCallBack?) : BottomSh
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        val dialog = BottomSheetDialog(context!!, R.style.MyTransparentBottomSheetDialogTheme)
         bind = FragmentVideoCreationBinding.inflate(layoutInflater)
 
         dialog.setContentView(bind.root)

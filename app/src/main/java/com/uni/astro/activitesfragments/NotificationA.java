@@ -114,7 +114,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
 
 
     SimpleDraweeView ivUserPic;
-    LinearLayout tabCreateStory;
+    TextView tabCreateStory;
 
     RecyclerView storyRecyclerview;
     StoryAdapter storyAdapter;
@@ -132,18 +132,16 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         Functions.setLocale(Functions.getSharedPreference(NotificationA.this).getString(Variables.APP_LANGUAGE_CODE,Variables.DEFAULT_LANGUAGE_CODE)
                 , this, getClass(),false);
-        setContentView(R.layout.activity_notification);
+        setContentView(R.layout.notifications_screen);
         context = NotificationA.this;
-
-
         rootRef = FirebaseDatabase.getInstance().getReference();
         datalist = new ArrayList<>();
         tabCreateStory=findViewById(R.id.tabCreateStory);
         tabCreateStory.setOnClickListener(this);
         ivUserPic=findViewById(R.id.ivUserPic);
-        shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
-        dataContainer=findViewById(R.id.dataContainer);
-        recyclerView = (RecyclerView) findViewById(R.id.recylerview);
+//        shimmerFrameLayout = findViewById(R.id.shimmer_view_container);
+//        dataContainer=findViewById(R.id.dataContainer);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_notification);
         linearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -265,18 +263,18 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
             }
         });
 
-        loadMoreProgress = findViewById(R.id.load_more_progress);
+        loadMoreProgress = findViewById(R.id.load_more_progress_notifications);
 
 
-        swiperefresh =findViewById(R.id.swiperefresh);
+        swiperefresh =findViewById(R.id.swipe_refresh);
         swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (datalist.size()<1)
                 {
-                    dataContainer.setVisibility(View.GONE);
-                    shimmerFrameLayout.setVisibility(View.VISIBLE);
-                    shimmerFrameLayout.startShimmer();
+                    recyclerView.setVisibility(View.GONE);
+//                    shimmerFrameLayout.setVisibility(View.VISIBLE);
+//                    shimmerFrameLayout.startShimmer();
                 }
                 pageCount = 0;
                 callApi();
@@ -296,82 +294,82 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
         if (!Functions.getSettingsPreference(context).getString(Variables.AddType,"none").equalsIgnoreCase("none")){
 
             if( Functions.getSettingsPreference(context).getString(Variables.AddType,"").equalsIgnoreCase("admob")){
-                initBannerGoogleAd();
+//                initBannerGoogleAd();
             }
             else if( Functions.getSettingsPreference(context).getString(Variables.AddType,"").equalsIgnoreCase("adcolony")){
-                initBannerAd();
+//                initBannerAd();
             }
         }
     }
 
-    LinearLayout adView;
-    private AdColonyAdView bannerAdColony;
-    private void initBannerAd() {
-        adView = findViewById(R.id.banneradColony);
-        adView.setVisibility(View.VISIBLE);
-        AdColonyAdViewListener bannerListener = new AdColonyAdViewListener() {
+//    LinearLayout adView;
+//    private AdColonyAdView bannerAdColony;
+//    private void initBannerAd() {
+//        adView = findViewById(R.id.banneradColony);
+//        adView.setVisibility(View.VISIBLE);
+//        AdColonyAdViewListener bannerListener = new AdColonyAdViewListener() {
+//
+//            // Code to be executed when an ad request is filled
+//            // or when an ad finishes loading.
+//            @Override
+//            public void onRequestFilled(AdColonyAdView adColonyAdView) {
+//
+//                //Remove previous ad view if present.
+//                if (adView.getChildCount() > 0) {
+//                    adView.removeView(bannerAdColony);
+//                }
+//                adView.addView(adColonyAdView);
+//                bannerAdColony = adColonyAdView;
+//            }
+//
+//            // Code to be executed when an ad request is not filled
+//            //or when an ad is not loaded.
+//            @Override
+//            public void onRequestNotFilled(AdColonyZone zone) {
+//                super.onRequestNotFilled(zone);
+//            }
+//
+//            //Code to be executed when an ad opens
+//            @Override
+//            public void onOpened(AdColonyAdView ad) {
+//                super.onOpened(ad);
+//            }
+//
+//            //Code to be executed when user closed an ad
+//            @Override
+//            public void onClosed(AdColonyAdView ad) {
+//                super.onClosed(ad);
+//            }
+//
+//            // Code to be executed when the user clicks on an ad.
+//            @Override
+//            public void onClicked(AdColonyAdView ad) {
+//                super.onClicked(ad);
+//            }
+//
+//            // called after onAdOpened(), when a user click opens another app
+//            // (such as the Google Play), backgrounding the current app
+//            @Override
+//            public void onLeftApplication(AdColonyAdView ad) {
+//                super.onLeftApplication(ad);
+//            }
+//        };
+//
+//        // Optional Ad specific options to be sent with request
+//        AdColonyAdOptions adOptions = new AdColonyAdOptions();
+//
+//        //Request Ad
+//        AdColony.requestAdView(Constants.AD_COLONY_BANNER_ID, bannerListener, AdColonyAdSize.BANNER, adOptions);
+//    }
 
-            // Code to be executed when an ad request is filled
-            // or when an ad finishes loading.
-            @Override
-            public void onRequestFilled(AdColonyAdView adColonyAdView) {
-
-                //Remove previous ad view if present.
-                if (adView.getChildCount() > 0) {
-                    adView.removeView(bannerAdColony);
-                }
-                adView.addView(adColonyAdView);
-                bannerAdColony = adColonyAdView;
-            }
-
-            // Code to be executed when an ad request is not filled
-            //or when an ad is not loaded.
-            @Override
-            public void onRequestNotFilled(AdColonyZone zone) {
-                super.onRequestNotFilled(zone);
-            }
-
-            //Code to be executed when an ad opens
-            @Override
-            public void onOpened(AdColonyAdView ad) {
-                super.onOpened(ad);
-            }
-
-            //Code to be executed when user closed an ad
-            @Override
-            public void onClosed(AdColonyAdView ad) {
-                super.onClosed(ad);
-            }
-
-            // Code to be executed when the user clicks on an ad.
-            @Override
-            public void onClicked(AdColonyAdView ad) {
-                super.onClicked(ad);
-            }
-
-            // called after onAdOpened(), when a user click opens another app
-            // (such as the Google Play), backgrounding the current app
-            @Override
-            public void onLeftApplication(AdColonyAdView ad) {
-                super.onLeftApplication(ad);
-            }
-        };
-
-        // Optional Ad specific options to be sent with request
-        AdColonyAdOptions adOptions = new AdColonyAdOptions();
-
-        //Request Ad
-        AdColony.requestAdView(Constants.AD_COLONY_BANNER_ID, bannerListener, AdColonyAdSize.BANNER, adOptions);
-    }
-
-
-    AdView adViewGoogle;
-    public void initBannerGoogleAd() {
-        adViewGoogle = findViewById(R.id.banneradGoogle);
-        adViewGoogle.setVisibility(View.VISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adViewGoogle.loadAd(adRequest);
-    }
+//
+//    AdView adViewGoogle;
+//    public void initBannerGoogleAd() {
+//        adViewGoogle = findViewById(R.id.banneradGoogle);
+//        adViewGoogle.setVisibility(View.VISIBLE);
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        adViewGoogle.loadAd(adRequest);
+//    }
 
 
 
@@ -846,7 +844,7 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
 
 
     private void setupStoryRecyclerview() {
-        storyRecyclerview=findViewById(R.id.storyRecyclerview);
+        storyRecyclerview=findViewById(R.id.recycler_notification);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         storyRecyclerview.setLayoutManager(layoutManager);
@@ -880,9 +878,9 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
 
                     if (datalist.size()<1)
                     {
-                        dataContainer.setVisibility(View.GONE);
-                        shimmerFrameLayout.setVisibility(View.VISIBLE);
-                        shimmerFrameLayout.startShimmer();
+                        recyclerView.setVisibility(View.GONE);
+//                        shimmerFrameLayout.setVisibility(View.VISIBLE);
+//                        shimmerFrameLayout.startShimmer();
                     }
 
                     pageCount = 0;
@@ -926,9 +924,9 @@ public class NotificationA extends AppCompatLocaleActivity implements View.OnCli
             @Override
             public void onResponce(String resp) {
                 isApiCall=false;
-                shimmerFrameLayout.stopShimmer();
-                shimmerFrameLayout.setVisibility(View.GONE);
-                dataContainer.setVisibility(View.VISIBLE);
+//                shimmerFrameLayout.stopShimmer();
+//                shimmerFrameLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 swiperefresh.setRefreshing(false);
                 parseData(resp);
             }

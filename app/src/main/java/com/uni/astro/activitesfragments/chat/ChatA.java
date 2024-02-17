@@ -412,17 +412,23 @@ public class ChatA extends AppCompatLocaleActivity implements View.OnClickListen
             }
 
             @Override
-            public void onFinish(long recordTime) {
+            public void onFinish(long recordTime, boolean limitReached) {
                 sendAudio.stopRecording();
 
                 findViewById(R.id.write_layout).setVisibility(View.VISIBLE);
             }
+
 
             @Override
             public void onLessThanSecond() {
                 sendAudio.stopTimerWithoutRecoder();
                 findViewById(R.id.write_layout).setVisibility(View.VISIBLE);
             }
+
+//            @Override
+//            public void onLock() {
+//
+//            }
         });
         recordView.setSlideToCancelText(getString(R.string.slide_to_cancel));
         micBtn.setListenForRecord(true);

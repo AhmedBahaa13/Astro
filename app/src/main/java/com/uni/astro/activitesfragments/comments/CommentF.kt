@@ -10,6 +10,7 @@ import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
@@ -28,9 +29,7 @@ import com.uni.astro.Constants
 import com.uni.astro.Constants.TAG_
 import com.uni.astro.R
 import com.uni.astro.activitesfragments.comments.adapters.CommentsAdapter
-import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.OnRelyItemCLickListener
-import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.LinkClickListener
-import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.OnLongClickListener
+import com.uni.astro.activitesfragments.comments.adapters.Comments_Reply_Adapter.*
 import com.uni.astro.activitesfragments.comments.voice.VoiceCommentManager
 import com.uni.astro.activitesfragments.profile.ProfileA
 import com.uni.astro.apiclasses.ApiLinks
@@ -39,12 +38,8 @@ import com.uni.astro.interfaces.FragmentDataSend
 import com.uni.astro.models.CommentModel
 import com.uni.astro.models.HomeModel
 import com.uni.astro.models.UsersModel
-import com.uni.astro.simpleclasses.DataParsing
-import com.uni.astro.simpleclasses.DebounceClickHandler
-import com.uni.astro.simpleclasses.Functions
+import com.uni.astro.simpleclasses.*
 import com.uni.astro.simpleclasses.Functions.deleteDir
-import com.uni.astro.simpleclasses.PermissionUtils
-import com.uni.astro.simpleclasses.Variables
 import com.volley.plus.VPackages.VolleyRequest
 import com.volley.plus.interfaces.APICallBack
 import org.json.JSONObject
@@ -94,7 +89,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        dialog = BottomSheetDialog(requireContext(),R.style.MyTransparentBottomSheetDialogTheme)
         val dialogView = FragmentCommentBinding.inflate(layoutInflater)
 
         dialog?.setContentView(dialogView.root)
@@ -102,12 +97,13 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
 
         mBehavior.isHideable = false
         mBehavior.isDraggable = false
+
         mBehavior.setPeekHeight(resources.getDimension(R.dimen._450sdp).toInt(), true)
 
         mBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState != BottomSheetBehavior.STATE_EXPANDED) {
-                    mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             }
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
@@ -116,18 +112,32 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
         return dialog as BottomSheetDialog
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = FragmentCommentBinding.inflate(inflater, container, false)
+        bind.recyclerView.isNestedScrollingEnabled = true;
+        bind.recyclerView.setOnTouchListener { v, event ->
+            val action = event.action
+            when (action) {
+                MotionEvent.ACTION_DOWN ->                         // Disallow NestedScrollView to intercept touch events.
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                MotionEvent.ACTION_UP ->                         // Allow NestedScrollView to intercept touch events.
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+            }
 
+            // Handle RecyclerView touch events.
+            v.onTouchEvent(event)
+            true
+        }
         bind.apply {
             tvComment.setOnClickListener(DebounceClickHandler {
                 replyStatus = null
                 hitComment()
             })
 
-            goBack.setOnClickListener(DebounceClickHandler {
-                dismiss()
-            })
+//            goBack.setOnClickListener(DebounceClickHandler {
+//                dismiss()
+//            })
 
 
             val bundle = arguments
@@ -150,8 +160,8 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
 
             val linearLayoutManager = LinearLayoutManager(context)
             linearLayoutManager.orientation = RecyclerView.VERTICAL
-            recyclerView.layoutManager = linearLayoutManager
-            recyclerView.setHasFixedSize(true)
+//            recyclerView.layoutManager = linearLayoutManager
+//            recyclerView.setHasFixedSize(true)
 
             commentsAdapter = CommentsAdapter(requireContext(), dataList,
                 object : CommentsAdapter.OnItemClickListener {
@@ -341,6 +351,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                             recordPanel.visibility = View.VISIBLE
                             recordView.visibility = View.VISIBLE
                             tvComment.visibility = View.GONE
+                            inputLayout.visibility = View.GONE
                         }
 
                         sendAudio?.startVoiceRecording(requireActivity())
@@ -355,7 +366,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                     sendAudio?.stopTimer()
                 }
 
-                override fun onFinish(recordDuration: Long) {
+                override fun onFinish(recordDuration: Long, limitReached: Boolean) {
                     var timer: CountDownTimer = object : CountDownTimer(0, 0) {
                         override fun onTick(millisUntilFinished: Long) {}
                         override fun onFinish() {}
@@ -371,6 +382,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                         recordView.visibility = View.GONE
                         tvComment.visibility = View.GONE
                         btnMic.visibility = View.GONE
+                        inputLayout.visibility = View.GONE
                     }
 
                     val recordFile = sendAudio?.finishRecording(requireActivity())
@@ -412,7 +424,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                     btnPlay.setOnClickListener(DebounceClickHandler {
                         if (!togglePlay) {
                             mediaPlayer.start()
-                            btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                            btnPlay.setImageResource(R.drawable.pause_audio_ic)
 
                             timer = object : CountDownTimer(recordDuration, 100) {
                                 override fun onTick(millisUntilFinished: Long) {
@@ -420,7 +432,7 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                                 }
 
                                 override fun onFinish() {
-                                    btnPlay.setImageResource(R.drawable.ic_play_icon)
+                                    btnPlay.setImageResource(R.drawable.play_audio_icon)
                                     seekBar.progress = 0
                                 }
                             }
@@ -436,13 +448,13 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                                 }
 
                                 override fun onStartTrackingTouch(seekBar: SeekBar) {
-                                    btnPlay.setImageResource(R.drawable.ic_play_icon)
+                                    btnPlay.setImageResource(R.drawable.play_audio_icon)
                                     mediaPlayer.pause()
                                     timer.cancel()
                                 }
 
                                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                                    btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                                    btnPlay.setImageResource(R.drawable.pause_audio_ic)
                                     mediaPlayer.seekTo(seekBar.progress)
                                     mediaPlayer.start()
                                     timer.start()
@@ -464,6 +476,10 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                     Toast.makeText(requireContext(), "Record Is Too Short...", Toast.LENGTH_SHORT).show()
                     resetRecordViews()
                 }
+
+//                override fun onLock() {
+//                    TODO("Not yet implemented")
+//                }
             })
 
 
@@ -503,9 +519,10 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
                 btnMic.visibility = View.VISIBLE
                 tvComment.visibility = View.VISIBLE
                 recordView.visibility = View.VISIBLE
+                inputLayout.visibility = View.VISIBLE
                 btnSendVoice.visibility = View.VISIBLE
                 btnDeleteRecord.visibility = View.VISIBLE
-                btnPlay.setImageResource(R.drawable.ic_play_icon)
+                btnPlay.setImageResource(R.drawable.play_audio_icon)
                 seekBar.progress = 0
                 recordTime.text = "00:00"
             }
@@ -516,7 +533,6 @@ class CommentF(count: Int, var fragmentDataSend: FragmentDataSend?) : BottomShee
         var replyStr = ""
         if (replyStatus == null) {
             commentType = "OwnComment"
-
         } else if (replyStatus == "commentReply") {
             replyStr = "${getString(R.string.reply_to)} ${selectedReplyComment!!.replay_user_name}"
             commentType = "replyComment"
