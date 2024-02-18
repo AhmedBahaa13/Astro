@@ -187,8 +187,8 @@
 
                     <ImageView
                         android:id="@+id/btnPlay"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_13sdp"
+                        android:layout_height="@dimen/_13sdp"
                         android:background="@color/transparent"
                         android:clickable="false"
                         android:scaleType="fitXY"
