@@ -3,12 +3,10 @@ package com.uni.astro.activitesfragments.comments.adapters
 import android.app.Activity
 import android.content.Context
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
@@ -57,9 +55,12 @@ class CommentsAdapter(
     var mediaPlayerProgress = 0
 
 
-
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewtype: Int): CommentsViewHolder {
-        val cBind = ItemCommentLayoutBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val cBind = ItemCommentLayoutBinding.inflate(
+            LayoutInflater.from(viewGroup.context),
+            viewGroup,
+            false
+        )
         return CommentsViewHolder(cBind)
     }
 
@@ -99,14 +100,28 @@ class CommentsAdapter(
 
 
             likeTxt.text = Functions.getSuffix(item.like_count)
-            tvMessageData.text = Functions.changeDateLatterFormat("yyyy-MM-dd hh:mm:ssZZ", context, item.created + "+0000")
+            tvMessageData.text = Functions.changeDateLatterFormat(
+                "yyyy-MM-dd hh:mm:ssZZ",
+                context,
+                item.created + "+0000"
+            )
 
 
             if (item.liked != null && !item.equals("")) {
                 if (item.liked == "1") {
-                    likeImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_like_fill))
+                    likeImage.setColorFilter(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.love_comment_clicked
+                        )
+                    )
                 } else {
-                    likeImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_heart_gray_out))
+                    likeImage.setColorFilter(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.love_comment_default
+                        )
+                    )
                 }
             }
 
@@ -116,7 +131,10 @@ class CommentsAdapter(
                 ivVarified.visibility = View.GONE
             }
 
-            FriendsTagHelper.Creator.create(ContextCompat.getColor(context, R.color.whiteColor), ContextCompat.getColor(context, R.color.appColor)) { friendsTags ->
+            FriendsTagHelper.Creator.create(
+                ContextCompat.getColor(context, R.color.whiteColor),
+                ContextCompat.getColor(context, R.color.appColor)
+            ) { friendsTags ->
                 var friendsTag = friendsTags
                 if (friendsTag.contains("@")) {
                     Log.d(Constants.TAG_, "Friends $friendsTag")
@@ -135,7 +153,8 @@ class CommentsAdapter(
 
             if (item.arrayList != null && item.arrayList.size > 0) {
                 replyCount.visibility = View.VISIBLE
-                replyCount.text = "${context.getString(R.string.view_replies)} (${item.arrayList.size})"
+                replyCount.text =
+                    "${context.getString(R.string.view_replies)} (${item.arrayList.size})"
 
             } else {
                 replyCount.visibility = View.GONE
@@ -160,11 +179,11 @@ class CommentsAdapter(
             }
 
             commentsReplyAdapter = Comments_Reply_Adapter(context, item.arrayList)
-            replyRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            replyRecyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             replyRecyclerView.adapter = commentsReplyAdapter
             replyRecyclerView.setHasFixedSize(false)
             holder.bind(position, item, listener)
-
 
 
             // ============================= Click Listeners =============================
@@ -173,7 +192,7 @@ class CommentsAdapter(
                     holder.stopPlaying()
 
                 } else {
-                    holder.playAudio(item.commentText, position)
+                    holder.playAudio(item.commentText, position, item)
                 }
             }
 
@@ -185,56 +204,67 @@ class CommentsAdapter(
         }
     }
 
-    inner class CommentsViewHolder(val cBinder: ItemCommentLayoutBinding) : RecyclerView.ViewHolder(cBinder.root) {
+    inner class CommentsViewHolder(val cBinder: ItemCommentLayoutBinding) :
+        RecyclerView.ViewHolder(cBinder.root) {
         // ============================= Voice Comment Functions =============================
         private var cTimer: CountDownTimer = object : CountDownTimer(0, 0) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {}
         }
 
-        fun playAudio(vID: String, position: Int) {
+        fun playAudio(vID: String, position: Int, item: CommentModel) {
             //mediaPlayer = MediaPlayer.create(context, Uri.parse(vID))
             mediaPlayer = MediaPlayer().apply {
+                Log.d("CommentsViewHolder", "playAudio: $vID")
                 setDataSource(vID)
                 prepare()
             }
+
 
             cBinder.apply {
                 seekBar.max = getRecordDuration(dataList[position].duration)
 
                 if (!mediaPlayer.isPlaying) {
                     mediaPlayer.start()
-                    btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                    btnPlay.setImageResource(R.drawable.pause_audio_ic)
 
-                    cTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 300) {
+                    cTimer = object : CountDownTimer(mediaPlayer.duration.toLong(), 100) {
                         override fun onTick(millisUntilFinished: Long) {
-                            if (mediaPlayer.isPlaying) {
-                                seekBar.progress = mediaPlayer.currentPosition
-                            }
+                            seekBar.progress = mediaPlayer.currentPosition
                         }
 
                         override fun onFinish() {
-                            btnPlay.setImageResource(R.drawable.ic_play_icon)
+                            btnPlay.setImageResource(R.drawable.play_audio_icon)
                             seekBar.progress = 0
                         }
                     }
                     cTimer.start()
 
                     seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                        override fun onProgressChanged(
+                            seekBar: SeekBar,
+                            progress: Int,
+                            fromUser: Boolean
+                        ) {
+                            cBinder.voiceTime.text = String.format(
+                                "%02d:%02d",
+                                mediaPlayer.currentPosition / (60 * 1000),
+                                (mediaPlayer.currentPosition / 1000) % 60
+                            )
+
                             if (fromUser) {
                                 mediaPlayer.seekTo(progress)
                             }
                         }
 
                         override fun onStartTrackingTouch(seekBar: SeekBar) {
-                            btnPlay.setImageResource(R.drawable.ic_play_icon)
+                            btnPlay.setImageResource(R.drawable.play_audio_icon)
                             mediaPlayer.pause()
                             cTimer.cancel()
                         }
 
                         override fun onStopTrackingTouch(seekBar: SeekBar) {
-                            btnPlay.setImageResource(R.drawable.ic_pause_icon)
+                            btnPlay.setImageResource(R.drawable.pause_audio_ic)
                             mediaPlayer.seekTo(seekBar.progress)
                             mediaPlayer.start()
                             cTimer.start()
@@ -248,52 +278,72 @@ class CommentsAdapter(
 
         fun stopPlaying() {
             if (mediaPlayer.isPlaying) {
-                cBinder.btnPlay.setImageResource(R.drawable.ic_play_icon)
+                cBinder.btnPlay.setImageResource(R.drawable.play_audio_icon)
                 mediaPlayer.pause()
                 cTimer.cancel()
             }
         }
 
         fun downloadAudio(vUrl: String, vID: String) {
-            PRDownloader.download(vUrl, Functions.getAppFolder(context), "$vID.mp3").build().start(object : OnDownloadListener {
-                override fun onDownloadComplete() {
-                    Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
-                }
+            PRDownloader.download(vUrl, Functions.getAppFolder(context), "$vID.mp3").build()
+                .start(object : OnDownloadListener {
+                    override fun onDownloadComplete() {
+                        Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
+                    }
 
-                override fun onError(error: Error) {
-                    Toast.makeText(context, "Download Failed", Toast.LENGTH_SHORT).show()
-                }
-            })
+                    override fun onError(error: Error) {
+                        Toast.makeText(context, "Download Failed", Toast.LENGTH_SHORT).show()
+                    }
+                })
         }
 
         fun getRecordDuration(durationString: String): Int {
+            Log.d("CommentsAdapter", "getRecordDuration: String :: $durationString")
             val parts = durationString.split(":")
             val minutes = parts[0].toIntOrNull() ?: 0
             val seconds = parts[1].toIntOrNull() ?: 0
+            Log.d("CommentsAdapter", "getRecordDuration: Duration :: ${minutes * 60 *1000 + seconds*1000}")
 
-            return minutes * 60 + seconds
+            return minutes * 60 *1000 + seconds*1000
         }
-
 
 
         fun bind(position: Int, item: CommentModel, listener: OnItemClickListener) {
             cBinder.apply {
                 itemView.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
                 userPic.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
-                tabUserPic.setOnClickListener { view: View -> listener.onItemClick(position, item, view) }
+                tabUserPic.setOnClickListener { view: View ->
+                    listener.onItemClick(
+                        position,
+                        item,
+                        view
+                    )
+                }
                 username.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
 
-                tabMessageReply.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
+                tabMessageReply.setOnClickListener { v: View ->
+                    listener.onItemClick(
+                        position,
+                        item,
+                        v
+                    )
+                }
                 likeLayout.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
                 replyCount.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
-                showLessTxt.setOnClickListener { v: View -> listener.onItemClick(position, item, v) }
+                showLessTxt.setOnClickListener { v: View ->
+                    listener.onItemClick(
+                        position,
+                        item,
+                        v
+                    )
+                }
 
                 commentPanel.setOnLongClickListener { view ->
                     listener.onItemLongPress(position, item, view)
                     false
                 }
 
-                seekBar.setOnTouchListener { v: View?, event: MotionEvent -> true }
+//                seekBar.setOnTouchListener { v: View?, event: MotionEvent -> true }
             }
         }
     }

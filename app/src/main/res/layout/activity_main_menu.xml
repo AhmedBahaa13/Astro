@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:id="@+id/mainMenuFragment"
@@ -17,16 +18,23 @@
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="top|center_horizontal|bottom" />
+                android:layout_above="@id/tabs"
+                android:layout_gravity="top|center_horizontal|bottom"
+                android:background="@color/white" />
 
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
+                app:tabPaddingBottom="@dimen/_6sdp"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:elevation="@dimen/_2sdp"
+                android:background="@color/black"
+                android:elevation="@dimen/_10sdp"
                 android:gravity="center"
+                android:shadowColor="@color/black"
+                android:shadowDy="50"
+                android:shadowRadius="240"
                 android:visibility="gone"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@color/transparent"
@@ -36,7 +44,8 @@
                 app:tabPaddingStart="0dp"
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                app:tabTextColor="@color/dimgray" />
+                app:tabTextColor="@color/dimgray"
+                tools:visibility="visible" />
 
 
             <androidx.cardview.widget.CardView
@@ -52,7 +61,8 @@
                 android:visibility="gone"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="@dimen/_15sdp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                tools:visibility="gone">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -102,7 +112,8 @@
                                 android:layout_centerInParent="true"
                                 android:visibility="gone"
                                 app:placeholderImage="@drawable/image_placeholder"
-                                app:placeholderImageScaleType="centerCrop" />
+                                app:placeholderImageScaleType="centerCrop"
+                                tools:visibility="visible" />
 
 
                             <View
@@ -121,7 +132,8 @@
                             android:layout_height="@dimen/_34sdp"
                             android:layout_marginStart="@dimen/_60sdp"
                             android:background="@drawable/ic_circle_bg_gray"
-                            android:visibility="gone">
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
                             <TextView
                                 android:id="@+id/tvJoinCount"
@@ -167,14 +179,16 @@
                             android:layout_height="@dimen/_38sdp"
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:background="@drawable/ic_circle_bg_gray"
-                            android:visibility="gone">
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
                             <ImageView
                                 android:id="@+id/ivRiseHandUser"
                                 android:layout_width="@dimen/_20sdp"
                                 android:layout_height="@dimen/_20sdp"
                                 android:layout_centerInParent="true"
-                                android:src="@drawable/ic_rise_hand_list" />
+                                android:src="@drawable/ic_rise_hand_list"
+                                tools:visibility="visible" />
 
 
                             <TextView
@@ -190,7 +204,8 @@
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/_6sdp"
                                 android:textStyle="bold"
-                                android:visibility="gone" />
+                                android:visibility="gone"
+                                tools:visibility="visible" />
 
                         </RelativeLayout>
 
@@ -217,7 +232,8 @@
                             android:layout_height="@dimen/_38sdp"
                             android:layout_marginStart="@dimen/_8sdp"
                             android:background="@drawable/ic_circle_bg_gray"
-                            android:visibility="gone">
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
                             <ImageView
                                 android:id="@+id/ivMice"

@@ -12,15 +12,14 @@ import android.os.Looper
 import android.provider.ContactsContract
 import android.text.TextUtils
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -187,13 +186,17 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         val view1 = LayoutInflater.from(context).inflate(R.layout.item_tablayout, null)
         val imageView1 = view1.findViewById<ImageView>(R.id.image)
         val title1 = view1.findViewById<TextView>(R.id.text)
-        imageView1.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_home_white))
+        imageView1.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.video_library))
         imageView1.setColorFilter(
             ContextCompat.getColor(context!!, R.color.whiteColor),
             PorterDuff.Mode.SRC_IN
         )
         title1.text = context!!.getString(R.string.home)
         title1.setTextColor(ContextCompat.getColor(context!!, R.color.whiteColor))
+//        view1.updateLayoutParams {
+//            (this as LinearLayout.LayoutParams).topMargin =
+//                resources.getDimension(R.dimen._16sdp).toInt()
+//        }
         tabLayout!!.getTabAt(0)!!.customView = view1
         val view2 = LayoutInflater.from(context).inflate(R.layout.item_tablayout, null)
         val imageView2 = view2.findViewById<ImageView>(R.id.image)
@@ -201,28 +204,28 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         imageView2.setImageDrawable(
             ContextCompat.getDrawable(
                 context!!,
-                R.drawable.ic_discovery_gray
+                R.drawable.explore_trend_icon
             )
         )
         imageView2.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
         title2.text = context!!.getString(R.string.discover)
-        title2.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        title2.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tabLayout!!.getTabAt(1)!!.customView = view2
         val view3 = LayoutInflater.from(context).inflate(R.layout.item_add_tab_layout, null)
         tabLayout!!.getTabAt(2)!!.customView = view3
-        val view4 = LayoutInflater.from(context).inflate(R.layout.item_tablayout, null)
+        val view4 = LayoutInflater.from(context).inflate(R.layout.space_item_tablayout, null)
         val imageView4 = view4.findViewById<ImageView>(R.id.image)
         val title4 = view4.findViewById<TextView>(R.id.text)
-        imageView4.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_space_gray))
+        imageView4.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.space_ic))
         imageView4.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
-        title4.text = context!!.getString(R.string.spaces)
-        title4.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        title4.text = context!!.getString(R.string.uni)
+        title4.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tabLayout!!.getTabAt(3)!!.customView = view4
         val view5 = LayoutInflater.from(context).inflate(R.layout.item_tablayout, null)
         val imageView5 = view5.findViewById<ImageView>(R.id.image)
@@ -230,15 +233,15 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         imageView5.setImageDrawable(
             ContextCompat.getDrawable(
                 context!!,
-                R.drawable.ic_profile_gray
+                R.drawable.profile_icon
             )
         )
         imageView5.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
         title5.text = context!!.getString(R.string.profile)
-        title5.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        title5.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tabLayout!!.getTabAt(4)!!.customView = view5
         tabLayout!!.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -252,7 +255,7 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_home_white
+                                R.drawable.video_library
                             )
                         )
                         image.setColorFilter(
@@ -268,14 +271,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_discover_red
+                                R.drawable.explore_trend_icon
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.appColor),
+                            ContextCompat.getColor(context!!, R.color.white),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.appColor))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.white))
                     }
 
                     3 -> {
@@ -284,14 +287,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_space_red
+                                R.drawable.space_ic
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.appColor),
+                            ContextCompat.getColor(context!!, R.color.white),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.appColor))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.white))
                     }
 
                     4 -> {
@@ -300,14 +303,14 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_profile_red
+                                R.drawable.profile_icon
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.appColor),
+                            ContextCompat.getColor(context!!, R.color.white),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.appColor))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.white))
                     }
                 }
                 tab.customView = v
@@ -326,38 +329,38 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.darkgray),
+                            ContextCompat.getColor(context!!, R.color.unselected_tab),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
                     }
 
                     1 -> {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_discovery_gray
+                                R.drawable.explore_trend_icon
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.darkgray),
+                            ContextCompat.getColor(context!!, R.color.unselected_tab),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
                     }
 
                     3 -> {
                         image.setImageDrawable(
                             ContextCompat.getDrawable(
                                 context!!,
-                                R.drawable.ic_space_gray
+                                R.drawable.space_ic
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.darkgray),
+                            ContextCompat.getColor(context!!, R.color.unselected_tab),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
                     }
 
                     4 -> {
@@ -368,10 +371,10 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                             )
                         )
                         image.setColorFilter(
-                            ContextCompat.getColor(context!!, R.color.darkgray),
+                            ContextCompat.getColor(context!!, R.color.unselected_tab),
                             PorterDuff.Mode.SRC_IN
                         )
-                        title.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+                        title.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
                     }
                 }
                 tab.customView = v
@@ -427,6 +430,17 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 }
             }
         }
+        for (tabNum in 0 until tabLayout!!.tabCount) {
+            val tab = tabLayout!!.getTabAt(tabNum)
+            tab?.customView?.updateLayoutParams {
+                if (tab.position == 2) {
+                    (this as ViewGroup.MarginLayoutParams).bottomMargin =
+                        resources.getDimension(R.dimen._9sdp).toInt()
+                }
+//                else (this as LinearLayout.LayoutParams).topMargin =
+//                    resources.getDimension(R.dimen._1sdp).toInt()
+            }
+        }
     }
 
     // open the chat fragment when click on notification of message
@@ -443,12 +457,10 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         Functions.makeDirectry(Functions.getAppFolder(context) + Variables.APP_HIDED_FOLDER)
         Functions.makeDirectry(Functions.getAppFolder(context) + Variables.DRAFT_APP_FOLDER)
         if (Functions.checkLoginUser(this@MainMenuActivity)) {
-            val giftFragment = CreateContentF(object : FragmentCallBack {
-                override fun onResponce(bundle: Bundle?) {
-                    if (bundle != null) {
-                    }
+            val giftFragment = CreateContentF { bundle ->
+                if (bundle != null) {
                 }
-            })
+            }
             giftFragment.show(supportFragmentManager, "")
         }
     }
@@ -466,39 +478,44 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         val view1 = tab1!!.customView
         val imageView1 = view1!!.findViewById<ImageView>(R.id.image)
         imageView1.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
         val tex1 = view1.findViewById<TextView>(R.id.text)
-        tex1.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        tex1.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab1.customView = view1
         val tab2 = tabLayout!!.getTabAt(2)
         val view2 = tab2!!.customView
         val image = view2!!.findViewById<ImageView>(R.id.image)
-        image.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_add_white))
+//        image.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.add_video_tab_ic))
+        view2.updateLayoutParams {
+                (this as ViewGroup.MarginLayoutParams).bottomMargin =
+                    resources.getDimension(R.dimen._9sdp).toInt()
+
+        }
         tab2.customView = view2
         val tab3 = tabLayout!!.getTabAt(3)
         val view3 = tab3!!.customView
         val imageView3 = view3!!.findViewById<ImageView>(R.id.image)
         imageView3.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
         val tex3 = view3.findViewById<TextView>(R.id.text)
-        tex3.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        tex3.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab3.customView = view3
         val tab4 = tabLayout!!.getTabAt(4)
         val view4 = tab4!!.customView
         val imageView4 = view4!!.findViewById<ImageView>(R.id.image)
         imageView4.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.colorwhite_50),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
         val tex4 = view4.findViewById<TextView>(R.id.text)
-        tex4.setTextColor(ContextCompat.getColor(context!!, R.color.colorwhite_50))
+        tex4.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab4.customView = view4
-        tabLayout!!.background =
-            ContextCompat.getDrawable(context!!, R.drawable.d_top_gray_line_trans)
+//        tabLayout!!.background =
+//            ContextCompat.getDrawable(context!!, R.drawable.d_top_gray_line_trans)
         window.navigationBarColor = ContextCompat.getColor(context!!, R.color.blackColor)
         window.decorView.systemUiVisibility = 0
     }
@@ -510,37 +527,51 @@ class MainMenuActivity : AppCompatLocaleActivity() {
         val tex1 = view1!!.findViewById<TextView>(R.id.text)
         val imageView1 = view1.findViewById<ImageView>(R.id.image)
         imageView1.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.darkgray),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
-        tex1.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+        tex1.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab1.customView = view1
         val tab2 = tabLayout!!.getTabAt(2)
         val view2 = tab2!!.customView
         val image = view2!!.findViewById<ImageView>(R.id.image)
-        image.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_add_black))
+//        image.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.add_video_tab_ic))
+//        image.background =
+//            ResourcesCompat.getDrawable(resources, R.drawable.light_under_add_video, theme)
+//        image.layoutParams = image.layoutParams.apply {
+//            height = resources.getDimension(R.dimen._32sdp).toInt()
+//            width = resources.getDimension(R.dimen._32sdp).toInt()
+//        }
         tab2.customView = view2
         val tab3 = tabLayout!!.getTabAt(3)
         val view3 = tab3!!.customView
         val imageView3 = view3!!.findViewById<ImageView>(R.id.image)
         imageView3.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.darkgray),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
+//        view3.updateLayoutParams {
+//            (this as LinearLayout.LayoutParams).topMargin =
+//                resources.getDimension(R.dimen._16sdp).toInt()
+//        }
         val tex3 = view3.findViewById<TextView>(R.id.text)
-        tex3.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+        tex3.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab3.customView = view3
         val tab4 = tabLayout!!.getTabAt(4)
         val view4 = tab4!!.customView
         val imageView4 = view4!!.findViewById<ImageView>(R.id.image)
         imageView4.setColorFilter(
-            ContextCompat.getColor(context!!, R.color.darkgray),
+            ContextCompat.getColor(context!!, R.color.unselected_tab),
             PorterDuff.Mode.SRC_IN
         )
+//        view4.updateLayoutParams {
+//            (this as LinearLayout.LayoutParams).topMargin =
+//                resources.getDimension(R.dimen._16sdp).toInt()
+//        }
         val tex4 = view4.findViewById<TextView>(R.id.text)
-        tex4.setTextColor(ContextCompat.getColor(context!!, R.color.darkgray))
+        tex4.setTextColor(ContextCompat.getColor(context!!, R.color.unselected_tab))
         tab4.customView = view4
-        tabLayout!!.background = ContextCompat.getDrawable(context!!, R.drawable.ractengle_white)
+//        tabLayout!!.background = ContextCompat.getDrawable(context!!, R.drawable.ractengle_white)
         window.navigationBarColor = ContextCompat.getColor(context!!, R.color.white)
         if (DarkModePrefManager(this@MainMenuActivity).isNightMode) {
             window.decorView.systemUiVisibility = 0
@@ -586,9 +617,9 @@ class MainMenuActivity : AppCompatLocaleActivity() {
             } else if (position == 2) {
                 tab.text = context!!.getString(R.string.upload)
             } else if (position == 3) {
-                tab.text = context!!.getString(R.string.notifications)
+                tab.text = context!!.getString(R.string.uni)
             } else if (position == 4) {
-                tab.text = context!!.getString(R.string.profile)
+                tab.text = context!!.getString(R.string.me)
             }
         }
         tabLayoutMediator.attach()
@@ -1019,7 +1050,9 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                     val msg = jsonObject.optJSONObject("msg")
                     val userDetailModel = DataParsing.getUserDataModel(msg.optJSONObject("User"))
                     moveToProfile(
-                        userDetailModel.id!!, userDetailModel.username!!, userDetailModel.getProfilePic()!!
+                        userDetailModel.id!!,
+                        userDetailModel.username!!,
+                        userDetailModel.getProfilePic()!!
                     )
                 }
             } catch (e: Exception) {
@@ -1290,14 +1323,20 @@ class MainMenuActivity : AppCompatLocaleActivity() {
                 if (bundle != null) {
                     val invitation = bundle.getSerializable("data") as InviteForSpeakModel?
                     if (invitation!!.getInvite() == "1") {
-                        Dialogs.showInvitationDialog(this@MainMenuActivity, invitation.getUserName()) { bndl ->
+                        Dialogs.showInvitationDialog(
+                            this@MainMenuActivity,
+                            invitation.getUserName()
+                        ) { bndl ->
                             if (bndl != null) {
                                 roomFirebaseManager!!.removeInvitation()
                                 val updateRise = HashMap<String, Any>()
                                 updateRise["riseHand"] = "0"
                                 reference!!.child(Variables.roomKey)
                                     .child(model!!.model.id).child(Variables.roomUsers)
-                                    .child(Functions.getSharedPreference(context).getString(Variables.U_ID, "")!!)
+                                    .child(
+                                        Functions.getSharedPreference(context)
+                                            .getString(Variables.U_ID, "")!!
+                                    )
                                     .updateChildren(updateRise)
                                 if (bndl.getBoolean("isShow")) {
                                     if (RoomStreamService.streamingInstance != null && RoomStreamService.streamingInstance!!.ismAudioMuted()) {

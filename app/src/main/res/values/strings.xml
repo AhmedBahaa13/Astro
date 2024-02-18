@@ -89,6 +89,7 @@
     <string name="send_code">Send Code</string>
     <string name="inbox">Inbox</string>
     <string name="spaces">Spaces</string>
+    <string name="uni">Uni</string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
     <string name="follow">Follow</string>
@@ -132,9 +133,10 @@
     <string name="remove">Remove</string>
     <string name="are_you_sure_to_logout">Are you sure to logout?</string>
     <string name="logout">Logout</string>
-    <string name="home">Home</string>
+    <string name="home">What\'s new</string>
     <string name="discover">Discover</string>
     <string name="profile">Profile</string>
+    <string name="me">Me</string>
     <string name="video_already_in_progress">Please wait video already in uploading progress</string>
     <string name="tap_to_exist">Tap Again To Exit</string>
     <string name="txt_smaller">Video should be smaller than</string>
@@ -944,4 +946,7 @@
     <string name="daily_checkin">Daily Check In</string>
     <string name="post_new_video">Post New Video</string>
     <string name="profile_picture">Profile picture</string>
+    <string name="my_space">my space</string>
+    <string name="catch_s">Catch</string>
+    <string name="astr">A&#130;s&#130;t&#130;r</string>
 </resources>

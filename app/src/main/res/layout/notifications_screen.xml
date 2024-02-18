@@ -34,19 +34,19 @@
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/image_profile"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ivUserPic"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_25sdp"
         android:layout_marginTop="@dimen/_22sdp"
         android:contentDescription="@string/profile_picture"
-        android:src="@drawable/profile"
+        ads:backgroundImage="@drawable/profile"
         ads:layout_constraintStart_toStartOf="parent"
         ads:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tabCreateStory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
@@ -55,9 +55,9 @@
         android:textColor="@color/black"
         android:textSize="15sp"
         android:textStyle="normal"
-        ads:layout_constraintEnd_toEndOf="@+id/image_profile"
-        ads:layout_constraintStart_toStartOf="@+id/image_profile"
-        ads:layout_constraintTop_toBottomOf="@+id/image_profile" />
+        ads:layout_constraintEnd_toEndOf="@+id/ivUserPic"
+        ads:layout_constraintStart_toStartOf="@+id/ivUserPic"
+        ads:layout_constraintTop_toBottomOf="@+id/ivUserPic" />
 
     <ImageView
         android:id="@+id/image_add"
@@ -66,9 +66,9 @@
         android:layout_marginStart="@dimen/_5sdp"
         android:contentDescription="@string/send"
         android:src="@drawable/add"
-        ads:layout_constraintBottom_toBottomOf="@+id/textView3"
-        ads:layout_constraintStart_toEndOf="@id/textView3"
-        ads:layout_constraintTop_toTopOf="@+id/textView3" />
+        ads:layout_constraintBottom_toBottomOf="@+id/tabCreateStory"
+        ads:layout_constraintStart_toEndOf="@id/tabCreateStory"
+        ads:layout_constraintTop_toTopOf="@+id/tabCreateStory" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_story"
@@ -80,22 +80,42 @@
         android:orientation="horizontal"
         ads:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toEndOf="@id/image_profile"
+        ads:layout_constraintStart_toEndOf="@id/ivUserPic"
         ads:layout_constraintTop_toBottomOf="@+id/app_bar"
         tools:itemCount="10"
         tools:listitem="@layout/story_item" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_notification"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/_19sdp"
-        android:orientation="vertical"
-        ads:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         ads:layout_constraintBottom_toBottomOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toBottomOf="@id/image_add"
-        tools:itemCount="5"
-        tools:listitem="@layout/notification_item" />
+        ads:layout_constraintTop_toBottomOf="@id/image_add">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_19sdp"
+            android:orientation="vertical"
+            ads:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            tools:listitem="@layout/notification_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <ProgressBar
+        android:id="@+id/load_more_progress_notifications"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:layout_constraintTop_toTopOf="parent"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        android:theme="@style/ProgressbarStyle"
+        android:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

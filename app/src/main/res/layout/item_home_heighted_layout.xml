@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/transparent">
@@ -18,6 +19,13 @@
             android:id="@+id/mainlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/animate_rlt"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true" />
+
 
             <com.google.android.exoplayer2.ui.StyledPlayerView
                 android:id="@+id/playerview"
@@ -42,23 +50,62 @@
                 android:layout_centerInParent="true"
                 fresco:actualImageScaleType="centerCrop" />
 
-
-            <LinearLayout
-                android:id="@+id/side_menu"
-                android:layout_width="wrap_content"
+            <include
+                android:id="@+id/bottom_shet"
+                layout="@layout/test_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/bottomView"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_107sdp"
-                android:gravity="center_horizontal"
-                android:layoutDirection="ltr"
-                android:orientation="vertical">
+                android:layout_alignParentBottom="true"/>
 
-                <RelativeLayout
-                    android:layout_width="@dimen/_45sdp"
-                    android:layout_height="@dimen/_45sdp">
+            <!--<androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/sideMenu"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_120sdp"
+                android:layout_above="@id/bottomView"
+                android:layout_marginBottom="@dimen/_30sdp"
+                android:background="@drawable/home_bottom_bar_shadow">
 
+                <ImageView
+                    android:id="@+id/gift"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:src="@drawable/gift"
+                    app:layout_constraintEnd_toStartOf="@+id/shared_layout"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/username_layout" />
+
+                <ImageView
+                    android:id="@+id/shared_layout"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:src="@drawable/share"
+                    app:layout_constraintEnd_toStartOf="@+id/tabFavourite"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/gift"
+                    app:layout_constraintTop_toTopOf="@+id/gift" />
+
+                <com.like.LikeButton
+                    android:id="@+id/tabFavourite"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    app:like_drawable="@drawable/ic_favourite"
+                    app:unlike_drawable="@drawable/save"
+                    app:liked="false"
+                    app:layout_constraintEnd_toStartOf="@+id/username_layout"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/shared_layout"
+                    app:layout_constraintTop_toTopOf="@+id/shared_layout" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/username_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/user_pic"
@@ -67,208 +114,447 @@
                         android:layout_centerInParent="true"
                         app:actualImageScaleType="centerCrop"
                         app:failureImageScaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:placeholderImageScaleType="centerCrop"
                         fresco:placeholderImage="@drawable/ic_user_icon"
                         fresco:roundAsCircle="true" />
 
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true">
-
-
-                        <com.uni.astro.simpleclasses.CircleDivisionView
-                            android:id="@+id/circleStatusBar"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:visibility="gone"
-                            app:counts="2"
-                            app:dividerSpace="2"
-                            app:strokeLineColor="@color/appColor"
-                            app:strokeWidth="@dimen/_2sdp" />
-
-                    </RelativeLayout>
-
                     <ImageView
+                        app:layout_constraintTop_toBottomOf="@id/user_pic"
                         android:id="@+id/varified_btn"
-                        android:layout_width="@dimen/_14sdp"
-                        android:layout_height="@dimen/_14sdp"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_verified"
-                        android:visibility="gone" />
-
-
-                    <ImageView
-                        android:id="@+id/ivAddFollow"
-                        android:layout_width="@dimen/_14sdp"
-                        android:layout_height="@dimen/_14sdp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentBottom="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_follow_user"
-                        android:visibility="gone" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_55sdp"
-                    android:layout_marginTop="@dimen/_6sdp">
-
-
-                    <com.like.LikeButton
-                        android:id="@+id/likebtn"
+                        app:layout_constraintEnd_toEndOf="@id/user_pic"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        app:anim_scale_factor="2"
-                        app:circle_end_color="@color/appColor"
-                        app:circle_start_color="@color/appColor"
-                        app:dots_primary_color="@color/whiteColor"
-                        app:dots_secondary_color="@color/yellow_color_picker"
-                        app:icon_size="@dimen/_26sdp"
-                        app:icon_type="heart"
-                        app:liked="false"
-                        app:unlike_drawable="@drawable/ic_unliked" />
+                        android:layout_height="wrap_content"/>
 
                     <TextView
-                        android:id="@+id/like_txt"
+                        android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:shadowColor="@color/blackColor"
                         android:shadowDx="1"
                         android:shadowDy="1"
                         android:shadowRadius="3"
-                        android:text="@string/likes"
                         android:textColor="@color/whiteColor"
                         android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
 
                     <RelativeLayout
-                        android:id="@+id/animate_rlt"
+                        android:id="@+id/duet_layout_username"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_40sdp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/username">
 
-                </RelativeLayout>
+                        <TextView
+                            android:id="@+id/duet_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:shadowColor="@color/blackColor"
+                            android:shadowDx="1"
+                            android:shadowDy="1"
+                            android:shadowRadius="3"
+                            android:text="@string/duet_with"
+                            android:textColor="@color/whiteColor"
+                            android:textSize="@dimen/_11sdp"
+                            android:visibility="visible" />
 
+                        <LinearLayout
+                            android:id="@+id/duet_open_video"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/_6sdp"
+                            android:layout_toEndOf="@+id/duet_txt"
+                            android:background="@drawable/d_dark_gray_border"
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
-                <LinearLayout
+                            <ImageView
+                                android:layout_width="@dimen/_16sdp"
+                                android:layout_height="@dimen/_16sdp"
+                                android:layout_marginLeft="@dimen/_4sdp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_play_icon"
+                                app:tint="@color/blackColor" />
+
+                            <TextView
+                                android:id="@+id/duet_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_4sdp"
+                                android:layout_marginRight="@dimen/_12sdp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/blackColor"
+                                android:textSize="@dimen/_11sdp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/duet_layout_username">
+
+                        <ImageView
+                            android:layout_width="@dimen/_8sdp"
+                            android:layout_height="@dimen/_8sdp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/songs_icon_svg"
+                            app:tint="@color/whiteColor" />
+
+                        <TextView
+                            android:id="@+id/sound_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:ellipsize="marquee"
+                            android:fontFamily="@font/baloo2"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:shadowColor="@color/blackColor"
+                            android:shadowDx="1"
+                            android:shadowDy="1"
+                            android:shadowRadius="3"
+                            android:singleLine="true"
+                            android:textColor="@color/whiteColor"
+                            android:textSize="@dimen/_11sdp" />
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/trend"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:src="@drawable/explore_trend_ic"
+                    app:layout_constraintEnd_toStartOf="@+id/comment_layout"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toEndOf="@+id/username_layout"
+                    app:layout_constraintTop_toTopOf="@+id/tabFavourite"
+                    app:tint="#CCFFFFFF" />
+
+                <ImageView
                     android:id="@+id/comment_layout"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:src="@drawable/voice_comment_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/trend"
+                    app:layout_constraintTop_toTopOf="@+id/trend" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linearLayout2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/comment_image"
-                        android:layout_width="@dimen/_26sdp"
-                        android:layout_height="@dimen/_26sdp"
-                        android:src="@drawable/ic_comment" />
-
-                    <TextView
-                        android:id="@+id/comment_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:shadowColor="@color/blackColor"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:text="@string/comment"
-                        android:textColor="@color/whiteColor"
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_55sdp"
-                    android:layout_marginTop="@dimen/_6sdp">
-
+                    android:background="@drawable/after_like_button_bg"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_12sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/comment_layout"
+                    app:layout_constraintTop_toTopOf="@+id/username_layout">
 
                     <com.like.LikeButton
-                        android:id="@+id/tabFavourite"
+                        android:id="@+id/likebtn"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="center_horizontal"
+                        app:like_drawable="@drawable/default_love"
+                        app:unlike_drawable="@drawable/love"
+                        app:liked="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/likeTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        app:anim_scale_factor="2"
-                        app:circle_end_color="@color/yellow_color_picker"
-                        app:circle_start_color="@color/yellow_color_picker"
-                        app:dots_primary_color="@color/whiteColor"
-                        app:dots_secondary_color="@color/yellow_color_picker"
-                        app:icon_size="@dimen/_26sdp"
-                        app:icon_type="heart"
-                        app:liked="false"
-                        app:unlike_drawable="@drawable/ic_unfavourite" />
+                        android:fontFamily="@font/baloo"
+                        android:text="21.2k"
+                        android:textColor="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/likebtn" />
 
                     <TextView
                         android:id="@+id/tvFavourite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:shadowColor="@color/blackColor"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:text="@string/favourite"
-                        android:textColor="@color/whiteColor"
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold" />
+                        android:fontFamily="@font/baloo"
+                        android:text="21.2k"
+                        android:textColor="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/likebtn" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                    <RelativeLayout
-                        android:id="@+id/animateFavourite"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_40sdp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-                </RelativeLayout>
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/side_menu"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_above="@+id/bottomView"-->
+            <!--                android:layout_alignParentRight="true"-->
+            <!--                android:layout_marginRight="@dimen/_12sdp"-->
+            <!--                android:layout_marginBottom="@dimen/_107sdp"-->
+            <!--                android:background="@color/black"-->
+            <!--                android:gravity="center_horizontal"-->
+            <!--                android:layoutDirection="ltr"-->
+            <!--                android:orientation="horizontal">-->
 
-                <LinearLayout
-                    android:id="@+id/shared_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+            <!--                <RelativeLayout-->
+            <!--                    android:layout_width="@dimen/_45sdp"-->
+            <!--                    android:layout_height="@dimen/_45sdp">-->
 
-                    <ImageView
-                        android:layout_width="@dimen/_26sdp"
-                        android:layout_height="@dimen/_26sdp"
-                        android:padding="@dimen/_1sdp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_share" />
 
-                    <TextView
-                        android:id="@+id/tvShare"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:shadowColor="@color/blackColor"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:text="@string/share"
-                        android:textColor="@color/whiteColor"
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+            <!--                    &lt;!&ndash;                    <com.facebook.drawee.view.SimpleDraweeView&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        android:id="@+id/user_pic"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        android:layout_width="@dimen/_40sdp"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        android:layout_height="@dimen/_40sdp"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        android:layout_centerInParent="true"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        app:actualImageScaleType="centerCrop"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        app:failureImageScaleType="centerCrop"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        app:placeholderImageScaleType="centerCrop"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        fresco:placeholderImage="@drawable/ic_user_icon"&ndash;&gt;-->
+            <!--                    &lt;!&ndash;                        fresco:roundAsCircle="true" />&ndash;&gt;-->
 
-            </LinearLayout>
+
+            <!--&lt;!&ndash;                    <RelativeLayout&ndash;&gt;-->
+            <!--&lt;!&ndash;                        android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;                        android:layout_height="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;                        android:layout_alignParentTop="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;                        android:layout_alignParentBottom="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;                        android:layout_centerHorizontal="true">&ndash;&gt;-->
+
+
+            <!--&lt;!&ndash;                                                <com.uni.astro.simpleclasses.CircleDivisionView&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:id="@+id/circleStatusBar"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:layout_height="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:layout_alignParentTop="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:layout_alignParentBottom="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:layout_centerHorizontal="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    android:visibility="gone"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    app:counts="2"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    app:dividerSpace="2"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    app:strokeLineColor="@color/appColor"&ndash;&gt;-->
+            <!--&lt;!&ndash;                                                    app:strokeWidth="@dimen/_2sdp" />&ndash;&gt;-->
+
+            <!--&lt;!&ndash;                    </RelativeLayout>&ndash;&gt;-->
+
+            <!--                    <ImageView-->
+            <!--                        android:id="@+id/varified_btn"-->
+            <!--                        android:layout_width="@dimen/_14sdp"-->
+            <!--                        android:layout_height="@dimen/_14sdp"-->
+            <!--                        android:layout_alignParentRight="true"-->
+            <!--                        android:layout_alignParentBottom="true"-->
+            <!--                        android:scaleType="fitCenter"-->
+            <!--                        android:src="@drawable/ic_verified"-->
+            <!--                        android:visibility="gone" />-->
+
+
+            <!--                    <ImageView-->
+            <!--                        android:id="@+id/ivAddFollow"-->
+            <!--                        android:layout_width="@dimen/_14sdp"-->
+            <!--                        android:layout_height="@dimen/_14sdp"-->
+            <!--                        android:layout_alignParentStart="true"-->
+            <!--                        android:layout_alignParentBottom="true"-->
+            <!--                        android:scaleType="fitCenter"-->
+            <!--                        android:src="@drawable/ic_follow_user"-->
+            <!--                        android:visibility="gone" />-->
+
+            <!--                </RelativeLayout>-->
+
+            <!--                <RelativeLayout-->
+            <!--                    android:layout_width="@dimen/_45sdp"-->
+            <!--                    android:layout_height="@dimen/_45sdp"-->
+            <!--                    android:layout_marginTop="@dimen/_6sdp">-->
+
+
+            <!--                    <com.like.LikeButton-->
+            <!--                        android:id="@+id/likebtn"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_alignParentTop="true"-->
+            <!--                        android:layout_centerHorizontal="true"-->
+            <!--                        app:anim_scale_factor="2"-->
+            <!--                        app:circle_end_color="@color/appColor"-->
+            <!--                        app:circle_start_color="@color/appColor"-->
+            <!--                        app:dots_primary_color="@color/whiteColor"-->
+            <!--                        app:dots_secondary_color="@color/yellow_color_picker"-->
+            <!--                        app:icon_size="@dimen/_26sdp"-->
+            <!--                        app:icon_type="heart"-->
+            <!--                        app:liked="false"-->
+            <!--                        app:unlike_drawable="@drawable/ic_unliked" />-->
+
+            <!--                    <TextView-->
+            <!--                        android:id="@+id/like_txt"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_alignParentBottom="true"-->
+            <!--                        android:layout_centerHorizontal="true"-->
+            <!--                        android:layout_marginTop="@dimen/_4sdp"-->
+            <!--                        android:shadowColor="@color/blackColor"-->
+            <!--                        android:shadowDx="1"-->
+            <!--                        android:shadowDy="1"-->
+            <!--                        android:shadowRadius="3"-->
+            <!--                        android:text="@string/likes"-->
+            <!--                        android:textColor="@color/whiteColor"-->
+            <!--                        android:textSize="@dimen/_11sdp"-->
+            <!--                        android:textStyle="bold" />-->
+
+
+            <!--                    <RelativeLayout-->
+            <!--                        android:id="@+id/animate_rlt"-->
+            <!--                        android:layout_width="@dimen/_40sdp"-->
+            <!--                        android:layout_height="match_parent" />-->
+
+            <!--                </RelativeLayout>-->
+
+
+            <!--                <LinearLayout-->
+            <!--                    android:id="@+id/comment_layout"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="@dimen/_6sdp"-->
+            <!--                    android:gravity="center_horizontal"-->
+            <!--                    android:orientation="vertical">-->
+
+            <!--                    <ImageView-->
+            <!--                        android:id="@+id/comment_image"-->
+            <!--                        android:layout_width="@dimen/_26sdp"-->
+            <!--                        android:layout_height="@dimen/_26sdp"-->
+            <!--                        android:src="@drawable/ic_comment" />-->
+
+            <!--                    <TextView-->
+            <!--                        android:id="@+id/comment_txt"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:shadowColor="@color/blackColor"-->
+            <!--                        android:shadowDx="1"-->
+            <!--                        android:shadowDy="1"-->
+            <!--                        android:shadowRadius="3"-->
+            <!--                        android:text="@string/comment"-->
+            <!--                        android:textColor="@color/whiteColor"-->
+            <!--                        android:textSize="@dimen/_11sdp"-->
+            <!--                        android:textStyle="bold" />-->
+            <!--                </LinearLayout>-->
+
+            <!--                &lt;!&ndash;                <RelativeLayout&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_width="@dimen/_55sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_height="@dimen/_55sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_marginTop="@dimen/_6sdp">&ndash;&gt;-->
+
+
+            <!--                &lt;!&ndash;                    <com.like.LikeButton&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:id="@+id/tabFavourite"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_alignParentTop="true"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_centerHorizontal="true"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:anim_scale_factor="2"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:circle_end_color="@color/yellow_color_picker"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:circle_start_color="@color/yellow_color_picker"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:dots_primary_color="@color/whiteColor"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:dots_secondary_color="@color/yellow_color_picker"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:icon_size="@dimen/_26sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:icon_type="heart"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:liked="false"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        app:unlike_drawable="@drawable/ic_unfavourite" />&ndash;&gt;-->
+
+            <!--                &lt;!&ndash;                    <TextView&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:id="@+id/tvFavourite"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_alignParentBottom="true"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_centerHorizontal="true"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_marginTop="@dimen/_4sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowColor="@color/blackColor"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowDx="1"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowDy="1"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowRadius="3"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:text="@string/favourite"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textColor="@color/whiteColor"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textSize="@dimen/_11sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textStyle="bold" />&ndash;&gt;-->
+
+
+            <!--                &lt;!&ndash;                    <RelativeLayout&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:id="@+id/animateFavourite"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_width="match_parent"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_height="@dimen/_40sdp" />&ndash;&gt;-->
+
+            <!--                &lt;!&ndash;                </RelativeLayout>&ndash;&gt;-->
+
+            <!--                &lt;!&ndash;                <LinearLayout&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:id="@+id/shared_layout"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:layout_marginTop="@dimen/_6sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:gravity="center_horizontal"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    android:orientation="vertical">&ndash;&gt;-->
+
+            <!--                &lt;!&ndash;                    <ImageView&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_width="@dimen/_26sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_height="@dimen/_26sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:padding="@dimen/_1sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:scaleType="fitCenter"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:src="@drawable/ic_share" />&ndash;&gt;-->
+
+            <!--                &lt;!&ndash;                    <TextView&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:id="@+id/tvShare"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowColor="@color/blackColor"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowDx="1"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowDy="1"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:shadowRadius="3"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:text="@string/share"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textColor="@color/whiteColor"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textSize="@dimen/_11sdp"&ndash;&gt;-->
+            <!--                &lt;!&ndash;                        android:textStyle="bold" />&ndash;&gt;-->
+            <!--                &lt;!&ndash;                </LinearLayout>&ndash;&gt;-->
+
+            <!--            </LinearLayout>-->
+
+            <com.uni.astro.simpleclasses.CircleDivisionView
+                android:id="@+id/circleStatusBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                app:counts="2"
+                app:dividerSpace="2"
+                app:strokeLineColor="@color/appColor"
+                app:strokeWidth="@dimen/_2sdp" />
+
 
             <LinearLayout
                 android:id="@+id/video_info_layout"
@@ -288,7 +574,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:visibility="gone">
 
                     <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/ivRepostUser"
@@ -323,93 +610,6 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:shadowColor="@color/blackColor"
-                    android:shadowDx="1"
-                    android:shadowDy="1"
-                    android:shadowRadius="3"
-                    android:textColor="@color/whiteColor"
-                    android:textSize="@dimen/_11sdp"
-                    android:textStyle="bold" />
-
-
-                <RelativeLayout
-                    android:id="@+id/duet_layout_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/duet_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:shadowColor="@color/blackColor"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:text="@string/duet_with"
-                        android:textColor="@color/whiteColor"
-                        android:textSize="@dimen/_11sdp"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:id="@+id/duet_open_video"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="@dimen/_6sdp"
-                        android:layout_toEndOf="@+id/duet_txt"
-                        android:background="@drawable/d_dark_gray_border"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="@dimen/_16sdp"
-                            android:layout_height="@dimen/_16sdp"
-                            android:layout_marginLeft="@dimen/_4sdp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_play_icon"
-                            app:tint="@color/blackColor" />
-
-                        <TextView
-                            android:id="@+id/duet_username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_4sdp"
-                            android:layout_marginRight="@dimen/_12sdp"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textColor="@color/blackColor"
-                            android:textSize="@dimen/_11sdp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-
-                <TextView
-                    android:id="@+id/desc_txt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:gravity="start|center_vertical"
-                    android:shadowColor="@color/blackColor"
-                    android:shadowDx="1"
-                    android:shadowDy="1"
-                    android:shadowRadius="3"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/whiteColor"
-                    android:textSize="@dimen/_11sdp" />
-
 
                 <LinearLayout
                     android:id="@+id/tabPromotionText"
@@ -417,7 +617,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:visibility="gone">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -448,40 +649,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="@dimen/_8sdp"
-                        android:layout_height="@dimen/_8sdp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_music"
-                        app:tint="@color/whiteColor" />
-
-                    <TextView
-                        android:id="@+id/sound_name"
-                        android:layout_width="@dimen/_100sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_4sdp"
-                        android:ellipsize="marquee"
-                        android:gravity="left|center_vertical"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:scrollHorizontally="true"
-                        android:shadowColor="@color/blackColor"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:singleLine="true"
-                        android:textColor="@color/whiteColor"
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
 
                 <Button
                     android:id="@+id/btnWebsiteMove"
@@ -495,7 +662,8 @@
                     android:text="@string/start_creating"
                     android:textColor="@color/whiteColor"
                     android:textSize="@dimen/_11sdp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="gone" />
 
 
             </LinearLayout>
@@ -510,7 +678,9 @@
                 android:layout_marginBottom="@dimen/_22sdp"
                 android:background="@drawable/ic_black_disk"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="gone">
 
 
                 <com.facebook.drawee.view.SimpleDraweeView
@@ -530,7 +700,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:background="@drawable/d_round_transparent_background"
                 android:paddingLeft="@dimen/_8sdp"
                 android:paddingTop="@dimen/_4sdp"
@@ -542,7 +715,8 @@
                 android:shadowRadius="2"
                 android:text="@string/skip"
                 android:textSize="@dimen/_11sdp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <FrameLayout
                 android:id="@+id/tabBlockVideo"
@@ -555,7 +729,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:layoutDirection="ltr"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -603,27 +778,13 @@
 
 
             </FrameLayout>
+            <!--                    <RelativeLayout-->
+            <!--                        android:id="@+id/animate_rlt"-->
+            <!--                        android:layout_width="@dimen/_40sdp"-->
+            <!--                        android:layout_height="match_parent" />-->
 
-            <FrameLayout
-                android:id="@+id/bottomView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/_32sdp"
-                android:layoutDirection="ltr">
+            <!--                </RelativeLayout>-->
 
-                <RelativeLayout
-                    android:id="@+id/ViewForPlaylist"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_22sdp"
-                    android:layout_gravity="center"
-                    android:paddingStart="@dimen/_12sdp"
-                    android:paddingRight="@dimen/_12sdp"
-                    android:visibility="gone" />
-
-
-            </FrameLayout>
 
             <ProgressBar
                 android:id="@+id/p_bar"
@@ -648,7 +809,8 @@
                 android:layout_centerHorizontal="true"
                 android:animateLayoutChanges="true"
                 android:background="@color/colorblackfix"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/tabInnerPromotionEndView"

@@ -196,9 +196,9 @@ public class EditTextSheetF extends BottomSheetDialogFragment implements View.On
                                     lastChar = binding.messageEdit.getText().toString().substring(binding.messageEdit.getText().length() - 1);
 
                                 if (lastChar != null && lastChar.contains("@"))
-                                    binding.messageEdit.setText(binding.messageEdit.getText().toString() + item.username + " ");
+                                    binding.messageEdit.setText(binding.messageEdit.getText().toString()  + item.first_name + " "+ item.last_name);
                                 else
-                                    binding.messageEdit.setText(binding.messageEdit.getText().toString() + "@" + item.username + " ");
+                                    binding.messageEdit.setText(binding.messageEdit.getText().toString() + "@" + item.first_name + " "+ item.last_name );
 
                                 binding.messageEdit.setSelection(binding.messageEdit.getText().length());
                             }
