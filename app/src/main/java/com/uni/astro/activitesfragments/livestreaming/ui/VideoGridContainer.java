@@ -270,6 +270,10 @@ public class VideoGridContainer extends RelativeLayout implements Runnable {
         }
     }
 
+    @Override
+    public boolean isInEditMode() {
+        return true;
+    }
 
     public List<Integer> getmUidList(){
         return mUidList;

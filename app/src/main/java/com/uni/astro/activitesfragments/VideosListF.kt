@@ -10,20 +10,10 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Environment
-import android.os.Handler
-import android.os.Looper
-import android.os.ParcelFileDescriptor
+import android.os.*
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
@@ -37,11 +27,7 @@ import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import com.facebook.FacebookSdk.getApplicationContext
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -54,35 +40,24 @@ import com.uni.astro.activitesfragments.comments.CommentF
 import com.uni.astro.activitesfragments.profile.ProfileA
 import com.uni.astro.activitesfragments.profile.ReportTypeA
 import com.uni.astro.activitesfragments.profile.videopromotion.VideoPromoteStepsA
+import com.uni.astro.activitesfragments.sendgift.StickerGiftF
+import com.uni.astro.activitesfragments.sendgift.StickerModel
 import com.uni.astro.activitesfragments.soundlists.VideoSoundA
 import com.uni.astro.activitesfragments.videorecording.VideoRecoderDuetA
 import com.uni.astro.adapters.ViewPagerStatAdapter
 import com.uni.astro.apiclasses.ApiLinks
 import com.uni.astro.databinding.AlertLabelEditorBinding
 import com.uni.astro.databinding.ItemHomeHeightedLayoutBinding
-import com.uni.astro.databinding.TestLayoutBinding
 import com.uni.astro.interfaces.FragmentCallBack
 import com.uni.astro.interfaces.FragmentDataSend
 import com.uni.astro.models.HomeModel
-import com.uni.astro.simpleclasses.DataParsing
-import com.uni.astro.simpleclasses.DebounceClickHandler
-import com.uni.astro.simpleclasses.FriendsTagHelper
-import com.uni.astro.simpleclasses.Functions
-import com.uni.astro.simpleclasses.OnSwipeTouchListener
-import com.uni.astro.simpleclasses.PermissionUtils
-import com.uni.astro.simpleclasses.ShowMoreLess
-import com.uni.astro.simpleclasses.Variables
-import com.uni.astro.simpleclasses.VerticalViewPager
+import com.uni.astro.simpleclasses.*
 import com.volley.plus.VPackages.VolleyRequest
 import com.volley.plus.interfaces.APICallBack
 import io.paperdb.Paper
 import org.json.JSONObject
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
-import java.util.Locale
+import java.io.*
+import java.util.*
 
 
 // this is the main view which is show all the video in list
@@ -1716,4 +1691,30 @@ class VideosListF : Fragment, Player.Listener, FragmentDataSend {
         @JvmField
         var videoListCallback: FragmentCallBack? = null
     }
+
+//    fun ShowGiftSheet() {
+//        val giftFragment = StickerGiftF(
+//            item.user_id, item.username, item.profile_pic
+//        ) { bundle ->
+//            if (bundle.getBoolean("isShow", false)) {
+//                val model = bundle.getSerializable("Data") as StickerModel?
+//                val counter = bundle.getString("count")
+//                addGiftComment("gift", counter, model)
+//                Log.d(Constants.TAG_, "Test : " + item.coins())
+//                if (item != null) {
+//                    val userCoins: Double = java.lang.Double.valueOf(item.getUserCoins())
+//                    var userGift = java.lang.Long.valueOf(counter) * java.lang.Double.valueOf(
+//                        model!!.coins
+//                    )
+//                    userGift = userCoins + userGift
+//                    val map: java.util.HashMap<*, *> = java.util.HashMap<Any?, Any?>()
+//                    map["userCoins"] = "" + userGift
+//                    rootref.child("LiveStreamingUsers").child(item.getStreamingId())
+//                        .updateChildren(map)
+//                }
+//            }
+//        }
+//        giftFragment.show(childFragmentManager, "")
+//    }
+
 }

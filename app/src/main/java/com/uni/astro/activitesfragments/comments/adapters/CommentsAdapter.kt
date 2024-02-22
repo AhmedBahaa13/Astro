@@ -115,8 +115,21 @@ class CommentsAdapter(
                             R.color.love_comment_clicked
                         )
                     )
+                    likeTxt.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.love_comment_clicked
+                        )
+                    )
                 } else {
                     likeImage.setColorFilter(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.love_comment_default
+                        )
+                    )
+
+                    likeTxt.setTextColor(
                         ContextCompat.getColor(
                             context,
                             R.color.love_comment_default
@@ -302,9 +315,12 @@ class CommentsAdapter(
             val parts = durationString.split(":")
             val minutes = parts[0].toIntOrNull() ?: 0
             val seconds = parts[1].toIntOrNull() ?: 0
-            Log.d("CommentsAdapter", "getRecordDuration: Duration :: ${minutes * 60 *1000 + seconds*1000}")
+            Log.d(
+                "CommentsAdapter",
+                "getRecordDuration: Duration :: ${minutes * 60 * 1000 + seconds * 1000}"
+            )
 
-            return minutes * 60 *1000 + seconds*1000
+            return minutes * 60 * 1000 + seconds * 1000
         }
 
 

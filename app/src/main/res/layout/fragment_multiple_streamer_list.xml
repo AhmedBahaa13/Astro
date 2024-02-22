@@ -1,68 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
     android:clickable="true"
     android:focusable="true"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:keepScreenOn="true">
 
     <FrameLayout
-        android:background="@color/blackColor"
         android:id="@+id/tabStreamView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/blackColor">
 
         <com.uni.astro.activitesfragments.livestreaming.ui.VideoGridContainer
-            android:layout_marginTop="@dimen/_60sdp"
-            android:layout_marginBottom="@dimen/_50sdp"
-            android:clickable="false"
-            android:focusable="false"
             android:id="@+id/live_video_grid_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.uni.astro.simpleclasses.streaminglikes.HeartView
+            android:layout_height="match_parent"
             android:layout_marginTop="@dimen/_60sdp"
             android:layout_marginBottom="@dimen/_50sdp"
             android:clickable="false"
-            android:focusable="false"
+            android:focusable="false" />
+
+        <com.uni.astro.simpleclasses.streaminglikes.HeartView
             android:id="@+id/streamLikeView"
             android:layout_width="@dimen/_170sdp"
             android:layout_height="@dimen/_250sdp"
-            android:layout_gravity="bottom|end"/>
-
+            android:layout_gravity="bottom|end"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:clickable="false"
+            android:focusable="false" />
 
 
         <ViewFlipper
-            android:clickable="false"
-            android:focusable="false"
-            android:autoStart="false"
             android:id="@+id/viewflliper"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:autoStart="false"
+            android:clickable="false"
+            android:focusable="false">
 
 
             <RelativeLayout
-                android:clickable="false"
-                android:focusable="false"
                 android:id="@+id/viewTwo"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:focusable="false">
 
                 <RelativeLayout
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_160sdp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="top|center_horizontal"
                     android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_12sdp">
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:clickable="false"
+                    android:focusable="false">
 
                     <LinearLayout
                         android:id="@+id/tabUserProfile"
@@ -73,8 +71,8 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:gravity="start"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/_10sdp">
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -93,19 +91,20 @@
 
                             <LinearLayout
                                 android:id="@+id/tabInfoUser"
-                                android:layout_marginStart="@dimen/_4sdp"
-                                android:layout_centerVertical="true"
-                                android:layout_toEndOf="@+id/ivMainProfile"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_toEndOf="@+id/ivMainProfile"
                                 android:animateLayoutChanges="true"
                                 android:orientation="vertical">
+
                                 <LinearLayout
-                                    android:layout_marginEnd="@dimen/_12sdp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="start|center_vertical">
+                                    android:layout_marginEnd="@dimen/_12sdp"
+                                    android:gravity="start|center_vertical"
+                                    android:orientation="horizontal">
 
                                     <TextView
                                         android:id="@+id/tvMainUserName"
@@ -122,12 +121,12 @@
                                         android:textSize="@dimen/_13sdp" />
 
                                     <ImageView
-                                        android:layout_marginStart="@dimen/_6sdp"
                                         android:id="@+id/ivVerified"
                                         android:layout_width="@dimen/_10sdp"
                                         android:layout_height="@dimen/_10sdp"
+                                        android:layout_marginStart="@dimen/_6sdp"
                                         android:src="@drawable/ic_verified"
-                                        android:visibility="gone"/>
+                                        android:visibility="gone" />
 
                                 </LinearLayout>
 
@@ -156,8 +155,8 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="start">
+                            android:gravity="start"
+                            android:orientation="vertical">
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -275,31 +274,31 @@
                     </LinearLayout>
 
                     <RelativeLayout
-                        android:layout_alignParentTop="true"
-                        android:clickable="false"
-                        android:focusable="false"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:layout_toEndOf="@+id/tabUserProfile"
-                        android:animateLayoutChanges="true">
+                        android:animateLayoutChanges="true"
+                        android:clickable="false"
+                        android:focusable="false">
 
 
                         <LinearLayout
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
                             android:id="@+id/tabLiveUser"
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_14sdp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:animateLayoutChanges="true"
                             android:background="@drawable/edt_stream_draw_less_rectengle"
                             android:gravity="center"
                             android:orientation="horizontal"
                             android:paddingStart="@dimen/_4sdp"
                             android:paddingTop="@dimen/_1sdp"
                             android:paddingEnd="@dimen/_4sdp"
-                            android:paddingBottom="@dimen/_1sdp"
-                            android:animateLayoutChanges="true">
+                            android:paddingBottom="@dimen/_1sdp">
 
                             <TextView
                                 android:id="@+id/liveUserCount"
@@ -330,13 +329,13 @@
 
 
                 <RelativeLayout
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="@dimen/_150sdp"
                     android:layout_width="@dimen/_150sdp"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_150sdp"
+                    android:clickable="false"
+                    android:focusable="false">
 
 
                     <LinearLayout
@@ -391,28 +390,24 @@
                     </LinearLayout>
 
 
-
-
-
-
                     <RelativeLayout
-                        android:clickable="false"
-                        android:focusable="false"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
-                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true">
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:clickable="false"
+                        android:focusable="false">
 
                         <LinearLayout
-                            android:paddingStart="@dimen/_6sdp"
-                            android:paddingEnd="@dimen/_6sdp"
-                            android:weightSum="2"
-                            android:layout_centerInParent="true"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:paddingStart="@dimen/_6sdp"
+                            android:paddingEnd="@dimen/_6sdp"
+                            android:weightSum="2">
 
 
                             <TextView
@@ -432,37 +427,36 @@
                                 android:textSize="@dimen/_11sdp" />
 
 
-
                             <LinearLayout
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
-                                android:layout_weight="1.2"
-                                android:gravity="center"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:orientation="horizontal">
-
+                                android:layout_weight="1.2"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingStart="@dimen/_4sdp"
+                                android:paddingEnd="@dimen/_4sdp">
 
 
                                 <LinearLayout
-                                    android:visibility="visible"
                                     android:id="@+id/tabGift"
-                                    android:layout_marginStart="@dimen/_2sdp"
-                                    android:layout_weight="1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
                                     android:orientation="vertical"
-                                    android:gravity="center">
+                                    android:visibility="visible">
+
                                     <ImageView
-                                        android:layout_marginStart="@dimen/_2sdp"
                                         android:layout_width="@dimen/_28sdp"
                                         android:layout_height="@dimen/_28sdp"
-                                        android:src="@drawable/ic_stream_gift"
-                                        />
+                                        android:layout_marginStart="@dimen/_2sdp"
+                                        android:src="@drawable/ic_stream_gift" />
+
                                     <TextView
-                                        android:gravity="center"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center"
                                         android:maxLines="1"
                                         android:shadowColor="@color/blackColor"
                                         android:shadowDx="2"
@@ -474,24 +468,25 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:visibility="gone"
                                     android:id="@+id/tabCoHost"
-                                    android:layout_marginStart="@dimen/_2sdp"
-                                    android:layout_weight="1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
                                     android:orientation="vertical"
-                                    android:gravity="center">
+                                    android:visibility="gone">
+
                                     <ImageView
-                                        android:layout_marginStart="@dimen/_2sdp"
                                         android:layout_width="@dimen/_28sdp"
                                         android:layout_height="@dimen/_28sdp"
-                                        android:src="@drawable/ic_stream_co_host"
-                                        />
+                                        android:layout_marginStart="@dimen/_2sdp"
+                                        android:src="@drawable/ic_stream_co_host" />
+
                                     <TextView
-                                        android:gravity="center"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center"
                                         android:maxLines="1"
                                         android:shadowColor="@color/blackColor"
                                         android:shadowDx="2"
@@ -503,24 +498,25 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:visibility="visible"
                                     android:id="@+id/tabInviteAll"
-                                    android:layout_marginStart="@dimen/_2sdp"
-                                    android:layout_weight="1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
                                     android:orientation="vertical"
-                                    android:gravity="center">
+                                    android:visibility="visible">
+
                                     <ImageView
-                                        android:layout_marginStart="@dimen/_2sdp"
                                         android:layout_width="@dimen/_28sdp"
                                         android:layout_height="@dimen/_28sdp"
-                                        android:src="@drawable/ic_share_new"
-                                        />
+                                        android:layout_marginStart="@dimen/_2sdp"
+                                        android:src="@drawable/ic_share_new" />
+
                                     <TextView
-                                        android:gravity="center"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center"
                                         android:maxLines="1"
                                         android:shadowColor="@color/blackColor"
                                         android:shadowDx="2"
@@ -532,24 +528,25 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:visibility="visible"
                                     android:id="@+id/tabLikeStreaming"
-                                    android:layout_marginStart="@dimen/_2sdp"
-                                    android:layout_weight="1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
                                     android:orientation="vertical"
-                                    android:gravity="center">
+                                    android:visibility="visible">
+
                                     <ImageView
-                                        android:layout_marginStart="@dimen/_2sdp"
                                         android:layout_width="@dimen/_28sdp"
                                         android:layout_height="@dimen/_28sdp"
-                                        android:src="@drawable/ic_stream_like"
-                                        />
+                                        android:layout_marginStart="@dimen/_2sdp"
+                                        android:src="@drawable/ic_stream_like" />
+
                                     <TextView
-                                        android:gravity="center"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center"
                                         android:maxLines="1"
                                         android:shadowColor="@color/blackColor"
                                         android:shadowDx="2"
@@ -561,9 +558,7 @@
                                 </LinearLayout>
 
 
-
                             </LinearLayout>
-
 
 
                         </LinearLayout>
@@ -571,23 +566,21 @@
                     </RelativeLayout>
 
 
-
                 </RelativeLayout>
 
             </RelativeLayout>
 
 
-
             <RelativeLayout
-                android:clickable="false"
-                android:focusable="false"
                 android:id="@+id/viewOne"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
-                android:layout_marginTop="@dimen/_20sdp">
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:clickable="false"
+                android:focusable="false">
 
 
                 <ImageView
@@ -603,45 +596,40 @@
             </RelativeLayout>
 
 
-
-
-
         </ViewFlipper>
 
 
-
-
         <View
-            android:layout_marginTop="@dimen/_90sdp"
+            android:id="@+id/animationCapture"
             android:layout_width="@dimen/_1sdp"
             android:layout_height="@dimen/_1sdp"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/animationCapture"/>
+            android:layout_marginTop="@dimen/_90sdp" />
 
         <View
+            android:id="@+id/animationGiftCapture"
             android:layout_width="@dimen/_1sdp"
             android:layout_height="@dimen/_1sdp"
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/_90sdp"
-            android:layout_marginEnd="@dimen/_80sdp"
-            android:id="@+id/animationGiftCapture"/>
+            android:layout_marginEnd="@dimen/_80sdp" />
 
 
         <View
-            android:layout_marginTop="@dimen/_30sdp"
+            android:id="@+id/animationResetAnimation"
             android:layout_width="@dimen/_1sdp"
             android:layout_height="@dimen/_1sdp"
             android:layout_marginStart="-250dp"
-            android:id="@+id/animationResetAnimation"/>
+            android:layout_marginTop="@dimen/_30sdp" />
 
         <RelativeLayout
-            android:alpha="0"
-            android:layout_marginStart="-250dp"
-            android:background="@drawable/d_less_round_gray_transparent"
             android:id="@+id/tabGiftMain"
             android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/_90sdp"
             android:layout_height="@dimen/_60sdp"
+            android:layout_marginStart="-250dp"
+            android:layout_marginTop="@dimen/_90sdp"
+            android:alpha="0"
+            android:background="@drawable/d_less_round_gray_transparent"
             android:paddingStart="@dimen/_11sdp"
             android:paddingEnd="@dimen/_11sdp">
 
@@ -652,44 +640,44 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 fresco:placeholderImage="@drawable/ic_user_icon"
-                fresco:roundAsCircle="true"/>
+                fresco:roundAsCircle="true" />
 
             <LinearLayout
                 android:id="@+id/tabGiftTitle"
-                android:layout_toEndOf="@id/ivGiftProfile"
-                android:layout_marginStart="@dimen/_4sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_toEndOf="@id/ivGiftProfile"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvGiftTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/username"
-                    android:maxLines="1"
                     android:ellipsize="end"
-                    android:textColor="@color/whiteColor"
-                    android:textSize="@dimen/_11sdp"
+                    android:maxLines="1"
+                    android:shadowColor="@color/blackColor"
                     android:shadowDx="4"
                     android:shadowDy="4"
                     android:shadowRadius="4"
-                    android:shadowColor="@color/blackColor"/>
+                    android:text="@string/username"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="@dimen/_11sdp" />
 
                 <TextView
                     android:id="@+id/tvGiftCountTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/username"
-                    android:maxLines="1"
                     android:ellipsize="end"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/_11sdp"
+                    android:maxLines="1"
+                    android:shadowColor="@color/blackColor"
                     android:shadowDx="4"
                     android:shadowDy="4"
                     android:shadowRadius="4"
-                    android:shadowColor="@color/blackColor"/>
+                    android:text="@string/username"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_11sdp" />
 
             </LinearLayout>
 
@@ -705,48 +693,48 @@
                 fresco:placeholderImage="@drawable/ic_coins_image" />
 
             <TextView
-                android:layout_marginTop="@dimen/_11sdp"
-                android:layout_toEndOf="@+id/ivGiftItem"
                 android:id="@+id/tvSendGiftCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:maxLines="1"
+                android:layout_marginTop="@dimen/_11sdp"
+                android:layout_toEndOf="@+id/ivGiftItem"
                 android:ellipsize="end"
-                android:textStyle="bold"
-                android:textColor="@color/whiteColor"
-                android:textSize="@dimen/_13sdp"
+                android:maxLines="1"
+                android:shadowColor="@color/blackColor"
                 android:shadowDx="4"
                 android:shadowDy="4"
                 android:shadowRadius="4"
-                android:shadowColor="@color/blackColor"/>
+                android:text=""
+                android:textColor="@color/whiteColor"
+                android:textSize="@dimen/_13sdp"
+                android:textStyle="bold" />
 
 
         </RelativeLayout>
 
         <LinearLayout
-            android:alpha="0"
             android:id="@+id/tabGiftCount"
-            android:layout_marginTop="@dimen/_110sdp"
-            android:layout_gravity="top|center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/_110sdp"
+            android:alpha="0"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/ivGiftCount"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                fresco:placeholderImage="@drawable/ic_coins_image"
-                android:padding="@dimen/_2sdp" />
+                android:padding="@dimen/_2sdp"
+                fresco:placeholderImage="@drawable/ic_coins_image" />
 
 
             <TextView
-                android:layout_marginStart="@dimen/_1sdp"
                 android:id="@+id/tvGiftCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_1sdp"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/whiteColor"
@@ -755,20 +743,20 @@
         </LinearLayout>
 
         <View
-            android:layout_marginTop="@dimen/_50sdp"
             android:id="@+id/tabMainView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"/>
+            android:layout_height="@dimen/_300sdp"
+            android:layout_marginTop="@dimen/_50sdp" />
 
 
     </FrameLayout>
 
     <FrameLayout
-        android:background="@color/blackColor"
-        android:visibility="gone"
         android:id="@+id/tabOfflineView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/blackColor"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -779,49 +767,49 @@
                 android:layout_width="@dimen/_24sdp"
                 android:layout_height="@dimen/_24sdp"
                 android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/activity_horizontal_margin"
                 android:padding="@dimen/_3sdp"
                 android:scaleType="fitCenter"
-                android:layout_margin="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_white_cross" />
 
 
             <LinearLayout
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerInParent="true">
-
-            <TextView
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/whoops"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="@color/whiteColor"
-                android:textSize="@dimen/_15sdp"
-                android:shadowDx="4"
-                android:shadowDy="4"
-                android:shadowRadius="4"
-                android:shadowColor="@color/blackColor"/>
-
-            <TextView
-                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/influencer_not_live"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="@color/whiteColor"
-                android:textSize="@dimen/_11sdp"
-                android:shadowDx="4"
-                android:shadowDy="4"
-                android:shadowRadius="4"
-                android:shadowColor="@color/blackColor"/>
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:shadowColor="@color/blackColor"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="4"
+                    android:text="@string/whoops"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="@dimen/_15sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:shadowColor="@color/blackColor"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="4"
+                    android:text="@string/influencer_not_live"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="@dimen/_11sdp" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -829,11 +817,11 @@
 
 
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/tabLockStream"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/blackColor">
+        android:background="@color/blackColor"
+        android:visibility="gone">
 
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -847,18 +835,18 @@
             fresco:placeholderImage="@drawable/image_placeholder" />
 
         <LinearLayout
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:orientation="vertical">
 
 
             <RelativeLayout
-                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_width="@dimen/_80sdp"
                 android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/ic_profile_circle_bg">
 
 
@@ -884,21 +872,21 @@
 
 
             <TextView
-                android:layout_marginTop="@dimen/_20sdp"
                 android:id="@+id/tvUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/whiteColor"
-                android:textSize="@dimen/_15sdp"
                 android:layout_gravity="center_horizontal"
-                android:text=""/>
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text=""
+                android:textColor="@color/whiteColor"
+                android:textSize="@dimen/_15sdp" />
 
 
             <com.facebook.drawee.view.SimpleDraweeView
-                android:layout_marginTop="@dimen/_20sdp"
                 android:id="@+id/ivLocker"
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="@dimen/_150sdp"
+                android:layout_marginTop="@dimen/_20sdp"
                 app:actualImageScaleType="centerCrop"
                 app:failureImageScaleType="centerCrop"
                 app:placeholderImageScaleType="centerCrop"
@@ -914,10 +902,10 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:inputType="number"
+                android:itemBackground="@drawable/ic_passcode_bg"
                 android:textColor="@color/whiteColor"
                 android:textColorHint="@color/whiteColor"
                 android:textSize="@dimen/_19sdp"
-                android:itemBackground="@drawable/ic_passcode_bg"
                 app:cursorColor="@color/blackColor"
                 app:hideLineWhenFilled="false"
                 app:itemCount="4"

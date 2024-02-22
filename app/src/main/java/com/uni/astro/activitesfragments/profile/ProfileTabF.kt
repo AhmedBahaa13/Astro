@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +22,7 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -222,6 +224,10 @@ class ProfileTabF : Fragment() {
 
                     when (tab.position) {
                         0 -> {
+                            tab.icon?.setTint(ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            ))
                             if (myVideoCount > 0) {
                                 bind.createPopupLayout.visibility = View.GONE
                             } else {
@@ -239,7 +245,12 @@ class ProfileTabF : Fragment() {
                     }
                 }
 
-                override fun onTabUnselected(tab: TabLayout.Tab) {}
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                    tab.icon?.setTint(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.love_comment_default
+                    ))
+                }
 
                 override fun onTabReselected(tab: TabLayout.Tab) {}
             })
@@ -267,23 +278,23 @@ class ProfileTabF : Fragment() {
     private fun setupViewPager(viewPager: ViewPager2) {
         myVideosTab = UserVideoF.newInstance(
             true,
-            Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, ""),
             ""
         )
 
         val likedVidFrag = LikedVideoF.newInstance(
             true,
-            Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, ""),
             true,
             ""
         )
 
         val repostFrag = RepostVideoF.newInstance(
             true,
-            Functions.getSharedPreference(context).getString(Variables.U_ID, ""),
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, ""),
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, ""),
             ""
         )
 
@@ -344,14 +355,14 @@ class ProfileTabF : Fragment() {
         get() {
             val parameters = JSONObject()
             try {
-                parameters.put("user_id", Functions.getSharedPreference(context).getString(Variables.U_ID, "0"))
+                parameters.put("user_id", Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "0"))
                 parameters.put("started_at", Functions.getCurrentDate("yyyy-MM-dd HH:mm:ss"))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
             Functions.showLoader(activity, false, false)
-            VolleyRequest.JsonPostRequest(activity, ApiLinks.liveStream, parameters, Functions.getHeaders(context)) { resp ->
+            VolleyRequest.JsonPostRequest(activity, ApiLinks.liveStream, parameters, Functions.getHeaders(requireContext())) { resp ->
                 Functions.checkStatus(activity, resp)
                 Functions.cancelLoader()
                 try {
@@ -373,15 +384,15 @@ class ProfileTabF : Fragment() {
         val intent = Intent(activity, ConcertSelectionA::class.java)
         intent.putExtra(
             "userId",
-            Functions.getSharedPreference(context).getString(Variables.U_ID, "")
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "")
         )
         intent.putExtra(
             "userName",
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, "")
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, "")
         )
         intent.putExtra(
             "userPicture",
-            Functions.getSharedPreference(context).getString(Variables.U_PIC, "")
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_PIC, "")
         )
         intent.putExtra("userRole", Constants.CLIENT_ROLE_BROADCASTER)
         intent.putExtra("streamingId", streamingId)
@@ -413,7 +424,7 @@ class ProfileTabF : Fragment() {
             mediaURL = picUrl
         }
 
-        val fragment = ShareAndViewProfileF(isGif, mediaURL, Functions.getSharedPreference(context).getString(Variables.U_ID, "")) { bundle ->
+        val fragment = ShareAndViewProfileF(isGif, mediaURL, Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "")) { bundle ->
             if (bundle.getString("action") == "profileShareMessage") {
                 if (Functions.checkLoginUser(activity)) {
                     // firebase sharing
@@ -461,7 +472,7 @@ class ProfileTabF : Fragment() {
         super.setMenuVisibility(visible)
         if (visible) {
             Handler(Looper.getMainLooper()).postDelayed({
-                if (Functions.getSharedPreference(context).getBoolean(Variables.IS_LOGIN, false)) {
+                if (Functions.getSharedPreference(requireContext()).getBoolean(Variables.IS_LOGIN, false)) {
                     updateProfile()
                     callApiForUserDetail()
                     getCloseFriends()
@@ -574,34 +585,34 @@ class ProfileTabF : Fragment() {
 
     // place the profile data
     private fun updateProfile() {
-        bind.username2Txt.text = Functions.showUsername(Functions.getSharedPreference(context).getString(Variables.U_NAME, ""))
-        val firstName = Functions.getSharedPreference(context).getString(Variables.F_NAME, "")
-        val lastName = Functions.getSharedPreference(context).getString(Variables.L_NAME, "")
+        bind.username2Txt.text = Functions.showUsername(Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, ""))
+        val firstName = Functions.getSharedPreference(requireContext()).getString(Variables.F_NAME, "")
+        val lastName = Functions.getSharedPreference(requireContext()).getString(Variables.L_NAME, "")
 
         if (firstName.equals("", ignoreCase = true) && lastName.equals("", ignoreCase = true)) {
-            bind.username.text = Functions.getSharedPreference(context).getString(Variables.U_NAME, "")
+            bind.username.text = Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, "")
         } else {
             bind.username.text = "$firstName $lastName"
         }
 
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_BIO, ""))) {
+        if (TextUtils.isEmpty(Functions.getSharedPreference(requireContext()).getString(Variables.U_BIO, ""))) {
             bind.tvBio.visibility = View.GONE
 
         } else {
             bind.tvBio.visibility = View.VISIBLE
-            bind.tvBio.text = Functions.getSharedPreference(context).getString(Variables.U_BIO, "")
+            bind.tvBio.text = Functions.getSharedPreference(requireContext()).getString(Variables.U_BIO, "")
         }
 
-        if (TextUtils.isEmpty(Functions.getSharedPreference(context).getString(Variables.U_LINK, ""))) {
+        if (TextUtils.isEmpty(Functions.getSharedPreference(requireContext()).getString(Variables.U_LINK, ""))) {
             bind.tabLink.visibility = View.GONE
 
         } else {
             bind.tabLink.visibility = View.VISIBLE
-            bind.tvLink.text = Functions.getSharedPreference(context).getString(Variables.U_LINK, "")
+            bind.tvLink.text = Functions.getSharedPreference(requireContext()).getString(Variables.U_LINK, "")
         }
 
-        picUrl = Functions.getSharedPreference(context).getString(Variables.U_PIC, "")
-        profileGif = Functions.getSharedPreference(context).getString(Variables.U_GIF, "")
+        picUrl = Functions.getSharedPreference(requireContext()).getString(Variables.U_PIC, "")
+        profileGif = Functions.getSharedPreference(requireContext()).getString(Variables.U_GIF, "")
 
         if (profileGif == com.uni.astro.Constants.BASE_URL) {
             bind.userImage.controller = Functions.frescoImageLoad(picUrl, bind.userImage, false)
@@ -819,7 +830,7 @@ class ProfileTabF : Fragment() {
         try {
             parameters.put(
                 "user_id",
-                Functions.getSharedPreference(context).getString(Variables.U_ID, "")
+                Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "")
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -941,7 +952,7 @@ class ProfileTabF : Fragment() {
                     }
                 }
 
-                val editor = Functions.getSharedPreference(context).edit()
+                val editor = Functions.getSharedPreference(requireContext()).edit()
                 editor.putString(Variables.U_PIC, picUrl)
                 editor.putString(Variables.U_GIF, userDetailModel.getProfileGif())
                 editor.putString(Variables.U_PROFILE_VIEW, userDetailModel.profileView)
@@ -1048,11 +1059,11 @@ class ProfileTabF : Fragment() {
     // open the following fragment
     private fun openFollowing() {
         val intent = Intent(context, FollowsMainTabA::class.java)
-        intent.putExtra("id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""))
+        intent.putExtra("id", Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, ""))
         intent.putExtra("from_where", "following")
         intent.putExtra(
             "userName",
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, "")
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, "")
         )
         intent.putExtra("followingCount", followingCount)
         intent.putExtra("followerCount", followerCount)
@@ -1063,11 +1074,11 @@ class ProfileTabF : Fragment() {
     // open the followers fragment
     private fun openFollowers() {
         val intent = Intent(context, FollowsMainTabA::class.java)
-        intent.putExtra("id", Functions.getSharedPreference(context).getString(Variables.U_ID, ""))
+        intent.putExtra("id", Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, ""))
         intent.putExtra("from_where", "fan")
         intent.putExtra(
             "userName",
-            Functions.getSharedPreference(context).getString(Variables.U_NAME, "")
+            Functions.getSharedPreference(requireContext()).getString(Variables.U_NAME, "")
         )
         intent.putExtra("followingCount", followingCount)
         intent.putExtra("followerCount", followerCount)
@@ -1077,7 +1088,7 @@ class ProfileTabF : Fragment() {
 
     private fun inboxList() {
         val inboxQuery = FirebaseDatabase.getInstance().reference.child("Inbox")
-            .child(Functions.getSharedPreference(context).getString(Variables.U_ID, "0")!!)
+            .child(Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "0")!!)
             .orderByChild("date")
 
         inboxQuery.addListenerForSingleValueEvent(object : ValueEventListener {
