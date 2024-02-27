@@ -66,6 +66,9 @@ public class MyVideosAdapter extends RecyclerView.Adapter<MyVideosAdapter.Custom
         }
 
         public void bind(final int position, final HomeModel item, final AdapterClickListener listener) {
+//            switch (position%3){
+//                case
+//            }
             itemView.setOnClickListener(v -> {
                 listener.onItemClick(v, position, item);
 

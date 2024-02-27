@@ -381,7 +381,7 @@
                                         android:textColor="@color/whiteColor"
                                         android:textSize="@dimen/_13sdp"
                                         android:textStyle="bold"
-                                        android:visibility="gone" />
+                                        android:visibility="visible" />
 
                                     <TextView
                                         android:id="@+id/messageBtn"
@@ -407,7 +407,7 @@
                                         android:backgroundTint="@color/darkgray"
                                         android:padding="@dimen/_8sdp"
                                         android:src="@drawable/ic_add_friend"
-                                        android:visibility="gone"
+                                        android:visibility="visible"
                                         app:tint="@color/black" />
 
 

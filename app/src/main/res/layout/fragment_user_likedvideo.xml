@@ -16,6 +16,8 @@
       android:layout_above="@+id/load_more_progress"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_marginHorizontal="@dimen/_5sdp"
+
       android:id="@+id/recylerview"
       android:scrollingCache="true"/>
 

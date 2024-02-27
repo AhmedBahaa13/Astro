@@ -89,4 +89,6 @@
     <color name="after_like">#F81265</color>
     <color name="love_comment_clicked">#F33658</color>
     <color name="love_comment_default">#BDBCBF</color>
+    <color name="default_tab">#8798A2</color>
+    <color name="selected_tab">#424242</color>
 </resources>

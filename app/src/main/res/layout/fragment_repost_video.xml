@@ -17,6 +17,7 @@
            android:layout_alignParentTop="true"
             android:id="@+id/recylerview"
             android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:layout_height="match_parent"
             android:layout_above="@+id/load_more_progress"
             android:layout_centerHorizontal="true"
