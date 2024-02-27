@@ -221,12 +221,15 @@ class ProfileTabF : Fragment() {
             tabs.addOnTabSelectedListener(object : OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     pager.setCurrentItem(tab.position, true)
-
+                    tab.icon?.setTint(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.selected_tab
+                    ))
                     when (tab.position) {
                         0 -> {
                             tab.icon?.setTint(ContextCompat.getColor(
                                 requireContext(),
-                                R.color.black
+                                R.color.selected_tab
                             ))
                             if (myVideoCount > 0) {
                                 bind.createPopupLayout.visibility = View.GONE
@@ -247,12 +250,16 @@ class ProfileTabF : Fragment() {
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
                     tab.icon?.setTint(ContextCompat.getColor(
-                        requireContext(),
-                        R.color.love_comment_default
+                        requireContext(),R.color.default_tab
                     ))
                 }
 
-                override fun onTabReselected(tab: TabLayout.Tab) {}
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                    tab.icon?.setTint(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.selected_tab
+                    ))
+                }
             })
 
 
@@ -308,11 +315,26 @@ class ProfileTabF : Fragment() {
     }
     private fun setupTabIcons() {
         bottomTabsBinding.apply {
-            tabs.getTabAt(0)?.setIcon(tabIcons[0])
-            tabs.getTabAt(1)?.setIcon(tabIcons[1])
-            tabs.getTabAt(2)?.setIcon(tabIcons[2])
-            tabs.getTabAt(3)?.setIcon(tabIcons[3])
-            tabs.getTabAt(4)?.setIcon(tabIcons[4])
+            tabs.getTabAt(0)?.setIcon(tabIcons[0])?.icon?.setTint(ContextCompat.getColor(
+                requireContext(),
+                R.color.selected_tab
+            ))
+            tabs.getTabAt(1)?.setIcon(tabIcons[1])?.icon?.setTint(ContextCompat.getColor(
+                requireContext(),
+                R.color.default_tab
+            ))
+            tabs.getTabAt(2)?.setIcon(tabIcons[2])?.icon?.setTint(ContextCompat.getColor(
+                requireContext(),
+                R.color.default_tab
+            ))
+            tabs.getTabAt(3)?.setIcon(tabIcons[3])?.icon?.setTint(ContextCompat.getColor(
+                requireContext(),
+                R.color.default_tab
+            ))
+            tabs.getTabAt(4)?.setIcon(tabIcons[4])?.icon?.setTint(ContextCompat.getColor(
+                requireContext(),
+                R.color.default_tab
+            ))
         }
     }
 
@@ -361,9 +383,9 @@ class ProfileTabF : Fragment() {
                 e.printStackTrace()
             }
 
-            Functions.showLoader(activity, false, false)
-            VolleyRequest.JsonPostRequest(activity, ApiLinks.liveStream, parameters, Functions.getHeaders(requireContext())) { resp ->
-                Functions.checkStatus(activity, resp)
+            Functions.showLoader(requireActivity(), false, false)
+            VolleyRequest.JsonPostRequest(requireActivity(), ApiLinks.liveStream, parameters, Functions.getHeaders(requireContext())) { resp ->
+                Functions.checkStatus(requireActivity(), resp)
                 Functions.cancelLoader()
                 try {
                     val jsonObject = JSONObject(resp)
@@ -381,7 +403,7 @@ class ProfileTabF : Fragment() {
         }
 
     private fun goLive() {
-        val intent = Intent(activity, ConcertSelectionA::class.java)
+        val intent = Intent(requireActivity(), ConcertSelectionA::class.java)
         intent.putExtra(
             "userId",
             Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "")
@@ -426,7 +448,7 @@ class ProfileTabF : Fragment() {
 
         val fragment = ShareAndViewProfileF(isGif, mediaURL, Functions.getSharedPreference(requireContext()).getString(Variables.U_ID, "")) { bundle ->
             if (bundle.getString("action") == "profileShareMessage") {
-                if (Functions.checkLoginUser(activity)) {
+                if (Functions.checkLoginUser(requireActivity())) {
                     // firebase sharing
                 }
             }
@@ -458,8 +480,8 @@ class ProfileTabF : Fragment() {
     private fun openManageMultipleAccounts() {
         val f = ManageAccountsF { bundle: Bundle ->
             if (bundle.getBoolean("isShow", false)) {
-                Functions.hideSoftKeyboard(activity)
-                val intent = Intent(activity, LoginA::class.java)
+                Functions.hideSoftKeyboard(requireActivity())
+                val intent = Intent(requireActivity(), LoginA::class.java)
                 startActivity(intent)
                 requireActivity().overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top)
             }
@@ -571,7 +593,7 @@ class ProfileTabF : Fragment() {
 
     private fun showDraftCount() {
         try {
-            val path = Functions.getAppFolder(activity) + Variables.DRAFT_APP_FOLDER
+            val path = Functions.getAppFolder(requireActivity()) + Variables.DRAFT_APP_FOLDER
             val directory = File(path)
             val files = directory.listFiles()
 
@@ -836,11 +858,11 @@ class ProfileTabF : Fragment() {
             e.printStackTrace()
         }
         VolleyRequest.JsonPostRequest(
-            activity, ApiLinks.showUserDetail, parameters, Functions.getHeaders(
-                activity
+            requireActivity(), ApiLinks.showUserDetail, parameters, Functions.getHeaders(
+                requireActivity()
             )
         ) { resp ->
-            Functions.checkStatus(activity, resp)
+            Functions.checkStatus(requireActivity(), resp)
             parseData(resp)
         }
     }
@@ -1006,7 +1028,7 @@ class ProfileTabF : Fragment() {
                 updateProfileVisitorCount(userDetailModel)
 
             } else {
-                Functions.showToast(activity, jsonObject.optString("msg"))
+                Functions.showToast(requireActivity(), jsonObject.optString("msg"))
             }
 
         } catch (e: Exception) {

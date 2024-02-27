@@ -394,9 +394,10 @@
                                 android:layout_height="@dimen/_15sdp"
                                 android:layout_marginStart="@dimen/_4sdp"
                                 android:scaleType="fitCenter"
-                                android:src="@drawable/ic_verified"
-                                android:visibility="gone"
-                                tools:visibility="visible" />
+                                android:src="@drawable/verified"
+                                android:visibility="visible"
+                                tools:visibility="visible"
+                                app:tint="@color/black" />
                         </LinearLayout>
 
                         <TextView
@@ -565,6 +566,154 @@
 
                         </LinearLayout>
 
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/materialCardView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginStart="@dimen/_6sdp"
+                                android:layout_marginEnd="@dimen/_9sdp"
+                                app:cardCornerRadius="@dimen/_16sdp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
+                                app:layout_constraintEnd_toStartOf="@+id/materialCardView"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintHorizontal_chainStyle="spread"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="@+id/materialCardView">
+
+                                <LinearLayout
+                                    android:layout_width="@dimen/_58sdp"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/me_button_bg"
+                                    android:orientation="vertical"
+                                    android:paddingHorizontal="@dimen/_17sdp"
+                                    android:paddingVertical="@dimen/_10sdp">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_25sdp"
+                                        android:layout_height="@dimen/_25sdp"
+                                        android:layout_gravity="center_horizontal"
+                                        android:src="@drawable/outlined_star" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/_12sdp"
+                                        android:layout_marginBottom="@dimen/_2sdp"
+                                        android:fontFamily="@font/baloo"
+                                        android:text="@string/me" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/materialCardView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                app:cardCornerRadius="@dimen/_16sdp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintBottom_toBottomOf="@+id/materialCardView3"
+                                app:layout_constraintEnd_toStartOf="@+id/materialCardView3"
+                                app:layout_constraintStart_toEndOf="@+id/materialCardView2"
+                                app:layout_constraintTop_toTopOf="@+id/materialCardView3">
+
+                                <LinearLayout
+                                    android:layout_width="@dimen/_58sdp"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/talk_me_button_bg"
+                                    android:orientation="vertical"
+                                    android:paddingVertical="@dimen/_10sdp">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_25sdp"
+                                        android:layout_height="@dimen/_25sdp"
+                                        android:layout_gravity="center_horizontal"
+                                        android:src="@drawable/ic_chat" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/_12sdp"
+                                        android:layout_marginBottom="@dimen/_2sdp"
+                                        android:fontFamily="@font/baloo"
+                                        android:text="@string/talk_me" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/materialCardView3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                app:cardCornerRadius="@dimen/_16sdp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintEnd_toStartOf="@id/materialCardView4"
+                                app:layout_constraintStart_toEndOf="@+id/materialCardView"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <LinearLayout
+                                    android:layout_width="@dimen/_58sdp"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/talk_me_button_bg"
+                                    android:orientation="vertical"
+                                    android:paddingTop="@dimen/_10sdp"
+                                    android:paddingBottom="@dimen/_5sdp">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_25sdp"
+                                        android:layout_height="@dimen/_25sdp"
+                                        android:layout_gravity="center_horizontal"
+                                        android:src="@drawable/outlined_gift" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:fontFamily="@font/baloo"
+                                        android:gravity="center"
+                                        android:includeFontPadding="false"
+                                        android:text="@string/make_me_happy"
+                                        android:textSize="@dimen/_9ssp" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/materialCardView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginEnd="@dimen/_10sdp"
+                                android:elevation="0dp"
+                                app:cardCornerRadius="@dimen/_16sdp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintBottom_toBottomOf="@+id/materialCardView3"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@+id/materialCardView3">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:background="#F9F9F9"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/_2sdp">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/_25sdp"
+                                        android:layout_height="@dimen/_25sdp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Show More"
+                                        android:src="@drawable/arrow_down_figma"
+                                        app:tint="#979797" />
+
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
